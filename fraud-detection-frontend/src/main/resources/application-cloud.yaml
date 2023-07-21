@@ -1,0 +1,9 @@
+kafka:
+  bootstrap-servers: cp-cp-kafka.confluent-platform.svc:9092
+
+security.auth.enabled: true
+
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: cp-cp-kafka.confluent-platform.svc:9092
