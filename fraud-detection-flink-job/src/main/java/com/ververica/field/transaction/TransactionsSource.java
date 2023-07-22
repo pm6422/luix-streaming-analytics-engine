@@ -18,7 +18,7 @@
 
 package com.ververica.field.transaction;
 
-import com.ververica.field.config.Config;
+import com.ververica.field.input.Config;
 import com.ververica.field.dynamicrules.KafkaUtils;
 import com.ververica.field.transaction.domain.Transaction;
 import com.ververica.field.dynamicrules.functions.JsonDeserializer;
@@ -35,7 +35,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.util.Properties;
 
-import static com.ververica.field.config.Parameters.*;
+import static com.ververica.field.input.Parameters.*;
 
 public class TransactionsSource {
 

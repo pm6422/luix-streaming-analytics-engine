@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.ververica.field.config;
+package com.ververica.field.input;
 
 import org.apache.flink.api.java.utils.ParameterTool;
 

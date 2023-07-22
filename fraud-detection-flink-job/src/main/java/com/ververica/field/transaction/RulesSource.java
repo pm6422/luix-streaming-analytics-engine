@@ -18,7 +18,7 @@
 
 package com.ververica.field.transaction;
 
-import com.ververica.field.config.Config;
+import com.ververica.field.input.Config;
 import com.ververica.field.dynamicrules.KafkaUtils;
 import com.ververica.field.dynamicrules.Rule;
 import com.ververica.field.dynamicrules.functions.RuleDeserializer;
@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import static com.ververica.field.config.Parameters.*;
+import static com.ververica.field.input.Parameters.*;
 
 public class RulesSource {
 

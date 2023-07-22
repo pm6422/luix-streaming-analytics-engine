@@ -18,7 +18,7 @@
 
 package com.ververica.field.dynamicrules.sinks;
 
-import com.ververica.field.config.Config;
+import com.ververica.field.input.Config;
 import com.ververica.field.dynamicrules.Alert;
 import com.ververica.field.dynamicrules.KafkaUtils;
 import com.ververica.field.dynamicrules.functions.JsonSerializer;
@@ -34,7 +34,7 @@ import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSink;
 import java.io.IOException;
 import java.util.Properties;
 
-import static com.ververica.field.config.Parameters.*;
+import static com.ververica.field.input.Parameters.*;
 
 public class AlertsSink {
 

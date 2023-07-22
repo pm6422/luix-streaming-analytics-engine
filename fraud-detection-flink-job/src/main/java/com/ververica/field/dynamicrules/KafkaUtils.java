@@ -18,11 +18,11 @@
 
 package com.ververica.field.dynamicrules;
 
-import com.ververica.field.config.Config;
+import com.ververica.field.input.Config;
 
 import java.util.Properties;
 
-import static com.ververica.field.config.Parameters.*;
+import static com.ververica.field.input.Parameters.*;
 
 public class KafkaUtils {
 

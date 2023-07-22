@@ -18,7 +18,7 @@
 
 package com.ververica.field.transaction.rule;
 
-import com.ververica.field.config.Config;
+import com.ververica.field.input.Config;
 import com.ververica.field.dynamicrules.Alert;
 import com.ververica.field.dynamicrules.Rule;
 import com.ververica.field.dynamicrules.functions.AverageAggregate;
@@ -50,7 +50,7 @@ import org.apache.flink.util.OutputTag;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.ververica.field.config.Parameters.*;
+import static com.ververica.field.input.Parameters.*;
 
 @Slf4j
 public class RulesEvaluator {
