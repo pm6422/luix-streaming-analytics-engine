@@ -18,7 +18,7 @@
 
 package com.ververica.field.dynamicrules.functions;
 
-import com.ververica.field.sources.BaseGenerator;
+import com.ververica.field.transaction.generator.BaseGenerator;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 

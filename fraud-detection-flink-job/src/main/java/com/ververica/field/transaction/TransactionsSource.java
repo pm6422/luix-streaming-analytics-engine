@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules.sources;
+package com.ververica.field.transaction;
 
 import com.ververica.field.config.Config;
 import com.ververica.field.dynamicrules.KafkaUtils;
-import com.ververica.field.dynamicrules.Transaction;
+import com.ververica.field.transaction.domain.Transaction;
 import com.ververica.field.dynamicrules.functions.JsonDeserializer;
 import com.ververica.field.dynamicrules.functions.JsonGeneratorWrapper;
 import com.ververica.field.dynamicrules.functions.TimeStamper;
-import com.ververica.field.dynamicrules.functions.TransactionsGenerator;
+import com.ververica.field.transaction.generator.TransactionsGenerator;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.kafka.source.KafkaSource;

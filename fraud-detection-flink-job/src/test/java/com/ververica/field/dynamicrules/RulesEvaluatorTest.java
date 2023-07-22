@@ -18,9 +18,10 @@
 
 package com.ververica.field.dynamicrules;
 
-import com.ververica.field.dynamicrules.RulesEvaluator.Descriptors;
-import com.ververica.field.dynamicrules.functions.DynamicAlertFunction;
-import com.ververica.field.dynamicrules.functions.DynamicKeyFunction;
+import com.ververica.field.transaction.rule.RulesEvaluator;
+import com.ververica.field.transaction.rule.RulesEvaluator.Descriptors;
+import com.ververica.field.transaction.alert.DynamicAlertFunction;
+import com.ververica.field.transaction.key.DynamicKeyFunction;
 import com.ververica.field.dynamicrules.util.AssertUtils;
 import com.ververica.field.dynamicrules.util.BroadcastStreamKeyedOperatorTestHarness;
 import com.ververica.field.dynamicrules.util.BroadcastStreamNonKeyedOperatorTestHarness;
@@ -30,6 +31,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.ververica.field.transaction.domain.Transaction;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.watermark.Watermark;

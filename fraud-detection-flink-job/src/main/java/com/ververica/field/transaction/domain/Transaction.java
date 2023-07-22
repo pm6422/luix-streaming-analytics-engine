@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules;
+package com.ververica.field.transaction.domain;
 
+import com.ververica.field.dynamicrules.TimestampAssignable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

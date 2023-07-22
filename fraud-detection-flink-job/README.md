@@ -1,9 +1,6 @@
-# Dynamic Fraud Detection Demo with Apache Flink
+# Fraud Detection with Apache Flink
 
-## Introduction
-
-
-### Instructions (local execution with netcat):
+## Introduction (local execution with netcat):
 
 1. Start `netcat`:
 ```

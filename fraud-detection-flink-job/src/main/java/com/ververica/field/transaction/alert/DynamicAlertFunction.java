@@ -16,12 +16,13 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules.functions;
+package com.ververica.field.transaction.alert;
 
 import com.ververica.field.dynamicrules.*;
 import com.ververica.field.dynamicrules.Rule.ControlType;
 import com.ververica.field.dynamicrules.Rule.RuleState;
-import com.ververica.field.dynamicrules.RulesEvaluator.Descriptors;
+import com.ververica.field.transaction.rule.RulesEvaluator.Descriptors;
+import com.ververica.field.transaction.domain.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;

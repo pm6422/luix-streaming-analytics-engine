@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-package com.ververica.field.sources;
+package com.ververica.field.transaction.generator;
 
+import com.ververica.field.utils.Throttler;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
@@ -54,8 +55,12 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
         this.maxRecordsPerSecond = maxRecordsPerSecond;
     }
 
+    public int getMaxRecordsPerSecond() {
+        return maxRecordsPerSecond;
+    }
+
     @Override
-    public void open(Configuration parameters) throws Exception {
+    public void open(Configuration parameters) {
         if (id == -1) {
             id = getRuntimeContext().getIndexOfThisSubtask();
         }
@@ -110,7 +115,5 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
 
     public abstract T randomEvent(SplittableRandom rnd, long id);
 
-    public int getMaxRecordsPerSecond() {
-        return maxRecordsPerSecond;
-    }
+
 }

@@ -16,17 +16,20 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules;
+package com.ververica.field.transaction.rule;
 
 import com.ververica.field.config.Config;
+import com.ververica.field.dynamicrules.Alert;
+import com.ververica.field.dynamicrules.Rule;
 import com.ververica.field.dynamicrules.functions.AverageAggregate;
-import com.ververica.field.dynamicrules.functions.DynamicAlertFunction;
-import com.ververica.field.dynamicrules.functions.DynamicKeyFunction;
+import com.ververica.field.transaction.alert.DynamicAlertFunction;
+import com.ververica.field.transaction.key.DynamicKeyFunction;
 import com.ververica.field.dynamicrules.sinks.AlertsSink;
 import com.ververica.field.dynamicrules.sinks.CurrentRulesSink;
 import com.ververica.field.dynamicrules.sinks.LatencySink;
-import com.ververica.field.dynamicrules.sources.RulesSource;
-import com.ververica.field.dynamicrules.sources.TransactionsSource;
+import com.ververica.field.transaction.RulesSource;
+import com.ververica.field.transaction.TransactionsSource;
+import com.ververica.field.transaction.domain.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -54,7 +57,7 @@ public class RulesEvaluator {
 
     private final Config config;
 
-    RulesEvaluator(Config config) {
+    public RulesEvaluator(Config config) {
         this.config = config;
     }
 

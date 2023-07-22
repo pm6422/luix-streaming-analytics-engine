@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules.functions;
+package com.ververica.field.transaction.generator;
 
-import com.ververica.field.dynamicrules.Transaction;
-import com.ververica.field.dynamicrules.Transaction.PaymentType;
-import com.ververica.field.sources.BaseGenerator;
+import com.ververica.field.transaction.domain.Transaction;
+import com.ververica.field.transaction.domain.Transaction.PaymentType;
 
 import java.math.BigDecimal;
 import java.util.SplittableRandom;
@@ -46,7 +45,7 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100;
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
-        Transaction transaction = Transaction.builder()
+        return Transaction.builder()
                 .transactionId(transactionId)
                 .payeeId(payeeId)
                 .beneficiaryId(beneficiaryId)
@@ -55,8 +54,6 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
                 .eventTime(System.currentTimeMillis())
                 .ingestionTimestamp(System.currentTimeMillis())
                 .build();
-
-        return transaction;
     }
 
     private PaymentType paymentType(long id) {

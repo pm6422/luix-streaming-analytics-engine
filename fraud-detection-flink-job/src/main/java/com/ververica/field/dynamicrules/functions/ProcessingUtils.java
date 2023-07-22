@@ -25,9 +25,9 @@ import org.apache.flink.api.common.state.MapState;
 import java.util.HashSet;
 import java.util.Set;
 
-class ProcessingUtils {
+public class ProcessingUtils {
 
-    static void handleRuleBroadcast(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
+    public static void handleRuleBroadcast(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         switch (rule.getRuleState()) {
             case ACTIVE:
             case PAUSE:
@@ -39,7 +39,7 @@ class ProcessingUtils {
         }
     }
 
-    static <K, V> Set<V> addToStateValuesSet(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+    public static <K, V> Set<V> addToStateValuesSet(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
         Set<V> valuesSet = mapState.get(key);
 
         if (valuesSet != null) {

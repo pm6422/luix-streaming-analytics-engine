@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules.functions;
+package com.ververica.field.transaction.key;
 
 import com.ververica.field.dynamicrules.Keyed;
 import com.ververica.field.dynamicrules.KeysExtractor;
 import com.ververica.field.dynamicrules.Rule;
 import com.ververica.field.dynamicrules.Rule.ControlType;
 import com.ververica.field.dynamicrules.Rule.RuleState;
-import com.ververica.field.dynamicrules.RulesEvaluator.Descriptors;
-import com.ververica.field.dynamicrules.Transaction;
+import com.ververica.field.transaction.rule.RulesEvaluator.Descriptors;
+import com.ververica.field.transaction.domain.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;

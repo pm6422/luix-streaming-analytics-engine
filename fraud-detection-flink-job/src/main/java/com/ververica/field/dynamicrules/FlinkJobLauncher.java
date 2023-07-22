@@ -2,6 +2,7 @@ package com.ververica.field.dynamicrules;
 
 import com.ververica.field.config.Config;
 import com.ververica.field.config.Parameters;
+import com.ververica.field.transaction.rule.RulesEvaluator;
 import org.apache.flink.api.java.utils.ParameterTool;
 
 import static com.ververica.field.config.Parameters.*;

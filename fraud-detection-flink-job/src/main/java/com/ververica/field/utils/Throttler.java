@@ -16,22 +16,21 @@
  * limitations under the License.
  */
 
-package com.ververica.field.sources;
+package com.ververica.field.utils;
 
 import org.apache.flink.util.Preconditions;
 
 /**
  * Utility to throttle a thread to a given number of executions (records) per second.
  */
-final class Throttler {
+public final class Throttler {
 
     private final long throttleBatchSize;
     private final long nanosPerBatch;
+    private       long endOfNextBatchNanos;
+    private       int  currentBatch;
 
-    private long endOfNextBatchNanos;
-    private int  currentBatch;
-
-    Throttler(long maxRecordsPerSecond, int numberOfParallelSubtasks) {
+    public Throttler(long maxRecordsPerSecond, int numberOfParallelSubtasks) {
         Preconditions.checkArgument(
                 maxRecordsPerSecond == -1 || maxRecordsPerSecond > 0,
                 "maxRecordsPerSecond must be positive or -1 (infinite)");
@@ -60,7 +59,7 @@ final class Throttler {
         this.currentBatch = 0;
     }
 
-    void throttle() throws InterruptedException {
+    public void throttle() throws InterruptedException {
         if (throttleBatchSize == -1) {
             return;
         }

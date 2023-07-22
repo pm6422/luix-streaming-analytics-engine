@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.ververica.field.dynamicrules.sources;
+package com.ververica.field.transaction;
 
 import com.ververica.field.config.Config;
 import com.ververica.field.dynamicrules.KafkaUtils;
