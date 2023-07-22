@@ -6,7 +6,7 @@
 ```
 nc -lk 9999
 ```
-2. Run main method of `com.ververica.field.dynamicrules.FlinkJobLauncher`
+2. Run main method of `com.luixtech.frauddetection.flinkjob.FlinkJobLauncher`
 3. Submit to netcat in correct format:
 rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName field), (aggregation function), (limit operator), (limit), (window size in minutes)
 
