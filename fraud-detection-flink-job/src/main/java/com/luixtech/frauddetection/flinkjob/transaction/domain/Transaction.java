@@ -49,7 +49,8 @@ public class Transaction implements TimestampAssignable<Long> {
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US).withZone(ZoneOffset.UTC);
 
     public enum PaymentType {
-        CSH("CSH"), CRD("CRD");
+        CSH("CSH"),
+        CRD("CRD");
 
         String representation;
 

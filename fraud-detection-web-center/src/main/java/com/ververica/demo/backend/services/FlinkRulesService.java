@@ -30,28 +30,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class FlinkRulesService {
 
-  private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-  @Value("${kafka.topic.rules}")
-  private String topic;
+    @Value("${kafka.topic.rules}")
+    private String topic;
 
-  private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-  @Autowired
-  public FlinkRulesService(KafkaTemplate<String, String> kafkaTemplate) {
-    this.kafkaTemplate = kafkaTemplate;
-  }
+    @Autowired
+    public FlinkRulesService(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
-  public void addRule(Rule rule) {
-    String payload = rule.getRulePayload();
-    kafkaTemplate.send(topic, payload);
-  }
+    public void addRule(Rule rule) {
+        String payload = rule.getRulePayload();
+        kafkaTemplate.send(topic, payload);
+    }
 
-  public void deleteRule(int ruleId) throws JsonProcessingException {
-    RulePayload payload = new RulePayload();
-    payload.setRuleId(ruleId);
-    payload.setRuleState(RuleState.DELETE);
-    String payloadJson = mapper.writeValueAsString(payload);
-    kafkaTemplate.send(topic, payloadJson);
-  }
+    public void deleteRule(int ruleId) throws JsonProcessingException {
+        RulePayload payload = new RulePayload();
+        payload.setRuleId(ruleId);
+        payload.setRuleState(RuleState.DELETE);
+        String payloadJson = mapper.writeValueAsString(payload);
+        kafkaTemplate.send(topic, payloadJson);
+    }
 }
