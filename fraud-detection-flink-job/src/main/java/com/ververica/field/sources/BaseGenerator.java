@@ -34,17 +34,13 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 /**
  * A simple random data generator with data rate throttling logic.
  */
-public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T>
-        implements CheckpointedFunction {
+public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> implements CheckpointedFunction {
 
     private static final long serialVersionUID = 1L;
 
-    protected int maxRecordsPerSecond;
-
-    private volatile boolean running = true;
-
-    private long id = -1;
-
+    protected         int             maxRecordsPerSecond;
+    private volatile  boolean         running = true;
+    private           long            id      = -1;
     private transient ListState<Long> idState;
 
     protected BaseGenerator() {
@@ -98,10 +94,9 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T>
 
     @Override
     public void initializeState(FunctionInitializationContext context) throws Exception {
-        idState =
-                context
-                        .getOperatorStateStore()
-                        .getUnionListState(new ListStateDescriptor<>("ids", BasicTypeInfo.LONG_TYPE_INFO));
+        idState = context
+                .getOperatorStateStore()
+                .getUnionListState(new ListStateDescriptor<>("ids", BasicTypeInfo.LONG_TYPE_INFO));
 
         if (context.isRestored()) {
             long max = Long.MIN_VALUE;

@@ -27,10 +27,8 @@ import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TransactionsGenerator extends BaseGenerator<Transaction> {
-
-    private static final long MAX_PAYEE_ID       = 100000;
-    private static final long MAX_BENEFICIARY_ID = 100000;
-
+    private static final long   MAX_PAYEE_ID       = 100000;
+    private static final long   MAX_BENEFICIARY_ID = 100000;
     private static final double MIN_PAYMENT_AMOUNT = 5d;
     private static final double MAX_PAYMENT_AMOUNT = 20d;
 
@@ -48,16 +46,15 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100;
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
-        Transaction transaction =
-                Transaction.builder()
-                        .transactionId(transactionId)
-                        .payeeId(payeeId)
-                        .beneficiaryId(beneficiaryId)
-                        .paymentAmount(paymentAmount)
-                        .paymentType(paymentType(transactionId))
-                        .eventTime(System.currentTimeMillis())
-                        .ingestionTimestamp(System.currentTimeMillis())
-                        .build();
+        Transaction transaction = Transaction.builder()
+                .transactionId(transactionId)
+                .payeeId(payeeId)
+                .beneficiaryId(beneficiaryId)
+                .paymentAmount(paymentAmount)
+                .paymentType(paymentType(transactionId))
+                .eventTime(System.currentTimeMillis())
+                .ingestionTimestamp(System.currentTimeMillis())
+                .build();
 
         return transaction;
     }

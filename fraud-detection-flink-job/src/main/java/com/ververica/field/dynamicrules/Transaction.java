@@ -45,14 +45,10 @@ public class Transaction implements TimestampAssignable<Long> {
     public  PaymentType paymentType;
     private Long        ingestionTimestamp;
 
-    private static DateTimeFormatter timeFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    .withLocale(Locale.US)
-                    .withZone(ZoneOffset.UTC);
+    private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US).withZone(ZoneOffset.UTC);
 
     public enum PaymentType {
-        CSH("CSH"),
-        CRD("CRD");
+        CSH("CSH"), CRD("CRD");
 
         String representation;
 
@@ -74,13 +70,7 @@ public class Transaction implements TimestampAssignable<Long> {
         List<String> tokens = Arrays.asList(line.split(","));
         int numArgs = 7;
         if (tokens.size() != numArgs) {
-            throw new RuntimeException(
-                    "Invalid transaction: "
-                            + line
-                            + ". Required number of arguments: "
-                            + numArgs
-                            + " found "
-                            + tokens.size());
+            throw new RuntimeException("Invalid transaction: " + line + ". Required number of arguments: " + numArgs + " found " + tokens.size());
         }
 
         Transaction transaction = new Transaction();
@@ -88,8 +78,7 @@ public class Transaction implements TimestampAssignable<Long> {
         try {
             Iterator<String> iter = tokens.iterator();
             transaction.transactionId = Long.parseLong(iter.next());
-            transaction.eventTime =
-                    ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
+            transaction.eventTime = ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
             transaction.payeeId = Long.parseLong(iter.next());
             transaction.beneficiaryId = Long.parseLong(iter.next());
             transaction.paymentType = PaymentType.fromString(iter.next());
