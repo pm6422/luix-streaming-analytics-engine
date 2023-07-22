@@ -23,9 +23,9 @@ import lombok.Getter;
 @Getter
 public class Param<T> {
 
-    private String   name;
-    private Class<T> type;
-    private T        defaultValue;
+    private final String   name;
+    private final Class<T> type;
+    private final T        defaultValue;
 
     Param(String name, T defaultValue, Class<T> type) {
         this.name = name;

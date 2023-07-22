@@ -36,6 +36,7 @@ import org.apache.flink.util.Collector;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import static com.ververica.field.dynamicrules.functions.ProcessingUtils.handleRuleBroadcast;
 
@@ -93,15 +94,13 @@ public class DynamicKeyFunction
 
     private void handleControlCommand(
             ControlType controlType, BroadcastState<Integer, Rule> rulesState) throws Exception {
-        switch (controlType) {
-            case DELETE_RULES_ALL:
-                Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-                while (entriesIterator.hasNext()) {
-                    Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                    rulesState.remove(ruleEntry.getKey());
-                    log.info("Removed Rule {}", ruleEntry.getValue());
-                }
-                break;
+        if (Objects.requireNonNull(controlType) == ControlType.DELETE_RULES_ALL) {
+            Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
+            while (entriesIterator.hasNext()) {
+                Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                rulesState.remove(ruleEntry.getKey());
+                log.info("Removed Rule {}", ruleEntry.getValue());
+            }
         }
     }
 

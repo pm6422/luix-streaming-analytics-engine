@@ -48,30 +48,28 @@ public class TransactionsSource {
         int transactionsPerSecond = config.get(RECORDS_PER_SECOND);
         DataStreamSource<String> dataStreamSource;
 
-        switch (transactionsSourceType) {
-            case KAFKA:
-                Properties kafkaProps = KafkaUtils.initConsumerProperties(config);
-                String transactionsTopic = config.get(DATA_TOPIC);
+        if (transactionsSourceType == Type.KAFKA) {
+            Properties kafkaProps = KafkaUtils.initConsumerProperties(config);
+            String transactionsTopic = config.get(DATA_TOPIC);
 
-                // NOTE: Idiomatically, watermarks should be assigned here, but this done later
-                // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
-                // TODO: refactor when FLIP-238 is added
+            // NOTE: Idiomatically, watermarks should be assigned here, but this done later
+            // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
+            // TODO: refactor when FLIP-238 is added
 
-                KafkaSource<String> kafkaSource =
-                        KafkaSource.<String>builder()
-                                .setProperties(kafkaProps)
-                                .setTopics(transactionsTopic)
-                                .setStartingOffsets(OffsetsInitializer.latest())
-                                .setValueOnlyDeserializer(new SimpleStringSchema())
-                                .build();
+            KafkaSource<String> kafkaSource =
+                    KafkaSource.<String>builder()
+                            .setProperties(kafkaProps)
+                            .setTopics(transactionsTopic)
+                            .setStartingOffsets(OffsetsInitializer.latest())
+                            .setValueOnlyDeserializer(new SimpleStringSchema())
+                            .build();
 
-                dataStreamSource =
-                        env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Rules Kafka Source");
-                break;
-            default:
-                JsonGeneratorWrapper<Transaction> generatorSource =
-                        new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
-                dataStreamSource = env.addSource(generatorSource);
+            dataStreamSource =
+                    env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "Rules Kafka Source");
+        } else {
+            JsonGeneratorWrapper<Transaction> generatorSource =
+                    new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
+            dataStreamSource = env.addSource(generatorSource);
         }
         return dataStreamSource;
     }
@@ -90,7 +88,7 @@ public class TransactionsSource {
         GENERATOR("Transactions Source (generated locally)"),
         KAFKA("Transactions Source (Kafka)");
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;

@@ -43,7 +43,7 @@ public class RuleDeserializer extends RichFlatMapFunction<String, Rule> {
         try {
             Rule rule = ruleParser.fromString(value);
             if (rule.getRuleState() != RuleState.CONTROL && rule.getRuleId() == null) {
-                throw new NullPointerException("ruleId cannot be null: " + rule.toString());
+                throw new NullPointerException("ruleId cannot be null: " + rule);
             }
             out.collect(rule);
         } catch (Exception e) {

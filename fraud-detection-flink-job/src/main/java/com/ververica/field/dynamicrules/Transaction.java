@@ -45,7 +45,7 @@ public class Transaction implements TimestampAssignable<Long> {
     public  PaymentType paymentType;
     private Long        ingestionTimestamp;
 
-    private static transient DateTimeFormatter timeFormatter =
+    private static DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                     .withLocale(Locale.US)
                     .withZone(ZoneOffset.UTC);

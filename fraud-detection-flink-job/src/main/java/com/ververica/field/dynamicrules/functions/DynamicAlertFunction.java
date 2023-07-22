@@ -55,13 +55,13 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     private static final String COUNT            = "COUNT_FLINK";
     private static final String COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK";
 
-    private static int WIDEST_RULE_KEY         = Integer.MIN_VALUE;
-    private static int CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
+    private static final int WIDEST_RULE_KEY         = Integer.MIN_VALUE;
+    private static final int CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
 
     private transient MapState<Long, Set<Transaction>> windowState;
     private           Meter                            alertMeter;
 
-    private MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor =
+    private final MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor =
             new MapStateDescriptor<>(
                     "windowState",
                     BasicTypeInfo.LONG_TYPE_INFO,
@@ -188,10 +188,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     private boolean noRuleAvailable(Rule rule) {
         // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
         // updated and used in `DynamicKeyFunction`
-        if (rule == null) {
-            return true;
-        }
-        return false;
+        return rule == null;
     }
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {

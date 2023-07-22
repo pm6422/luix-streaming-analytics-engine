@@ -65,7 +65,7 @@ public class CurrentRulesSink {
                 break;
             case PUBSUB:
                 PubSubSink<String> pubSubSinkFunction =
-                        PubSubSink.<String>newBuilder()
+                        PubSubSink.newBuilder()
                                 .withSerializationSchema(new SimpleStringSchema())
                                 .withProjectName(config.get(GCP_PROJECT_NAME))
                                 .withTopicName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
@@ -91,7 +91,7 @@ public class CurrentRulesSink {
         PUBSUB("Current Rules Sink (Pub/Sub)"),
         STDOUT("Current Rules Sink (Std. Out)");
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;

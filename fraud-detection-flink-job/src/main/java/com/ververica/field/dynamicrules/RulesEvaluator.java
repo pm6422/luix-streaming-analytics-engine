@@ -52,7 +52,7 @@ import static com.ververica.field.config.Parameters.*;
 @Slf4j
 public class RulesEvaluator {
 
-    private Config config;
+    private final Config config;
 
     RulesEvaluator(Config config) {
         this.config = config;

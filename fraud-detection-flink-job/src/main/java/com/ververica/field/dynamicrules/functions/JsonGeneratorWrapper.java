@@ -26,7 +26,7 @@ import java.util.SplittableRandom;
 
 public class JsonGeneratorWrapper<T> extends BaseGenerator<String> {
 
-    private              BaseGenerator<T> wrappedGenerator;
+    private final        BaseGenerator<T> wrappedGenerator;
     private static final ObjectMapper     objectMapper = new ObjectMapper();
 
     public JsonGeneratorWrapper(BaseGenerator<T> wrappedGenerator) {

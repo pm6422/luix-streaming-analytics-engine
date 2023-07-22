@@ -70,7 +70,7 @@ public class RulesSource {
                 break;
             case PUBSUB:
                 PubSubSource<String> pubSubSourceFunction =
-                        PubSubSource.<String>newBuilder()
+                        PubSubSource.newBuilder()
                                 .withDeserializationSchema(new SimpleStringSchema())
                                 .withProjectName(config.get(GCP_PROJECT_NAME))
                                 .withSubscriptionName(config.get(GCP_PUBSUB_RULES_SUBSCRIPTION))
@@ -109,7 +109,7 @@ public class RulesSource {
         PUBSUB("Rules Source (Pub/Sub)"),
         SOCKET("Rules Source (Socket)");
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;

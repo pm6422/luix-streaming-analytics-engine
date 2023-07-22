@@ -62,7 +62,7 @@ public class AlertsSink {
                 break;
             case PUBSUB:
                 PubSubSink<String> pubSubSinkFunction =
-                        PubSubSink.<String>newBuilder()
+                        PubSubSink.newBuilder()
                                 .withSerializationSchema(new SimpleStringSchema())
                                 .withProjectName(config.get(GCP_PROJECT_NAME))
                                 .withTopicName(config.get(GCP_PUBSUB_ALERTS_SUBSCRIPTION))
@@ -88,7 +88,7 @@ public class AlertsSink {
         PUBSUB("Alerts Sink (Pub/Sub)"),
         STDOUT("Alerts Sink (Std. Out)");
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;
