@@ -11,7 +11,7 @@
     <artifactId>fraud-detection-web-center</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>fraud-detection-frontend</name>
+    <name>fraud-detection-web-center</name>
     <properties>
         <java.version>11</java.version>
         <logback.version>1.2.11</logback.version>

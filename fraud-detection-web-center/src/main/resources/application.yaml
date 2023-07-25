@@ -34,6 +34,6 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   application:
-    name: fraud-detection-frontend
+    name: fraud-detection-web-center
   profiles:
     active: dev
