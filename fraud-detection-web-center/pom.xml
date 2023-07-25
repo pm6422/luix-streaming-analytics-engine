@@ -21,7 +21,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <swagger.version>2.9.2</swagger.version>
     </properties>
-    <!-- Spring Boot Starters -->
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
