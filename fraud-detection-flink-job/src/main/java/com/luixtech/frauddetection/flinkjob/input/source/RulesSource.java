@@ -1,12 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.RuleDeserializer;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -14,11 +12,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.connectors.gcp.pubsub.PubSubSource;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.input.Parameters.RULES_SOURCE;
@@ -46,15 +42,6 @@ public class RulesSource {
                 // TODO: refactor when FLIP-238 is added
                 dataStreamSource =
                         env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), rulesSourceType.getName());
-                break;
-            case PUBSUB:
-                PubSubSource<String> pubSubSourceFunction =
-                        PubSubSource.newBuilder()
-                                .withDeserializationSchema(new SimpleStringSchema())
-                                .withProjectName(inputConfig.get(Parameters.GCP_PROJECT_NAME))
-                                .withSubscriptionName(inputConfig.get(Parameters.GCP_PUBSUB_RULES_SUBSCRIPTION))
-                                .build();
-                dataStreamSource = env.addSource(pubSubSourceFunction);
                 break;
             case SOCKET:
                 SocketTextStreamFunction socketSourceFunction =
