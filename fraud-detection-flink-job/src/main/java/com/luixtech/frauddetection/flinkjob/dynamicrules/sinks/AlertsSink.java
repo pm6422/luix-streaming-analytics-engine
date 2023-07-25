@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.JsonSerializer;
-import com.luixtech.frauddetection.flinkjob.input.Config;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -37,15 +37,15 @@ import java.util.Properties;
 
 public class AlertsSink {
 
-    public static DataStreamSink<String> addAlertsSink(Config config, DataStream<String> stream) throws IOException {
-        String sinkType = config.get(Parameters.ALERTS_SINK);
+    public static DataStreamSink<String> addAlertsSink(InputConfig inputConfig, DataStream<String> stream) throws IOException {
+        String sinkType = inputConfig.get(Parameters.ALERTS_SINK);
         AlertsSink.Type alertsSinkType = AlertsSink.Type.valueOf(sinkType.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (alertsSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(config);
-                String alertsTopic = config.get(Parameters.ALERTS_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
+                String alertsTopic = inputConfig.get(Parameters.ALERTS_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
@@ -63,8 +63,8 @@ public class AlertsSink {
                 PubSubSink<String> pubSubSinkFunction =
                         PubSubSink.newBuilder()
                                 .withSerializationSchema(new SimpleStringSchema())
-                                .withProjectName(config.get(Parameters.GCP_PROJECT_NAME))
-                                .withTopicName(config.get(Parameters.GCP_PUBSUB_ALERTS_SUBSCRIPTION))
+                                .withProjectName(inputConfig.get(Parameters.GCP_PROJECT_NAME))
+                                .withTopicName(inputConfig.get(Parameters.GCP_PUBSUB_ALERTS_SUBSCRIPTION))
                                 .build();
                 dataStreamSink = stream.addSink(pubSubSinkFunction);
                 break;

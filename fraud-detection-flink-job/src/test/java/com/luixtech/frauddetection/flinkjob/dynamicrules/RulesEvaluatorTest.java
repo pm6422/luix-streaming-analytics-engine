@@ -21,6 +21,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.AssertUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamKeyedOperatorTestHarness;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamNonKeyedOperatorTestHarness;
+import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
 import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
 import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
@@ -54,7 +55,7 @@ public class RulesEvaluatorTest {
                 Transaction, Rule, Keyed<Transaction, String, Integer>>
         testHarness =
             BroadcastStreamNonKeyedOperatorTestHarness.getInitializedTestHarness(
-                new DynamicKeyFunction(), RulesEvaluator.Descriptors.rulesDescriptor)) {
+                new DynamicKeyFunction(), Descriptors.rulesDescriptor)) {
 
       testHarness.processElement2(new StreamRecord<>(rule1, 12L));
       testHarness.processElement1(new StreamRecord<>(event1, 15L));
@@ -77,12 +78,12 @@ public class RulesEvaluatorTest {
             Transaction, Rule, Keyed<Transaction, String, Integer>>
         testHarness =
             BroadcastStreamNonKeyedOperatorTestHarness.getInitializedTestHarness(
-                new DynamicKeyFunction(), RulesEvaluator.Descriptors.rulesDescriptor)) {
+                new DynamicKeyFunction(), Descriptors.rulesDescriptor)) {
 
       testHarness.processElement2(new StreamRecord<>(rule1, 12L));
 
       BroadcastState<Integer, Rule> broadcastState =
-          testHarness.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor);
+          testHarness.getBroadcastState(Descriptors.rulesDescriptor);
 
       Map<Integer, Rule> expectedState = new HashMap<>();
       expectedState.put(rule1.getRuleId(), rule1);
@@ -113,7 +114,7 @@ public class RulesEvaluatorTest {
                 in -> (in.getKey()),
                 null,
                 BasicTypeInfo.STRING_TYPE_INFO,
-                RulesEvaluator.Descriptors.rulesDescriptor)) {
+                Descriptors.rulesDescriptor)) {
 
       testHarness.processElement2(new StreamRecord<>(rule1, 12L));
 
@@ -156,7 +157,7 @@ public class RulesEvaluatorTest {
                 in -> (in.getKey()),
                 null,
                 BasicTypeInfo.STRING_TYPE_INFO,
-                RulesEvaluator.Descriptors.rulesDescriptor)) {
+                Descriptors.rulesDescriptor)) {
 
       testHarness.processElement2(new StreamRecord<>(rule1, 12L));
 
@@ -201,7 +202,7 @@ public class RulesEvaluatorTest {
                 in -> (in.getKey()),
                 null,
                 BasicTypeInfo.STRING_TYPE_INFO,
-                RulesEvaluator.Descriptors.rulesDescriptor)) {
+                Descriptors.rulesDescriptor)) {
 
       //      long halfAMinuteMillis = 30 * 1000l;
       long watermarkDelay = 2 * 60 * 1000l;

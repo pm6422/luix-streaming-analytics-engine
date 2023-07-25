@@ -19,7 +19,7 @@ package com.ververica.demo.backend.exceptions;
 
 public class RuleNotFoundException extends RuntimeException {
 
-    public RuleNotFoundException(Integer id) {
-        super("Could not find employee " + id);
-    }
+  public RuleNotFoundException(Integer id) {
+    super("Could not find employee " + id);
+  }
 }

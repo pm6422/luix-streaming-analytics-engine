@@ -22,36 +22,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Config {
+public class InputConfig {
 
-    private final Map<Param<?>, Object> values = new HashMap<>();
+    private final Map<InputParam<?>, Object> values = new HashMap<>();
 
-    public <T> void put(Param<T> key, T value) {
+    public <T> void put(InputParam<T> key, T value) {
         values.put(key, value);
     }
 
-    public <T> T get(Param<T> key) {
+    public <T> T get(InputParam<T> key) {
         return key.getType().cast(values.get(key));
     }
 
-    public <T> Config(
+    public <T> InputConfig(
             Parameters inputParams,
-            List<Param<String>> stringParams,
-            List<Param<Integer>> intParams,
-            List<Param<Boolean>> boolParams) {
-        overrideDefaults(inputParams, stringParams);
-        overrideDefaults(inputParams, intParams);
-        overrideDefaults(inputParams, boolParams);
+            List<InputParam<String>> stringInputParams,
+            List<InputParam<Integer>> intInputParams,
+            List<InputParam<Boolean>> boolInputParams) {
+        overrideDefaults(inputParams, stringInputParams);
+        overrideDefaults(inputParams, intInputParams);
+        overrideDefaults(inputParams, boolInputParams);
     }
 
-    public static Config fromParameters(Parameters parameters) {
-        return new Config(
-                parameters, Parameters.STRING_PARAMS, Parameters.INT_PARAMS, Parameters.BOOL_PARAMS);
+    public static InputConfig fromParameters(Parameters parameters) {
+        return new InputConfig(
+                parameters, Parameters.STRING_INPUT_PARAMS, Parameters.INT_INPUT_PARAMS, Parameters.BOOL_INPUT_PARAMS);
     }
 
-    private <T> void overrideDefaults(Parameters inputParams, List<Param<T>> params) {
-        for (Param<T> param : params) {
-            put(param, inputParams.getOrDefault(param));
+    private <T> void overrideDefaults(Parameters inputParams, List<InputParam<T>> params) {
+        for (InputParam<T> inputParam : params) {
+            put(inputParam, inputParams.getOrDefault(inputParam));
         }
     }
 }

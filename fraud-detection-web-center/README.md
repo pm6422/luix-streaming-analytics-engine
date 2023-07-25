@@ -1,9 +1,3 @@
-To start Kafka:
-
-```
-docker-compose -f fraud-detection-frontend/docker/kafka.yml up -d
-```
-
 To start backend/host frontend:
 
 ```
@@ -14,7 +8,7 @@ React App:
 The react app is now set to start both the java app and the react dev server, simply run
 
 ```
-npm install (to get all the new dependencies)
+npm install
 npm start
 ```
 

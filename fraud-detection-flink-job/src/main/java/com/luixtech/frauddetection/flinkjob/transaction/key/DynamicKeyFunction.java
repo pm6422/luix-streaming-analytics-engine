@@ -18,13 +18,13 @@
 
 package com.luixtech.frauddetection.flinkjob.transaction.key;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.ProcessingUtils;
-import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Keyed;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KeysExtractor;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.ProcessingUtils;
+import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -40,12 +40,10 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 /**
- * Implements dynamic data partitioning based on a set of broadcasted rules.
+ * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction
-        extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
-
+public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -55,44 +53,33 @@ public class DynamicKeyFunction
     }
 
     @Override
-    public void processElement(
-            Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out)
-            throws Exception {
-        ReadOnlyBroadcastState<Integer, Rule> rulesState =
-                ctx.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor);
+    public void processElement(Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+        ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
         forkEventForEachGroupingKey(event, rulesState, out);
     }
 
-    private void forkEventForEachGroupingKey(
-            Transaction event,
-            ReadOnlyBroadcastState<Integer, Rule> rulesState,
-            Collector<Keyed<Transaction, String, Integer>> out)
-            throws Exception {
+    private void forkEventForEachGroupingKey(Transaction event, ReadOnlyBroadcastState<Integer, Rule> rulesState,
+                                             Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();
-            out.collect(
-                    new Keyed<>(
-                            event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
+            out.collect(new Keyed<>(event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);
     }
 
     @Override
-    public void processBroadcastElement(
-            Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+    public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         log.info("{}", rule);
-        BroadcastState<Integer, Rule> broadcastState =
-                ctx.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor);
+        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
         ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState);
         }
     }
 
-    private void handleControlCommand(
-            ControlType controlType, BroadcastState<Integer, Rule> rulesState) throws Exception {
+    private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState) throws Exception {
         if (Objects.requireNonNull(controlType) == ControlType.DELETE_RULES_ALL) {
             Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
             while (entriesIterator.hasNext()) {
@@ -104,7 +91,6 @@ public class DynamicKeyFunction
     }
 
     private static class RuleCounterGauge implements Gauge<Integer> {
-
         private int value = 0;
 
         public void setValue(int value) {

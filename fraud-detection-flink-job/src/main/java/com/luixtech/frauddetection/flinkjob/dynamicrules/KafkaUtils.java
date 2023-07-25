@@ -18,7 +18,7 @@
 
 package com.luixtech.frauddetection.flinkjob.dynamicrules;
 
-import com.luixtech.frauddetection.flinkjob.input.Config;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 
 import java.util.Properties;
 
@@ -26,21 +26,21 @@ import static com.luixtech.frauddetection.flinkjob.input.Parameters.*;
 
 public class KafkaUtils {
 
-    public static Properties initConsumerProperties(Config config) {
-        Properties kafkaProps = initProperties(config);
-        String offset = config.get(OFFSET);
+    public static Properties initConsumerProperties(InputConfig inputConfig) {
+        Properties kafkaProps = initProperties(inputConfig);
+        String offset = inputConfig.get(OFFSET);
         kafkaProps.setProperty("auto.offset.reset", offset);
         return kafkaProps;
     }
 
-    public static Properties initProducerProperties(Config params) {
+    public static Properties initProducerProperties(InputConfig params) {
         return initProperties(params);
     }
 
-    private static Properties initProperties(Config config) {
+    private static Properties initProperties(InputConfig inputConfig) {
         Properties kafkaProps = new Properties();
-        String kafkaHost = config.get(KAFKA_HOST);
-        int kafkaPort = config.get(KAFKA_PORT);
+        String kafkaHost = inputConfig.get(KAFKA_HOST);
+        int kafkaPort = inputConfig.get(KAFKA_PORT);
         String servers = String.format("%s:%s", kafkaHost, kafkaPort);
         kafkaProps.setProperty("bootstrap.servers", servers);
         return kafkaProps;

@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.JsonSerializer;
-import com.luixtech.frauddetection.flinkjob.input.Config;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -37,18 +37,18 @@ import java.util.Properties;
 
 public class CurrentRulesSink {
 
-    public static DataStreamSink<String> addRulesSink(Config config, DataStream<String> stream)
+    public static DataStreamSink<String> addRulesSink(InputConfig inputConfig, DataStream<String> stream)
             throws IOException {
 
-        String sinkType = config.get(Parameters.RULES_EXPORT_SINK);
+        String sinkType = inputConfig.get(Parameters.RULES_EXPORT_SINK);
         CurrentRulesSink.Type currentRulesSinkType =
                 CurrentRulesSink.Type.valueOf(sinkType.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (currentRulesSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(config);
-                String rulesExportTopic = config.get(Parameters.RULES_EXPORT_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
+                String rulesExportTopic = inputConfig.get(Parameters.RULES_EXPORT_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
@@ -66,8 +66,8 @@ public class CurrentRulesSink {
                 PubSubSink<String> pubSubSinkFunction =
                         PubSubSink.newBuilder()
                                 .withSerializationSchema(new SimpleStringSchema())
-                                .withProjectName(config.get(Parameters.GCP_PROJECT_NAME))
-                                .withTopicName(config.get(Parameters.GCP_PUBSUB_RULES_SUBSCRIPTION))
+                                .withProjectName(inputConfig.get(Parameters.GCP_PROJECT_NAME))
+                                .withTopicName(inputConfig.get(Parameters.GCP_PUBSUB_RULES_SUBSCRIPTION))
                                 .build();
                 dataStreamSink = stream.addSink(pubSubSinkFunction);
                 break;

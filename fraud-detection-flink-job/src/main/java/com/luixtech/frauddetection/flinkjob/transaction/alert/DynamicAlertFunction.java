@@ -19,10 +19,11 @@
 package com.luixtech.frauddetection.flinkjob.transaction.alert;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.*;
-import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -83,9 +84,9 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         addToStateValuesSet(windowState, currentEventTime, value.getWrapped());
 
         long ingestionTime = value.getWrapped().getIngestionTimestamp();
-        ctx.output(RulesEvaluator.Descriptors.latencySinkTag, System.currentTimeMillis() - ingestionTime);
+        ctx.output(Descriptors.latencySinkTag, System.currentTimeMillis() - ingestionTime);
 
-        Rule rule = ctx.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor).get(value.getId());
+        Rule rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.getId());
 
         if (noRuleAvailable(rule)) {
             log.error("Rule with ID {} does not exist", value.getId());
@@ -110,8 +111,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             // Evaluate the rule and trigger an alert if violated
             boolean ruleMatched = rule.apply(aggregateResult);
 
-            ctx.output(
-                    RulesEvaluator.Descriptors.demoSinkTag,
+            ctx.output(Descriptors.demoSinkTag,
                     "Rule "
                             + rule.getRuleId()
                             + " | "
@@ -133,8 +133,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
-        log.info("{}", rule);
-        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor);
+        log.info("Found rule: {}", rule);
+        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
         handleRuleBroadcast(rule, broadcastState);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
@@ -147,7 +147,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         switch (controlType) {
             case EXPORT_RULES_CURRENT:
                 for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
-                    ctx.output(RulesEvaluator.Descriptors.currentRulesSinkTag, entry.getValue());
+                    ctx.output(Descriptors.currentRulesSinkTag, entry.getValue());
                 }
                 break;
             case CLEAR_STATE_ALL:
@@ -209,7 +209,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
-        Rule widestWindowRule = ctx.getBroadcastState(RulesEvaluator.Descriptors.rulesDescriptor).get(WIDEST_RULE_KEY);
+        Rule widestWindowRule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(WIDEST_RULE_KEY);
 
         Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(Rule::getWindowMillis);
         Optional<Long> cleanupEventTimeThreshold = cleanupEventTimeWindow.map(window -> timestamp - window);

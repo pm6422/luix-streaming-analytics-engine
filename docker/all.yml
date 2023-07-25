@@ -6,6 +6,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
     image: confluentinc/cp-kafka:7.2.1
     # If you want to expose these ports outside your dev PC,
@@ -19,3 +20,31 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+#  flink-job-manager:
+#    image: flink:1.15-java8
+#    ports:
+#      - 8081:8081
+#    command: jobmanager
+#    environment:
+#      - |
+#        FLINK_PROPERTIES=
+#        jobmanager.rpc.address: flink-job-manager
+#        parallelism.default: 1
+#    depends_on:
+#      - kafka
+#
+#  flink-task-manager:
+#    image: flink:1.15-java8
+#    command: taskmanager
+#    environment:
+#      - |
+#        FLINK_PROPERTIES=
+#        jobmanager.rpc.address: flink-job-manager
+#        parallelism.default: 2
+#    scale: 1
+#    links:
+#      - "flink-job-manager:jobmanager"  # link to job manager service
+#    depends_on:
+#      - kafka
+#      - flink-job-manager

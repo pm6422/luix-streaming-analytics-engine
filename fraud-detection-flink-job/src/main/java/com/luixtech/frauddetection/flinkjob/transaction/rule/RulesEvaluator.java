@@ -1,35 +1,20 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.luixtech.frauddetection.flinkjob.transaction.rule;
 
-import com.luixtech.frauddetection.flinkjob.input.Config;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.AverageAggregate;
-import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
-import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.LatencySink;
-import com.luixtech.frauddetection.flinkjob.transaction.RulesSource;
-import com.luixtech.frauddetection.flinkjob.transaction.TransactionsSource;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
+import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
+import com.luixtech.frauddetection.flinkjob.output.Descriptors;
+import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
+import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -51,145 +36,95 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.input.Parameters.*;
+import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.*;
+import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.*;
 
 @Slf4j
+@AllArgsConstructor
 public class RulesEvaluator {
 
-    private final Config config;
-
-    public RulesEvaluator(Config config) {
-        this.config = config;
-    }
+    private final InputConfig inputConfig;
 
     public void run() throws Exception {
-        RulesSource.Type rulesSourceType = getRulesSourceType();
-
-        boolean isLocal = config.get(LOCAL_EXECUTION);
-        boolean enableCheckpoints = config.get(ENABLE_CHECKPOINTS);
-        int checkpointsInterval = config.get(CHECKPOINT_INTERVAL);
-        int minPauseBtwnCheckpoints = config.get(CHECKPOINT_INTERVAL);
-
-        // Environment setup
-        StreamExecutionEnvironment env = configureStreamExecutionEnvironment(rulesSourceType, isLocal);
-
-        if (enableCheckpoints) {
-            env.enableCheckpointing(checkpointsInterval);
-            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(minPauseBtwnCheckpoints);
-        }
+        // Configure execution environment
+        StreamExecutionEnvironment env = configureStreamExecutionEnv();
 
         // Streams setup
-        DataStream<Rule> rulesUpdateStream = getRulesUpdateStream(env);
-        DataStream<Transaction> transactions = getTransactionsStream(env);
-
-        BroadcastStream<Rule> rulesStream = rulesUpdateStream.broadcast(Descriptors.rulesDescriptor);
+        DataStream<Rule> rulesStream = getRulesStream(env);
+        DataStream<Transaction> transactionsStream = getTransactionsStream(env);
+        // Create a broadcast rules stream
+        BroadcastStream<Rule> broadcastRulesStream = rulesStream.broadcast(Descriptors.rulesDescriptor);
 
         // Processing pipeline setup
-        DataStream<Alert> alerts =
-                transactions
-                        .connect(rulesStream)
-                        .process(new DynamicKeyFunction())
-                        .uid("DynamicKeyFunction")
-                        .name("Dynamic Partitioning Function")
-                        .keyBy((keyed) -> keyed.getKey())
-                        .connect(rulesStream)
-                        .process(new DynamicAlertFunction())
-                        .uid("DynamicAlertFunction")
-                        .name("Dynamic Rule Evaluation Function");
+        DataStream<Alert> alertsStream = transactionsStream
+                .connect(broadcastRulesStream)
+                .process(new DynamicKeyFunction())
+                .uid("DynamicKeyFunction")
+                .name("Dynamic Partitioning Function")
+                .keyBy((keyed) -> keyed.getKey())
+                .connect(broadcastRulesStream)
+                .process(new DynamicAlertFunction())
+                .uid("DynamicAlertFunction")
+                .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations =
-                ((SingleOutputStreamOperator<Alert>) alerts).getSideOutput(Descriptors.demoSinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.demoSinkTag);
 
         DataStream<Long> latency =
-                ((SingleOutputStreamOperator<Alert>) alerts).getSideOutput(Descriptors.latencySinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.latencySinkTag);
 
         DataStream<Rule> currentRules =
-                ((SingleOutputStreamOperator<Alert>) alerts).getSideOutput(Descriptors.currentRulesSinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.currentRulesSinkTag);
 
-        alerts.print().name("Alert STDOUT Sink");
+        alertsStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
-        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alerts);
+        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertsStream);
         DataStream<String> currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules);
 
         currentRulesJson.print();
 
-        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(config, alertsJson);
+        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(inputConfig, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
-        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(config, currentRulesJson);
+        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(inputConfig, currentRulesJson);
         currentRulesSink.setParallelism(1);
 
-        DataStream<String> latencies =
-                latency
+        DataStream<String> latencies = latency
                         .timeWindowAll(Time.seconds(10))
                         .aggregate(new AverageAggregate())
                         .map(String::valueOf);
 
-        DataStreamSink<String> latencySink = LatencySink.addLatencySink(config, latencies);
+        DataStreamSink<String> latencySink = LatencySink.addLatencySink(inputConfig, latencies);
         latencySink.name("Latency Sink");
 
         env.execute("Fraud Detection Engine");
     }
 
-    private DataStream<Transaction> getTransactionsStream(StreamExecutionEnvironment env) {
-        // Data stream setup
-        int sourceParallelism = config.get(SOURCE_PARALLELISM);
-        DataStream<String> transactionsStringsStream =
-                TransactionsSource.initTransactionsSource(config, env)
-                        .name("Transactions Source")
-                        .setParallelism(sourceParallelism);
-        DataStream<Transaction> transactionsStream =
-                TransactionsSource.stringsStreamToTransactions(transactionsStringsStream);
-        return transactionsStream.assignTimestampsAndWatermarks(
-                new SimpleBoundedOutOfOrdernessTimestampExtractor<>(config.get(OUT_OF_ORDERNESS)));
-    }
-
-    private DataStream<Rule> getRulesUpdateStream(StreamExecutionEnvironment env) throws IOException {
-        RulesSource.Type rulesSourceEnumType = getRulesSourceType();
-
-        DataStream<String> rulesStrings =
-                RulesSource.initRulesSource(config, env)
-                        .name(rulesSourceEnumType.getName())
-                        .setParallelism(1);
-        return RulesSource.stringsStreamToRules(rulesStrings);
-    }
-
-    private RulesSource.Type getRulesSourceType() {
-        String rulesSource = config.get(RULES_SOURCE);
-        return RulesSource.Type.valueOf(rulesSource.toUpperCase());
-    }
-
-    private StreamExecutionEnvironment configureStreamExecutionEnvironment(RulesSource.Type rulesSourceEnumType, boolean isLocal) {
-        Configuration flinkConfig = new Configuration();
-        flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
-
-        StreamExecutionEnvironment env =
-                isLocal
-                        ? StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig)
-                        : StreamExecutionEnvironment.getExecutionEnvironment();
-
+    private StreamExecutionEnvironment configureStreamExecutionEnv() {
+        StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-        env.getCheckpointConfig().setCheckpointInterval(config.get(CHECKPOINT_INTERVAL));
-        env.getCheckpointConfig().setMinPauseBetweenCheckpoints(config.get(MIN_PAUSE_BETWEEN_CHECKPOINTS));
 
-        configureRestartStrategy(env, rulesSourceEnumType);
+        if (inputConfig.get(ENABLE_CHECKPOINTS)) {
+            env.enableCheckpointing(inputConfig.get(CHECKPOINT_INTERVAL));
+            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(inputConfig.get(MIN_PAUSE_BETWEEN_CHECKPOINTS));
+        }
+        configureRestartStrategy(env);
         return env;
     }
 
-    private static class SimpleBoundedOutOfOrdernessTimestampExtractor<T extends Transaction>
-            extends BoundedOutOfOrdernessTimestampExtractor<T> {
-
-        public SimpleBoundedOutOfOrdernessTimestampExtractor(int outOfOrdernessMillis) {
-            super(Time.of(outOfOrdernessMillis, TimeUnit.MILLISECONDS));
+    private StreamExecutionEnvironment getStreamExecutionEnv() {
+        if (inputConfig.get(LOCAL_EXECUTION)) {
+            // Create an embedded Flink execution environment with flink UI dashboard
+            Configuration flinkConfig = new Configuration();
+            flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
+            return StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig);
         }
-
-        @Override
-        public long extractTimestamp(T element) {
-            return element.getEventTime();
-        }
+        return StreamExecutionEnvironment.getExecutionEnvironment();
     }
 
-    private void configureRestartStrategy(StreamExecutionEnvironment env, RulesSource.Type rulesSourceEnumType) {
+    private void configureRestartStrategy(StreamExecutionEnvironment env) {
+        RulesSource.Type rulesSourceEnumType = getRulesSourceType(inputConfig);
         switch (rulesSourceEnumType) {
             case SOCKET:
                 env.setRestartStrategy(
@@ -202,15 +137,23 @@ public class RulesEvaluator {
         }
     }
 
-    public static class Descriptors {
-        public static final MapStateDescriptor<Integer, Rule> rulesDescriptor =
-                new MapStateDescriptor<>("rules", BasicTypeInfo.INT_TYPE_INFO, TypeInformation.of(Rule.class));
+    private DataStream<Rule> getRulesStream(StreamExecutionEnvironment env) throws IOException {
+        RulesSource.Type rulesSourceType = getRulesSourceType(inputConfig);
+        DataStream<String> rulesStringStream = initRulesSource(inputConfig, env)
+                // todo: put below in initRulesSource method
+                .name(rulesSourceType.getName())
+                .setParallelism(1);
+        return stringsStreamToRules(rulesStringStream);
+    }
 
-        public static final OutputTag<String> demoSinkTag         = new OutputTag<String>("demo-sink") {
-        };
-        public static final OutputTag<Long>   latencySinkTag      = new OutputTag<Long>("latency-sink") {
-        };
-        public static final OutputTag<Rule>   currentRulesSinkTag = new OutputTag<Rule>("current-rules-sink") {
-        };
+    private DataStream<Transaction> getTransactionsStream(StreamExecutionEnvironment env) {
+        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(inputConfig);
+        DataStream<String> transactionsStringsStream = initTransactionsSource(inputConfig, env)
+                // todo: put below in initTransactionsSource method
+                .name(transactionsSourceType.getName())
+                .setParallelism(inputConfig.get(SOURCE_PARALLELISM));
+        DataStream<Transaction> transactionsStream = stringsStreamToTransactions(transactionsStringsStream);
+        return transactionsStream.assignTimestampsAndWatermarks(
+                new SimpleBoundedOutOfOrdernessTimestampExtractor<>(inputConfig.get(OUT_OF_ORDERNESS)));
     }
 }

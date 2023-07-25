@@ -20,6 +20,8 @@ package com.ververica.demo.backend.controllers;
 import com.ververica.demo.backend.datasource.DemoTransactionsGenerator;
 import com.ververica.demo.backend.datasource.TransactionsGenerator;
 import com.ververica.demo.backend.services.KafkaTransactionsPusher;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,76 +31,73 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 @RestController
 @Slf4j
 public class DataGenerationController {
 
-    private final TransactionsGenerator         transactionsGenerator;
-    private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+  private final TransactionsGenerator transactionsGenerator;
+  private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
-    private final ExecutorService executor               = Executors.newSingleThreadExecutor();
-    private       boolean         generatingTransactions = false;
-    private boolean         listenerContainerRunning = true;
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private boolean generatingTransactions = false;
+  private boolean listenerContainerRunning = true;
 
-    @Value("${kafka.listeners.transactions.id}")
-    private String transactionListenerId;
+  @Value("${kafka.listeners.transactions.id}")
+  private String transactionListenerId;
 
-    @Value("${transactionsRateDisplayLimit}")
-    private int transactionsRateDisplayLimit;
+  @Value("${transactionsRateDisplayLimit}")
+  private int transactionsRateDisplayLimit;
 
-    @Autowired
-    public DataGenerationController(
-            KafkaTransactionsPusher transactionsPusher,
-            KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
-        transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
-        this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
+  @Autowired
+  public DataGenerationController(
+      KafkaTransactionsPusher transactionsPusher,
+      KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
+    transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
+    this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
+  }
+
+  @GetMapping("/api/startTransactionsGeneration")
+  public void startTransactionsGeneration() throws Exception {
+    log.info("{}", "startTransactionsGeneration called");
+    generateTransactions();
+  }
+
+  private void generateTransactions() {
+    if (!generatingTransactions) {
+      executor.submit(transactionsGenerator);
+      generatingTransactions = true;
+    }
+  }
+
+  @GetMapping("/api/stopTransactionsGeneration")
+  public void stopTransactionsGeneration() {
+    transactionsGenerator.cancel();
+    generatingTransactions = false;
+    log.info("{}", "stopTransactionsGeneration called");
+  }
+
+  @GetMapping("/api/generatorSpeed/{speed}")
+  public void setGeneratorSpeed(@PathVariable Long speed) {
+    log.info("Generator speed change request: " + speed);
+    if (speed <= 0) {
+      transactionsGenerator.cancel();
+      generatingTransactions = false;
+      return;
+    } else {
+      generateTransactions();
     }
 
-    @GetMapping("/api/startTransactionsGeneration")
-    public void startTransactionsGeneration() throws Exception {
-        log.info("{}", "startTransactionsGeneration called");
-        generateTransactions();
+    MessageListenerContainer listenerContainer =
+        kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+    if (speed > transactionsRateDisplayLimit) {
+      listenerContainer.stop();
+      listenerContainerRunning = false;
+    } else if (!listenerContainerRunning) {
+      listenerContainer.start();
     }
 
-    private void generateTransactions() {
-        if (!generatingTransactions) {
-            executor.submit(transactionsGenerator);
-            generatingTransactions = true;
-        }
+    if (transactionsGenerator != null) {
+      transactionsGenerator.adjustMaxRecordsPerSecond(speed);
     }
-
-    @GetMapping("/api/stopTransactionsGeneration")
-    public void stopTransactionsGeneration() {
-        transactionsGenerator.cancel();
-        generatingTransactions = false;
-        log.info("{}", "stopTransactionsGeneration called");
-    }
-
-    @GetMapping("/api/generatorSpeed/{speed}")
-    public void setGeneratorSpeed(@PathVariable Long speed) {
-        log.info("Generator speed change request: " + speed);
-        if (speed <= 0) {
-            transactionsGenerator.cancel();
-            generatingTransactions = false;
-            return;
-        } else {
-            generateTransactions();
-        }
-
-        MessageListenerContainer listenerContainer =
-                kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
-        if (speed > transactionsRateDisplayLimit) {
-            listenerContainer.stop();
-            listenerContainerRunning = false;
-        } else if (!listenerContainerRunning) {
-            listenerContainer.start();
-        }
-
-        if (transactionsGenerator != null) {
-            transactionsGenerator.adjustMaxRecordsPerSecond(speed);
-        }
-    }
+  }
 }

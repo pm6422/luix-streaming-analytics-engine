@@ -19,7 +19,7 @@
 package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.input.Config;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
@@ -35,17 +35,17 @@ import java.util.Properties;
 
 public class LatencySink {
 
-    public static DataStreamSink<String> addLatencySink(Config config, DataStream<String> stream)
+    public static DataStreamSink<String> addLatencySink(InputConfig inputConfig, DataStream<String> stream)
             throws IOException {
 
-        String latencySink = config.get(Parameters.LATENCY_SINK);
+        String latencySink = inputConfig.get(Parameters.LATENCY_SINK);
         LatencySink.Type latencySinkType = LatencySink.Type.valueOf(latencySink.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (latencySinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(config);
-                String latencyTopic = config.get(Parameters.LATENCY_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
+                String latencyTopic = inputConfig.get(Parameters.LATENCY_TOPIC);
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
                                 .setKafkaProducerConfig(kafkaProps)
@@ -62,8 +62,8 @@ public class LatencySink {
                 PubSubSink<String> pubSubSinkFunction =
                         PubSubSink.newBuilder()
                                 .withSerializationSchema(new SimpleStringSchema())
-                                .withProjectName(config.get(Parameters.GCP_PROJECT_NAME))
-                                .withTopicName(config.get(Parameters.GCP_PUBSUB_LATENCY_SUBSCRIPTION))
+                                .withProjectName(inputConfig.get(Parameters.GCP_PROJECT_NAME))
+                                .withTopicName(inputConfig.get(Parameters.GCP_PUBSUB_LATENCY_SUBSCRIPTION))
                                 .build();
                 dataStreamSink = stream.addSink(pubSubSinkFunction);
                 break;

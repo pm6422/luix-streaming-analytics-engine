@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.config;
 
 import static org.junit.Assert.assertEquals;
 
-import com.luixtech.frauddetection.flinkjob.input.Config;
+import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import org.junit.Test;
 
@@ -30,9 +30,9 @@ public class ConfigTest {
   public void testParameters() {
     String[] args = new String[] {"--kafka-host", "host-from-args"};
     Parameters parameters = Parameters.fromArgs(args);
-    Config config = Config.fromParameters(parameters);
+    InputConfig inputConfig = InputConfig.fromParameters(parameters);
 
-    final String kafkaHost = config.get(Parameters.KAFKA_HOST);
+    final String kafkaHost = inputConfig.get(Parameters.KAFKA_HOST);
     assertEquals("Wrong config parameter retrived", "host-from-args", kafkaHost);
   }
 
@@ -40,9 +40,9 @@ public class ConfigTest {
   public void testParameterWithDefaults() {
     String[] args = new String[] {};
     Parameters parameters = Parameters.fromArgs(args);
-    Config config = Config.fromParameters(parameters);
+    InputConfig inputConfig = InputConfig.fromParameters(parameters);
 
-    final Integer kafkaPort = config.get(Parameters.KAFKA_PORT);
+    final Integer kafkaPort = inputConfig.get(Parameters.KAFKA_PORT);
     assertEquals("Wrong config parameter retrived", new Integer(9092), kafkaPort);
   }
 }
