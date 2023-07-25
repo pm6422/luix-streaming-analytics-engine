@@ -1,5 +1,10 @@
 # Fraud Detection with Apache Flink
 
+## Local Run
+Flink Dashboard
+http://localhost:8081/#/overview
+
+
 ## Introduction (local execution with netcat):
 
 1. Start `netcat`:
