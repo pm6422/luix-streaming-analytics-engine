@@ -112,7 +112,6 @@ spring:
 #        prepStmtCacheSqlLimit: 2048
 #        useServerPrepStmts: true
   h2.console.enabled: true
-#  autoconfigure.exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
   kafka:
     producer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -134,11 +133,6 @@ springdoc: # https://springdoc.org/#migrating-from-springfox
   api-docs:
     enabled: true
   show-actuator: true
-
-security.auth.enabled: false
-
-transactionsRateDisplayLimit: 50
-
 kafka:
   topic:
     transactions: livetransactions
@@ -148,7 +142,6 @@ kafka:
     current-rules: current-rules
   listeners:
     transactions.id: transactions-listener
-
 web-socket:
   topic:
     transactions: /topic/transactions
@@ -193,3 +186,7 @@ luix:
   ribbon:
     # comma separated list of profiles to show a ribbon on the GUI
     display-on-active-profiles: dev,test,demo
+# ===================================================================
+# Application specific properties
+# ===================================================================
+transactionsRateDisplayLimit: 50

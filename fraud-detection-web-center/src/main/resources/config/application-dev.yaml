@@ -5,6 +5,3 @@ spring:
 kafka:
 #  bootstrap-servers: kafka-cp-kafka-headless:9092
   bootstrap-servers: 127.0.0.1:9092
-
-security.auth.enabled: true
-
