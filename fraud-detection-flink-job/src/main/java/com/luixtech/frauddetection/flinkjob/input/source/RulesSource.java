@@ -59,7 +59,7 @@ public class RulesSource {
         return ruleStrings
                 .flatMap(new RuleDeserializer())
                 .name("Rule Deserialization")
-//                .setParallelism(RULES_STREAM_PARALLELISM)
+                .setParallelism(1)
                 .assignTimestampsAndWatermarks(
                         new BoundedOutOfOrdernessTimestampExtractor<Rule>(Time.of(0, TimeUnit.MILLISECONDS)) {
                             @Override
