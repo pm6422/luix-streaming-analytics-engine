@@ -133,7 +133,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
-        log.info("Found rule: {}", rule);
+        log.info("Found rule {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
         handleRuleBroadcast(rule, broadcastState);
         updateWidestWindowRule(rule, broadcastState);
