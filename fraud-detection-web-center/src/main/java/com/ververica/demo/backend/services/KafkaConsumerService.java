@@ -53,7 +53,7 @@ public class KafkaConsumerService {
 
   @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
   public void templateAlerts(@Payload String message) {
-    log.warn("Found alert {}", message);
+    log.warn("Detected alert {}", message);
     simpTemplate.convertAndSend(alertsWebSocketTopic, message);
   }
 

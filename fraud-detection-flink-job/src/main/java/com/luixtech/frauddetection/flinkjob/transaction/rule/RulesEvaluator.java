@@ -118,6 +118,9 @@ public class RulesEvaluator {
             // Create an embedded Flink execution environment with flink UI dashboard
             Configuration flinkConfig = new Configuration();
             flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
+            // Fixed Insufficient number of network buffers on local linux env
+            // Refer to https://stackoverflow.com/questions/49283934/flink-ioexception-insufficient-number-of-network-buffers
+            flinkConfig.setString("taskmanager.memory.network.max", "2gb");
             return StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig);
         }
         return StreamExecutionEnvironment.getExecutionEnvironment();
