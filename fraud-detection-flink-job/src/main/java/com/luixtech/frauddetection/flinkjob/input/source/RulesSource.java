@@ -4,6 +4,7 @@ import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.RuleDeserializer;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import static com.luixtech.frauddetection.flinkjob.input.Parameters.RULES_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
 
+@Slf4j
 public class RulesSource {
 
     public static RulesSource.Type getRulesSourceType(InputConfig inputConfig) {
@@ -40,10 +42,11 @@ public class RulesSource {
                 // NOTE: Idiomatically, watermarks should be assigned here, but this done later
                 // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
                 // TODO: refactor when FLIP-238 is added
-                dataStreamSource =
-                        env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), rulesSourceType.getName());
+                dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), rulesSourceType.getName());
+                log.info("Created kafka based rules source");
                 break;
             case SOCKET:
+                log.info("Created local socket based rules source");
                 SocketTextStreamFunction socketSourceFunction =
                         new SocketTextStreamFunction("localhost", inputConfig.get(Parameters.SOCKET_PORT), "\n", -1);
                 dataStreamSource = env.addSource(socketSourceFunction);
