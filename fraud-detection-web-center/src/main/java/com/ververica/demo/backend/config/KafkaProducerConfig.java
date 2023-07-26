@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.ververica.demo.backend.configurations;
+package com.ververica.demo.backend.config;
 
 import java.util.HashMap;
 import java.util.Map;
