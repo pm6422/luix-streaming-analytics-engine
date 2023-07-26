@@ -19,8 +19,8 @@ package com.ververica.demo.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.ververica.demo.backend.domain.Rule;
-import com.ververica.demo.backend.exceptions.RuleNotFoundException;
 import com.ververica.demo.backend.model.RulePayload;
 import com.ververica.demo.backend.repository.RuleRepository;
 import com.ververica.demo.backend.services.FlinkRulesService;
@@ -70,7 +70,7 @@ class RuleController {
 
   @GetMapping("/rules/{id}")
   Rule one(@PathVariable Integer id) {
-    return repository.findById(id).orElseThrow(() -> new RuleNotFoundException(id));
+    return repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
   }
 
   @DeleteMapping("/rules/{id}")

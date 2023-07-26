@@ -19,9 +19,9 @@ package com.ververica.demo.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.framework.exception.DataNotFoundException;
 import com.ververica.demo.backend.datasource.Transaction;
 import com.ververica.demo.backend.domain.Rule;
-import com.ververica.demo.backend.exceptions.RuleNotFoundException;
 import com.ververica.demo.backend.model.Alert;
 import com.ververica.demo.backend.repository.RuleRepository;
 import com.ververica.demo.backend.services.KafkaTransactionsPusher;
@@ -46,10 +46,7 @@ public class AlertsController {
   private String alertsWebSocketTopic;
 
   @Autowired
-  public AlertsController(
-      RuleRepository repository,
-      KafkaTransactionsPusher transactionsPusher,
-      SimpMessagingTemplate simpSender) {
+  public AlertsController(RuleRepository repository, KafkaTransactionsPusher transactionsPusher, SimpMessagingTemplate simpSender) {
     this.repository = repository;
     this.transactionsPusher = transactionsPusher;
     this.simpSender = simpSender;
@@ -59,7 +56,7 @@ public class AlertsController {
 
   @GetMapping("/rules/{id}/alert")
   Alert mockAlert(@PathVariable Integer id) throws JsonProcessingException {
-    Rule rule = repository.findById(id).orElseThrow(() -> new RuleNotFoundException(id));
+    Rule rule = repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
     Transaction triggeringEvent = transactionsPusher.getLastTransaction();
     String violatedRule = rule.getRulePayload();
     BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
