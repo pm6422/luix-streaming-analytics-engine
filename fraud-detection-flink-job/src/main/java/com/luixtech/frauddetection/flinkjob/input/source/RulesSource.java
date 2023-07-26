@@ -1,9 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -14,7 +15,6 @@ import org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -23,13 +23,12 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 
 @Slf4j
 public class RulesSource {
-
     public static RulesSource.Type getRulesSourceType(InputConfig inputConfig) {
         String rulesSource = inputConfig.get(RULES_SOURCE);
         return RulesSource.Type.valueOf(rulesSource.toUpperCase());
     }
 
-    public static DataStreamSource<String> initRulesSource(InputConfig inputConfig, StreamExecutionEnvironment env) throws IOException {
+    public static DataStreamSource<String> initRulesSource(InputConfig inputConfig, StreamExecutionEnvironment env) {
         RulesSource.Type rulesSourceType = getRulesSourceType(inputConfig);
         DataStreamSource<String> dataStreamSource;
 
@@ -64,7 +63,7 @@ public class RulesSource {
                 .name("Rule Deserialization")
                 .setParallelism(1)
                 .assignTimestampsAndWatermarks(
-                        new BoundedOutOfOrdernessTimestampExtractor<Rule>(Time.of(0, TimeUnit.MILLISECONDS)) {
+                        new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {
                             @Override
                             public long extractTimestamp(Rule element) {
                                 // Prevents connected data+update stream watermark stalling.
@@ -73,6 +72,7 @@ public class RulesSource {
                         });
     }
 
+    @Getter
     public enum Type {
         KAFKA("Rules Source (Kafka)"),
         PUBSUB("Rules Source (Pub/Sub)"),
@@ -84,8 +84,5 @@ public class RulesSource {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 }
