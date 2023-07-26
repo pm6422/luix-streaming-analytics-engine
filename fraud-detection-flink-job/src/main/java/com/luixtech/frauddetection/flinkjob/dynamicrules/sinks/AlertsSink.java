@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.JsonSerializer;
+import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;

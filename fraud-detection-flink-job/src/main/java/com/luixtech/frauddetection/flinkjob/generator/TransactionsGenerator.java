@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.transaction.generator;
+package com.luixtech.frauddetection.flinkjob.generator;
 
+import com.luixtech.frauddetection.flinkjob.generator.BaseGenerator;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction.PaymentType;
 

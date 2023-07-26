@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.RuleDeserializer;
+import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import lombok.extern.slf4j.Slf4j;

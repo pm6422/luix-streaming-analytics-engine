@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.functions;
+package com.luixtech.frauddetection.flinkjob.serializer;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
