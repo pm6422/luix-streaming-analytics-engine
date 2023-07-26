@@ -19,7 +19,7 @@ package com.ververica.demo.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ververica.demo.backend.entities.Rule;
+import com.ververica.demo.backend.domain.Rule;
 import com.ververica.demo.backend.model.RulePayload;
 import com.ververica.demo.backend.model.RulePayload.ControlType;
 import com.ververica.demo.backend.model.RulePayload.RuleState;

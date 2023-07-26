@@ -18,7 +18,7 @@
 package com.ververica.demo.backend.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ververica.demo.backend.entities.Rule;
+import com.ververica.demo.backend.domain.Rule;
 import com.ververica.demo.backend.model.RulePayload;
 import com.ververica.demo.backend.repository.RuleRepository;
 import java.io.IOException;

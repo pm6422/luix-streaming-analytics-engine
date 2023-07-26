@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.ververica.demo.backend.entities;
+package com.ververica.demo.backend.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
