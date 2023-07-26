@@ -1,11 +1,11 @@
 <configuration>
-  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{60} %X{sourceThread} - %msg%n</pattern>
+      <pattern>%d %-5level[%thread] %logger{0}: %msg%n</pattern>
     </encoder>
   </appender>
 
   <root level="INFO">
-    <appender-ref ref="stdout"/>
+    <appender-ref ref="CONSOLE"/>
   </root>
 </configuration>
