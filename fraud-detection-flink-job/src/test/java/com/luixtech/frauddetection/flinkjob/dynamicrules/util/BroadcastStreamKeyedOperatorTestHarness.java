@@ -41,8 +41,7 @@ import org.apache.flink.util.Preconditions;
  * and watermarks into the operator. {@link java.util.Deque}s containing the emitted elements and
  * watermarks can be retrieved. you are free to modify these.
  */
-public class BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT>
-    extends AbstractStreamOperatorTestHarness<OUT> {
+public class BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT> extends AbstractStreamOperatorTestHarness<OUT> {
 
   private final CoBroadcastWithKeyedOperator<K, IN1, IN2, OUT> twoInputOperator;
 
@@ -93,8 +92,7 @@ public class BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT>
     twoInputOperator.processWatermark2(mark);
   }
 
-  public <K, V> BroadcastState<K, V> getBroadcastState(MapStateDescriptor<K, V> stateDescriptor)
-      throws Exception {
+  public <K, V> BroadcastState<K, V> getBroadcastState(MapStateDescriptor<K, V> stateDescriptor) throws Exception {
     return twoInputOperator.getOperatorStateBackend().getBroadcastState(stateDescriptor);
   }
 
