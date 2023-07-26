@@ -106,8 +106,7 @@ public class RulesEvaluatorTest {
     Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, "CRD", 1);
     Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, "CRD", 1);
 
-    try (BroadcastStreamKeyedOperatorTestHarness<
-                String, Keyed<Transaction, String, Integer>, Rule, Alert>
+    try (BroadcastStreamKeyedOperatorTestHarness<String, Keyed<Transaction, String, Integer>, Rule, Alert>
         testHarness =
             BroadcastStreamKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicAlertFunction(),

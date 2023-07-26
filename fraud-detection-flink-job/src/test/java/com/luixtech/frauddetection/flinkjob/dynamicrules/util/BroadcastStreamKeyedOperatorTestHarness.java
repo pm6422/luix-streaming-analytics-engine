@@ -135,8 +135,7 @@ public class BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT>
         descriptors);
   }
 
-  public static <K, IN1, IN2, OUT>
-      BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT> getInitializedTestHarness(
+  public static <K, IN1, IN2, OUT> BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT> getInitializedTestHarness(
           final KeyedBroadcastProcessFunction<K, IN1, IN2, OUT> function,
           final KeySelector<IN1, K> keySelector1,
           final KeySelector<IN2, K> keySelector2,
