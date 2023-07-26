@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ververica.demo.backend.entities.Rule;
 import com.ververica.demo.backend.exceptions.RuleNotFoundException;
 import com.ververica.demo.backend.model.RulePayload;
-import com.ververica.demo.backend.repositories.RuleRepository;
+import com.ververica.demo.backend.repository.RuleRepository;
 import com.ververica.demo.backend.services.FlinkRulesService;
 import java.io.IOException;
 import java.util.List;

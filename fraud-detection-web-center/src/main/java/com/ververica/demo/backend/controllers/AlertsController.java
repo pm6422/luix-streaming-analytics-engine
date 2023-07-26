@@ -23,7 +23,7 @@ import com.ververica.demo.backend.datasource.Transaction;
 import com.ververica.demo.backend.entities.Rule;
 import com.ververica.demo.backend.exceptions.RuleNotFoundException;
 import com.ververica.demo.backend.model.Alert;
-import com.ververica.demo.backend.repositories.RuleRepository;
+import com.ververica.demo.backend.repository.RuleRepository;
 import com.ververica.demo.backend.services.KafkaTransactionsPusher;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;

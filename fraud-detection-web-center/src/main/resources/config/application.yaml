@@ -1,5 +1,139 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overridden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties
+# ===================================================================
+app:
+  id: fraud-detection-web-center
+  name: fraud-detection-web-center
+  version: 1.0.0-SNAPSHOT
+  package: com.luixtech.fraud-detection-web-center
+  companyName: www.luixtech.com
+management: # Management http server configuration, used by ManagementServerProperties
+  endpoints:
+    web:
+      base-path: /management
+      exposure: # Refer to https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties.actuator
+        include:
+          - configprops
+          - env
+          - health
+          - beans
+          - mappings
+          - httptrace
+          - shutdown
+          - auditevents
+          - scheduledtasks
+          - loggers
+          - prometheus
+          - threaddump
+  endpoint:
+    health: # used by HealthEndpointProperties, Note: it will show health details if it has the access token by Ajax
+      enabled: true
+      show-details: WHEN_AUTHORIZED
+    httptrace:
+      enabled: true
+    shutdown:
+      enabled: true # explicitly enable
+  health:
+    mail:
+      enabled: true
+  metrics:
+    export:
+      prometheus: # Prometheus is the default metrics backend
+        enabled: true
+        step: 60
+    enable:
+      http: true
+      jvm: true
+      logback: true
+      process: true
+      system: true
+    distribution:
+      percentiles-histogram:
+        all: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    tags:
+      application: ${spring.application.name}
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+spring:
+  application:
+    name: ${app.id}
+  profiles:
+    # The commented value for `active` can be replaced with valid spring profiles to load.
+    # Otherwise, it will be filled in by maven when building the WAR file
+    # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
+    active: dev
+  banner:
+    location: classpath:config/banner-company.txt
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+#  data:
+#    jpa:
+#      repositories:
+#        bootstrap-mode: deferred
+#  jpa:
+#    open-in-view: true
+#    properties:
+#      hibernate.jdbc.time_zone: Asia/Shanghai
+#      hibernate.id.new_generator_mappings: true
+#      hibernate.connection.provider_disables_autocommit: true
+#      hibernate.cache.use_second_level_cache: false
+#      hibernate.cache.use_query_cache: false
+#      hibernate.generate_statistics: false
+#      # modify batch size as necessary
+#      hibernate.jdbc.batch_size: 25
+#      hibernate.order_inserts: true
+#      hibernate.order_updates: true
+#      hibernate.query.fail_on_pagination_over_collection_fetch: true
+#      hibernate.query.in_clause_parameter_padding: true
+#    hibernate:
+#      ddl-auto: none
+#      naming:
+#        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+#        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+#  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    hikari:
+#      poolName: Hikari
+#      auto-commit: false
+#      data-source-properties:
+#        cachePrepStmts: true
+#        prepStmtCacheSize: 250
+#        prepStmtCacheSqlLimit: 2048
+#        useServerPrepStmts: true
+  h2.console.enabled: true
+#  autoconfigure.exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+  kafka:
+    producer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 server:
+  # It can be overridden by `--server.port` value passed in the commandline or `-Dserver.port` set in `JAVA_OPTS`
   port: 5656
+logging:
+  level:
+    root: DEBUG
+    org.springframework.boot.devtools.autoconfigure: INFO
+    org.apache: WARN
+    sun.rmi: WARN
+    jdk.event.security: WARN
+    javax.xml.bind: INFO
+    com.zaxxer.hikari.pool.HikariPool: INFO
+    org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener: INFO
+springdoc: # https://springdoc.org/#migrating-from-springfox
+  api-docs:
+    enabled: true
+  show-actuator: true
 
 security.auth.enabled: false
 
@@ -15,27 +149,47 @@ kafka:
   listeners:
     transactions.id: transactions-listener
 
-  bootstrap-servers: localhost:9092
-
 web-socket:
   topic:
     transactions: /topic/transactions
     alerts: /topic/alerts
     latency: /topic/latency
-
-management.endpoints.web.exposure.include: mappings, loggers
-spring:
-  h2.console.enabled: true
-  thymeleaf.cache: false
-  autoconfigure.exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  application:
-    name: fraud-detection-web-center
-  profiles:
-    active: dev
-  banner:
-    location: classpath:config/banner-company.txt
+# ===================================================================
+# Luix framework specific properties
+# ===================================================================
+luix:
+  metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+    logs: # print metrics info to the logs
+      enabled: false
+      report-frequency: 60 # in seconds
+    graphite: # output metrics info to graphite server
+      enabled: false
+      host: localhost
+      port: 2003
+      prefix: ${spring.application.name}
+  http:
+    cache: # Used by the CachingHttpHeadersFilter
+      expired-after: 31
+  api-docs:
+    api-include-pattern: /api/**
+    open-api-include-pattern: /open-api/**
+    management-include-pattern: /management/**
+    title: Fraud Detection Web Center
+    version: ${app.version}
+    terms-of-service-url:
+    contact-name: Louis
+    contact-url:
+    contact-email: louis@luixtech.com
+    license: Unlicensed
+    license-url:
+  aop-logging:
+    enabled: true
+    method-whitelist-mode: false
+    method-whitelist:
+      - AccountController.getTokenUser
+  elapsed-time-logging:
+    enabled: true
+    slow-execution-threshold: 300 # unit: ms
+  ribbon:
+    # comma separated list of profiles to show a ribbon on the GUI
+    display-on-active-profiles: dev,test,demo
