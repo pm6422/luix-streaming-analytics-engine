@@ -1,12 +1,13 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
-import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
-import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.TimeStamper;
+import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
+import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
-import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -59,6 +60,7 @@ public class TransactionsSource {
                 .returns(Transaction.class);
     }
 
+    @Getter
     public enum Type {
         GENERATOR("Transactions Source (generated locally)"),
         KAFKA("Transactions Source (Kafka)");
@@ -69,8 +71,5 @@ public class TransactionsSource {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 }

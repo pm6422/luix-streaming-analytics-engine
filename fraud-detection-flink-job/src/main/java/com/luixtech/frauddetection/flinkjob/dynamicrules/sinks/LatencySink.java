@@ -21,6 +21,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
@@ -67,6 +68,7 @@ public class LatencySink {
         return dataStreamSink;
     }
 
+    @Getter
     public enum Type {
         KAFKA("Latency Sink (Kafka)"),
         PUBSUB("Latency Sink (Pub/Sub)"),
@@ -78,8 +80,5 @@ public class LatencySink {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 }

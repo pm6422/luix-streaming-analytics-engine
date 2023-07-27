@@ -19,10 +19,11 @@
 package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
+import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
+import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
+import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
@@ -75,6 +76,7 @@ public class CurrentRulesSink {
         return alerts.flatMap(new JsonSerializer<>(Rule.class)).name("Rules Deserialization");
     }
 
+    @Getter
     public enum Type {
         KAFKA("Current Rules Sink (Kafka)"),
         PUBSUB("Current Rules Sink (Pub/Sub)"),
@@ -86,8 +88,5 @@ public class CurrentRulesSink {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 }

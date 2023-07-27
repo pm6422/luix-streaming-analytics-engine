@@ -1,6 +1,5 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.flinkjob.generator.BaseGenerator;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 

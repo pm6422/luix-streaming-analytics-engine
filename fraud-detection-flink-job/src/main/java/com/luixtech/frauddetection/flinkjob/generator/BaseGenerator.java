@@ -1,6 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
 import com.luixtech.frauddetection.flinkjob.utils.Throttler;
+import lombok.Getter;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
@@ -21,8 +22,9 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
 
     private static final long serialVersionUID = 1L;
 
-    protected         int             maxRecordsPerSecond;
-    private volatile  boolean         running = true;
+    @Getter
+    protected        int     maxRecordsPerSecond;
+    private volatile boolean running = true;
     private           long            id      = -1;
     private transient ListState<Long> idState;
 
@@ -35,10 +37,6 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
                 maxRecordsPerSecond == -1 || maxRecordsPerSecond > 0,
                 "maxRecordsPerSecond must be positive or -1 (infinite)");
         this.maxRecordsPerSecond = maxRecordsPerSecond;
-    }
-
-    public int getMaxRecordsPerSecond() {
-        return maxRecordsPerSecond;
     }
 
     @Override

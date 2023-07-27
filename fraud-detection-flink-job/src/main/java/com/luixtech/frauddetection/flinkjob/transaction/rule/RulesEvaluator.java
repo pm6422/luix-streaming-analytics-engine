@@ -86,9 +86,9 @@ public class RulesEvaluator {
         currentRulesSink.setParallelism(1);
 
         DataStream<String> latencies = latency
-                        .timeWindowAll(Time.seconds(10))
-                        .aggregate(new AverageAggregate())
-                        .map(String::valueOf);
+                .timeWindowAll(Time.seconds(10))
+                .aggregate(new AverageAggregate())
+                .map(String::valueOf);
 
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(inputConfig, latencies);
         latencySink.name("Latency Sink");
