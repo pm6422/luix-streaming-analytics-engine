@@ -16,7 +16,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 @EnableKafka
 @Configuration
-public class KafkaConsumerConfig {
+public class KafkaConsumerConfiguration {
 
   @Value("${kafka.bootstrap-servers}")
   public String bootstrapServer;
@@ -39,10 +39,8 @@ public class KafkaConsumerConfig {
   }
 
   @Bean
-  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>>
-      kafkaListenerContainerFactory() {
-    ConcurrentKafkaListenerContainerFactory<String, String> factory =
-        new ConcurrentKafkaListenerContainerFactory<>();
+  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     return factory;
   }
