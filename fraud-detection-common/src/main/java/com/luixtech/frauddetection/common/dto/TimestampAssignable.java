@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.common.dto;
 
 public interface TimestampAssignable<T> {
     void assignIngestionTimestamp(T timestamp);

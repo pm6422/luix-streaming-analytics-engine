@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.streaming.api.watermark.Watermark;

@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.input.InputConfig;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;

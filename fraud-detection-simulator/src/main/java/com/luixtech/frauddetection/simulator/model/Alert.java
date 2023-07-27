@@ -17,7 +17,7 @@
 
 package com.luixtech.frauddetection.simulator.model;
 
-import com.luixtech.frauddetection.simulator.datasource.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

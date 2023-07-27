@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.simulator.datasource;
+package com.luixtech.frauddetection.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,13 +18,14 @@ import java.util.Locale;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction {
-    public long        transactionId;
-    public long        eventTime;
-    public long        payeeId;
-    public long        beneficiaryId;
-    public BigDecimal  paymentAmount;
-    public PaymentType paymentType;
+public class Transaction implements TimestampAssignable<Long> {
+    public  long        transactionId;
+    public  long        eventTime;
+    public  long        payeeId;
+    public  long        beneficiaryId;
+    public  BigDecimal  paymentAmount;
+    public  PaymentType paymentType;
+    private Long        ingestionTimestamp;
 
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US).withZone(ZoneOffset.UTC);
 
@@ -50,15 +51,9 @@ public class Transaction {
 
     public static Transaction fromString(String line) {
         List<String> tokens = Arrays.asList(line.split(","));
-        int numArgs = 6;
+        int numArgs = 7;
         if (tokens.size() != numArgs) {
-            throw new RuntimeException(
-                    "Invalid transaction: "
-                            + line
-                            + ". Required number of arguments: "
-                            + numArgs
-                            + " found "
-                            + tokens.size());
+            throw new RuntimeException("Invalid transaction: " + line + ". Required number of arguments: " + numArgs + " found " + tokens.size());
         }
 
         Transaction transaction = new Transaction();
@@ -66,16 +61,21 @@ public class Transaction {
         try {
             Iterator<String> iter = tokens.iterator();
             transaction.transactionId = Long.parseLong(iter.next());
-            transaction.eventTime =
-                    ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
+            transaction.eventTime = ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
             transaction.payeeId = Long.parseLong(iter.next());
             transaction.beneficiaryId = Long.parseLong(iter.next());
             transaction.paymentType = PaymentType.fromString(iter.next());
             transaction.paymentAmount = new BigDecimal(iter.next());
+            transaction.ingestionTimestamp = Long.parseLong(iter.next());
         } catch (NumberFormatException nfe) {
             throw new RuntimeException("Invalid record: " + line, nfe);
         }
 
         return transaction;
+    }
+
+    @Override
+    public void assignIngestionTimestamp(Long timestamp) {
+        this.ingestionTimestamp = timestamp;
     }
 }

@@ -11,7 +11,7 @@ import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.AllArgsConstructor;

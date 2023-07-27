@@ -22,7 +22,7 @@ import com.luixtech.frauddetection.flinkjob.dynamicrules.*;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;

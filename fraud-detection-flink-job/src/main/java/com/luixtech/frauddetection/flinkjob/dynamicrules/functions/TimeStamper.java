@@ -18,7 +18,7 @@
 
 package com.luixtech.frauddetection.flinkjob.dynamicrules.functions;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.TimestampAssignable;
+import com.luixtech.frauddetection.common.dto.TimestampAssignable;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.util.Collector;
 

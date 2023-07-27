@@ -1,5 +1,6 @@
 package com.luixtech.frauddetection.simulator.datasource;
 
+import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.thread.Throttler;
 import lombok.extern.slf4j.Slf4j;
 

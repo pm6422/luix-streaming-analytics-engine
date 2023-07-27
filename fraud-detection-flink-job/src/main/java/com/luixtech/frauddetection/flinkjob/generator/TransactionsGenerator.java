@@ -18,8 +18,8 @@
 
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction;
-import com.luixtech.frauddetection.flinkjob.transaction.domain.Transaction.PaymentType;
+import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.dto.Transaction.PaymentType;
 
 import java.math.BigDecimal;
 import java.util.SplittableRandom;
