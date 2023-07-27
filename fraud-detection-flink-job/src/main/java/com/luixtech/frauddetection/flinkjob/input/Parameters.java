@@ -1,9 +1,12 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class Parameters {
 
     private static final Map<InputParam<?>, Object> HOLDER = new HashMap<>();
@@ -16,6 +19,9 @@ public class Parameters {
         overrideDefaults(stringInputParams, parameterDefinitions);
         overrideDefaults(intInputParams, parameterDefinitions);
         overrideDefaults(boolInputParams, parameterDefinitions);
+
+        HOLDER.forEach((key, value) -> log.info("{} = {}", key.getName(), value));
+        System.out.println();
     }
 
     public static Parameters fromDefinitions(ParameterDefinitions parameterDefinitions) {
