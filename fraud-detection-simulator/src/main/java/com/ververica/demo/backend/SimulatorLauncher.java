@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableLuixFramework
 @ComponentScan("com.ververica")
-public class WebCenterLauncher {
+public class SimulatorLauncher {
   /**
    * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
    * --spring.profiles.active=your-active-profile
@@ -15,6 +15,6 @@ public class WebCenterLauncher {
    * @param args program arguments
    */
   public static void main(String[] args) {
-    SpringApplication.run(WebCenterLauncher.class, args);
+    SpringApplication.run(SimulatorLauncher.class, args);
   }
 }
