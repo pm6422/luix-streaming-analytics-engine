@@ -19,7 +19,8 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 public class ApplicationProperties {
 
-    private final WebSocket webSocket = new WebSocket();
+    private final WebSocket   webSocket   = new WebSocket();
+    private final Transaction transaction = new Transaction();
 
     @Data
     public static class WebSocket {
@@ -31,6 +32,11 @@ public class ApplicationProperties {
             private String alerts;
             private String latency;
         }
+    }
+
+    @Data
+    public static class Transaction {
+        private long maxTransactionSpeed;
     }
 
 }

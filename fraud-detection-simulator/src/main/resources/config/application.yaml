@@ -157,6 +157,5 @@ application:
       transactions: /topic/transactions
       alerts: /topic/alerts
       latency: /topic/latency
-
-
-transactionsRateDisplayLimit: 50
+  transaction:
+    max-transaction-speed: 50

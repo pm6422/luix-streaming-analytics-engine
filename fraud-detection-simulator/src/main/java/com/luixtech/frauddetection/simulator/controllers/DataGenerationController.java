@@ -17,6 +17,7 @@
 
 package com.luixtech.frauddetection.simulator.controllers;
 
+import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.datasource.DemoTransactionsGenerator;
 import com.luixtech.frauddetection.simulator.datasource.TransactionsGenerator;
 import com.luixtech.frauddetection.simulator.services.KafkaTransactionsPusher;
@@ -36,23 +37,24 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class DataGenerationController {
 
-    private final TransactionsGenerator         transactionsGenerator;
-    private final KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private static final ExecutorService               EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    private final        TransactionsGenerator         transactionsGenerator;
+    private final        KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private final        ApplicationProperties         applicationProperties;
 
-    private final ExecutorService executor                 = Executors.newSingleThreadExecutor();
-    private       boolean         generatingTransactions   = false;
-    private       boolean         listenerContainerRunning = true;
+    private boolean generatingTransactions   = false;
+    private boolean listenerContainerRunning = true;
 
     @Value("${kafka.listeners.transactions.id}")
     private String transactionListenerId;
 
-    @Value("${transactionsRateDisplayLimit}")
-    private int transactionsRateDisplayLimit;
-
     @Autowired
-    public DataGenerationController(KafkaTransactionsPusher transactionsPusher, KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
+    public DataGenerationController(KafkaTransactionsPusher transactionsPusher,
+                                    KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry,
+                                    ApplicationProperties applicationProperties) {
         this.transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
         this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
+        this.applicationProperties = applicationProperties;
     }
 
     @GetMapping("/api/startTransactionsGeneration")
@@ -63,7 +65,7 @@ public class DataGenerationController {
 
     private void generateTransactions() {
         if (!generatingTransactions) {
-            executor.submit(transactionsGenerator);
+            EXECUTOR_SERVICE.submit(transactionsGenerator);
             generatingTransactions = true;
         }
     }
@@ -87,7 +89,7 @@ public class DataGenerationController {
         }
 
         MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
-        if (speed > transactionsRateDisplayLimit) {
+        if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
             listenerContainer.stop();
             listenerContainerRunning = false;
         } else if (!listenerContainerRunning) {
