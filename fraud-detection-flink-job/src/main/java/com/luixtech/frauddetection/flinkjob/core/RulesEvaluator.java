@@ -129,17 +129,12 @@ public class RulesEvaluator {
     }
 
     private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) throws IOException {
-        DataStream<String> rulesStringStream = initRulesSource(parameters, env)
-                // todo: put below in initRulesSource method
-                .setParallelism(1);
+        DataStream<String> rulesStringStream = initRulesSource(parameters, env);
         return stringsStreamToRules(parameters, rulesStringStream);
     }
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
-        TransactionsSource.Type transactionsSourceType = getTransactionSourceType(parameters);
-        DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env)
-                // todo: put below in initTransactionsSource method
-                .setParallelism(parameters.getValue(SOURCE_PARALLELISM));
+        DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env);
         DataStream<Transaction> transactionsStream = stringsStreamToTransactions(parameters, transactionsStringsStream);
         return transactionsStream.assignTimestampsAndWatermarks(
                 new SimpleBoundedOutOfOrdernessTimestampExtractor<>(parameters.getValue(OUT_OF_ORDERNESS)));

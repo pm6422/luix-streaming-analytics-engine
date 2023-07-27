@@ -15,6 +15,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.SOURCE_PARALLELISM;
 import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.TRANSACTIONS_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
 
@@ -55,6 +56,7 @@ public class TransactionsSource {
         return transactionStrings
                 .flatMap(new JsonDeserializer<>(Transaction.class))
                 .name(getTransactionSourceType(parameters).getName())
+                .setParallelism(parameters.getValue(SOURCE_PARALLELISM))
                 .returns(Transaction.class)
                 .flatMap(new TimeStamper<>())
                 .returns(Transaction.class);
