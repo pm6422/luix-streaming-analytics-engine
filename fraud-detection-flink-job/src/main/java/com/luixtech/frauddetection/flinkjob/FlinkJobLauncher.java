@@ -1,9 +1,8 @@
 package com.luixtech.frauddetection.flinkjob;
 
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
-import org.apache.flink.api.java.utils.ParameterTool;
 
 /**
  * Main class to launch the Flink job with CLI params:
@@ -11,10 +10,9 @@ import org.apache.flink.api.java.utils.ParameterTool;
  */
 public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {
-        ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        Parameters inputParams = new Parameters(parameterTool);
-        InputConfig inputConfig = new InputConfig(inputParams, Parameters.STRING_INPUT_PARAMS, Parameters.INT_INPUT_PARAMS, Parameters.BOOL_INPUT_PARAMS);
-        RulesEvaluator rulesEvaluator = new RulesEvaluator(inputConfig);
+        Parameters parameters = Parameters.fromArgs(args);
+        ParamHolder paramHolder = ParamHolder.fromParameters(parameters);
+        RulesEvaluator rulesEvaluator = new RulesEvaluator(paramHolder);
         rulesEvaluator.run();
     }
 }

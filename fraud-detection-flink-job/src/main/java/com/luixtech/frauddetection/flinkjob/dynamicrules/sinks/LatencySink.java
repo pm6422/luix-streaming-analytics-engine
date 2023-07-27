@@ -19,7 +19,7 @@
 package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
@@ -35,17 +35,17 @@ import java.util.Properties;
 
 public class LatencySink {
 
-    public static DataStreamSink<String> addLatencySink(InputConfig inputConfig, DataStream<String> stream)
+    public static DataStreamSink<String> addLatencySink(ParamHolder paramHolder, DataStream<String> stream)
             throws IOException {
 
-        String latencySink = inputConfig.get(Parameters.LATENCY_SINK);
+        String latencySink = paramHolder.getValue(Parameters.LATENCY_SINK);
         LatencySink.Type latencySinkType = LatencySink.Type.valueOf(latencySink.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (latencySinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
-                String latencyTopic = inputConfig.get(Parameters.LATENCY_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(paramHolder);
+                String latencyTopic = paramHolder.getValue(Parameters.LATENCY_TOPIC);
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
                                 .setKafkaProducerConfig(kafkaProps)

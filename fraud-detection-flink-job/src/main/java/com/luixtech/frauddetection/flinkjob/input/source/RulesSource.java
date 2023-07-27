@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.Getter;
@@ -23,20 +23,20 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 
 @Slf4j
 public class RulesSource {
-    public static RulesSource.Type getRulesSourceType(InputConfig inputConfig) {
-        String rulesSource = inputConfig.get(RULES_SOURCE);
+    public static RulesSource.Type getRulesSourceType(ParamHolder paramHolder) {
+        String rulesSource = paramHolder.getValue(RULES_SOURCE);
         return RulesSource.Type.valueOf(rulesSource.toUpperCase());
     }
 
-    public static DataStreamSource<String> initRulesSource(InputConfig inputConfig, StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceType = getRulesSourceType(inputConfig);
+    public static DataStreamSource<String> initRulesSource(ParamHolder paramHolder, StreamExecutionEnvironment env) {
+        RulesSource.Type rulesSourceType = getRulesSourceType(paramHolder);
         DataStreamSource<String> dataStreamSource;
 
         switch (rulesSourceType) {
             case KAFKA:
                 // Specify the topic from which the rules are read
-                String rulesTopic = inputConfig.get(Parameters.RULES_TOPIC);
-                KafkaSource<String> kafkaSource = getKafkaSource(inputConfig, rulesTopic);
+                String rulesTopic = paramHolder.getValue(Parameters.RULES_TOPIC);
+                KafkaSource<String> kafkaSource = getKafkaSource(paramHolder, rulesTopic);
 
                 // NOTE: Idiomatically, watermarks should be assigned here, but this done later
                 // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
@@ -47,7 +47,7 @@ public class RulesSource {
             case SOCKET:
                 log.info("Created local socket based rules source");
                 SocketTextStreamFunction socketSourceFunction =
-                        new SocketTextStreamFunction("localhost", inputConfig.get(Parameters.SOCKET_PORT), "\n", -1);
+                        new SocketTextStreamFunction("localhost", paramHolder.getValue(Parameters.SOCKET_PORT), "\n", -1);
                 dataStreamSource = env.addSource(socketSourceFunction);
                 break;
             default:

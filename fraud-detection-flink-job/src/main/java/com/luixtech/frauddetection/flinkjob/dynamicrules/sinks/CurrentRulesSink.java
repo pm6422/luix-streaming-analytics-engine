@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import lombok.Getter;
@@ -37,18 +37,18 @@ import java.util.Properties;
 
 public class CurrentRulesSink {
 
-    public static DataStreamSink<String> addRulesSink(InputConfig inputConfig, DataStream<String> stream)
+    public static DataStreamSink<String> addRulesSink(ParamHolder paramHolder, DataStream<String> stream)
             throws IOException {
 
-        String sinkType = inputConfig.get(Parameters.RULES_EXPORT_SINK);
+        String sinkType = paramHolder.getValue(Parameters.RULES_EXPORT_SINK);
         CurrentRulesSink.Type currentRulesSinkType =
                 CurrentRulesSink.Type.valueOf(sinkType.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (currentRulesSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
-                String rulesExportTopic = inputConfig.get(Parameters.RULES_EXPORT_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(paramHolder);
+                String rulesExportTopic = paramHolder.getValue(Parameters.RULES_EXPORT_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()

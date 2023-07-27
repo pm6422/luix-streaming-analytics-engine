@@ -46,7 +46,7 @@ public class Parameters {
 
     private final ParameterTool parameterTool;
 
-    <T> T getOrDefault(InputParam<T> inputParam) {
+    <T> T getOrDefaultValue(InputParam<T> inputParam) {
         if (!parameterTool.has(inputParam.getName())) {
             return inputParam.getDefaultValue();
         }

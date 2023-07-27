@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import lombok.Getter;
@@ -37,15 +37,15 @@ import java.util.Properties;
 
 public class AlertsSink {
 
-    public static DataStreamSink<String> addAlertsSink(InputConfig inputConfig, DataStream<String> stream) throws IOException {
-        String sinkType = inputConfig.get(Parameters.ALERTS_SINK);
+    public static DataStreamSink<String> addAlertsSink(ParamHolder paramHolder, DataStream<String> stream) throws IOException {
+        String sinkType = paramHolder.getValue(Parameters.ALERTS_SINK);
         AlertsSink.Type alertsSinkType = AlertsSink.Type.valueOf(sinkType.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
         switch (alertsSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(inputConfig);
-                String alertsTopic = inputConfig.get(Parameters.ALERTS_TOPIC);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(paramHolder);
+                String alertsTopic = paramHolder.getValue(Parameters.ALERTS_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()

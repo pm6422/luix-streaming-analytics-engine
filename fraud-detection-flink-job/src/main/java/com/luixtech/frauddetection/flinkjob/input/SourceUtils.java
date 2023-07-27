@@ -8,8 +8,8 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import java.util.Properties;
 
 public abstract class SourceUtils {
-    public static KafkaSource<String> getKafkaSource(InputConfig inputConfig, String topic) {
-        Properties kafkaProps = KafkaUtils.initConsumerProperties(inputConfig);
+    public static KafkaSource<String> getKafkaSource(ParamHolder paramHolder, String topic) {
+        Properties kafkaProps = KafkaUtils.initConsumerProperties(paramHolder);
         return KafkaSource.<String>builder()
                 .setProperties(kafkaProps)
                 .setTopics(topic)

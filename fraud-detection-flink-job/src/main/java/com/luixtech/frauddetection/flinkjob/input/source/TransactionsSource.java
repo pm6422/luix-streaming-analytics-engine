@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.flinkjob.input.source;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
-import com.luixtech.frauddetection.flinkjob.input.InputConfig;
+import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.common.dto.Transaction;
@@ -21,19 +21,19 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 @Slf4j
 public class TransactionsSource {
 
-    public static TransactionsSource.Type getTransactionsSourceType(InputConfig inputConfig) {
-        String transactionsSource = inputConfig.get(TRANSACTIONS_SOURCE);
+    public static TransactionsSource.Type getTransactionsSourceType(ParamHolder paramHolder) {
+        String transactionsSource = paramHolder.getValue(TRANSACTIONS_SOURCE);
         return TransactionsSource.Type.valueOf(transactionsSource.toUpperCase());
     }
 
-    public static DataStreamSource<String> initTransactionsSource(InputConfig inputConfig, StreamExecutionEnvironment env) {
-        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(inputConfig);
+    public static DataStreamSource<String> initTransactionsSource(ParamHolder paramHolder, StreamExecutionEnvironment env) {
+        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(paramHolder);
         DataStreamSource<String> dataStreamSource;
 
         if (transactionsSourceType == Type.KAFKA) {
             // Specify the topic from which the transactions are read
-            String transactionsTopic = inputConfig.get(Parameters.DATA_TOPIC);
-            KafkaSource<String> kafkaSource = getKafkaSource(inputConfig, transactionsTopic);
+            String transactionsTopic = paramHolder.getValue(Parameters.DATA_TOPIC);
+            KafkaSource<String> kafkaSource = getKafkaSource(paramHolder, transactionsTopic);
 
             // NOTE: Idiomatically, watermarks should be assigned here, but this done later
             // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
@@ -43,7 +43,7 @@ public class TransactionsSource {
         } else {
             // Local generator mode
             // todo: need to remove local generator
-            int transactionsPerSecond = inputConfig.get(Parameters.RECORDS_PER_SECOND);
+            int transactionsPerSecond = paramHolder.getValue(Parameters.RECORDS_PER_SECOND);
             JsonGeneratorWrapper<Transaction> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
             dataStreamSource = env.addSource(generatorSource);
             log.info("Created local generator based transactions source");
