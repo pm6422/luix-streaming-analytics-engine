@@ -1,9 +1,7 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.datasource.DemoTransactionsGenerator;
 import com.luixtech.frauddetection.simulator.datasource.TransactionsGenerator;
-import com.luixtech.frauddetection.simulator.services.KafkaTransactionsPusher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
@@ -20,6 +18,7 @@ import java.util.concurrent.Executors;
 public class DataGenerationController {
 
     private static final ExecutorService               EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    @Resource
     private              TransactionsGenerator         transactionsGenerator;
     @Resource
     private              KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
@@ -28,10 +27,6 @@ public class DataGenerationController {
 
     private boolean generatingTransactions   = false;
     private boolean listenerContainerRunning = true;
-
-    public DataGenerationController(KafkaTransactionsPusher transactionsPusher) {
-        this.transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
-    }
 
     @GetMapping("/api/startTransactionsGeneration")
     public void startTransactionsGeneration() throws Exception {
