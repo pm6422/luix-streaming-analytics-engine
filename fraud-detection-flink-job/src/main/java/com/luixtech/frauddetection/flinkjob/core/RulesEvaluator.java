@@ -59,14 +59,9 @@ public class RulesEvaluator {
                 .uid("DynamicAlertFunction")
                 .name("Dynamic Rule Evaluation Function");
 
-        DataStream<String> allRuleEvaluations =
-                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
-
-        DataStream<Long> latency =
-                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
-
-        DataStream<Rule> currentRules =
-                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
+        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
+        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
+        DataStream<Rule> currentRules = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
 
         alertStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
@@ -134,7 +129,6 @@ public class RulesEvaluator {
     }
 
     private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) throws IOException {
-        RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
         DataStream<String> rulesStringStream = initRulesSource(parameters, env)
                 // todo: put below in initRulesSource method
                 .setParallelism(1);
