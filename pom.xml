@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>fraud-detection-flink-job</module>
-        <module>fraud-detection-web-center</module>
+        <module>fraud-detection-simulator</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
