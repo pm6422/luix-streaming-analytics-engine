@@ -7,10 +7,10 @@
 # https://docs.spring.io/spring-boot/docs/2.7.1/reference/html/application-properties.html#application-properties
 # ===================================================================
 app:
-  id: fraud-detection-web-center
-  name: fraud-detection-web-center
+  id: fraud-detection-simulator
+  name: fraud-detection-simulator
   version: 1.0.0-SNAPSHOT
-  package: com.luixtech.fraud-detection-web-center
+  package: com.luixtech.frauddetection.simulator
   companyName: www.luixtech.com
 management: # Management http server configuration, used by ManagementServerProperties
   endpoints:
@@ -133,7 +133,7 @@ luix:
     api-include-pattern: /api/**
     open-api-include-pattern: /open-api/**
     management-include-pattern: /management/**
-    title: Fraud Detection Web Center
+    title: Fraud Detection Simulator
     version: ${app.version}
     terms-of-service-url:
     contact-name: Louis
