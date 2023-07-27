@@ -18,17 +18,17 @@
 package com.luixtech.frauddetection.simulator.model;
 
 import com.luixtech.frauddetection.simulator.datasource.Transaction;
-
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 public class Alert {
-  private Integer ruleId;
-  private String rulePayload;
+    private Integer ruleId;
+    private String  rulePayload;
 
-  Transaction triggeringEvent;
-  BigDecimal  triggeringValue;
+    Transaction triggeringEvent;
+    BigDecimal  triggeringValue;
 }
