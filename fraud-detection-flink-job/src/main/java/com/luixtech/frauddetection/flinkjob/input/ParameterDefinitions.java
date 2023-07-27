@@ -33,7 +33,7 @@ public class ParameterDefinitions {
     public static final InputParam<String>  LATENCY_SINK                         = InputParam.string("latency-sink", "STDOUT");
     public static final InputParam<String>  RULES_EXPORT_SINK                    = InputParam.string("rules-export-sink", "STDOUT");
     public static final InputParam<Integer> RECORDS_PER_SECOND                   = InputParam.integer("records-per-second", 2);
-    public static final InputParam<Boolean> LOCAL_EXECUTION                      = InputParam.bool("local", false);
+    public static final InputParam<Boolean> LOCAL_WEBSERVER                      = InputParam.bool("local", false);
     public static final InputParam<Integer> SOURCE_PARALLELISM                   = InputParam.integer("source-parallelism", 2);
     public static final InputParam<Boolean> ENABLE_CHECKPOINTS                   = InputParam.bool("checkpoints", false);
     public static final InputParam<Integer> CHECKPOINT_INTERVAL                  = InputParam.integer("checkpoint-interval", 60_000_0);
@@ -42,7 +42,7 @@ public class ParameterDefinitions {
 
     public static final List<InputParam<?>> ALL = Arrays.asList(KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, RULES_EXPORT_TOPIC, OFFSET, GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, GCP_PUBSUB_ALERTS_SUBSCRIPTION, GCP_PUBSUB_LATENCY_SUBSCRIPTION, GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION, RULES_SOURCE, TRANSACTIONS_SOURCE, ALERTS_SINK, LATENCY_SINK, RULES_EXPORT_SINK,
             KAFKA_PORT, SOCKET_PORT, RECORDS_PER_SECOND, SOURCE_PARALLELISM, CHECKPOINT_INTERVAL, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERNESS,
-            LOCAL_EXECUTION, ENABLE_CHECKPOINTS);
+            LOCAL_WEBSERVER, ENABLE_CHECKPOINTS);
 
     private final ParameterTool parameterTool;
 

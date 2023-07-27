@@ -40,7 +40,7 @@ public class RulesEvaluator {
 
     public void run() throws Exception {
         // Configure execution environment
-        StreamExecutionEnvironment env = configureStreamExecutionEnv();
+        StreamExecutionEnvironment env = configureExecutionEnv();
 
         // Streams setup
         DataStream<Rule> rulesStream = getRulesStream(env);
@@ -94,7 +94,7 @@ public class RulesEvaluator {
         env.execute("Fraud Detection Engine");
     }
 
-    private StreamExecutionEnvironment configureStreamExecutionEnv() {
+    private StreamExecutionEnvironment configureExecutionEnv() {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
@@ -107,21 +107,22 @@ public class RulesEvaluator {
     }
 
     private StreamExecutionEnvironment getStreamExecutionEnv() {
-        if (parameters.getValue(LOCAL_EXECUTION)) {
-            // Create an embedded Flink execution environment with flink UI dashboard
-            Configuration flinkConfig = new Configuration();
-            flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
-            // Fixed Insufficient number of network buffers on local linux env
-            // Refer to https://stackoverflow.com/questions/49283934/flink-ioexception-insufficient-number-of-network-buffers
-            flinkConfig.setString("taskmanager.memory.network.max", "2gb");
-            return StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig);
+        if (!parameters.getValue(LOCAL_WEBSERVER)) {
+            return StreamExecutionEnvironment.getExecutionEnvironment();
         }
-        return StreamExecutionEnvironment.getExecutionEnvironment();
+
+        // Create an embedded Flink execution environment with flink UI dashboard
+        Configuration flinkConfig = new Configuration();
+        flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
+        // Fixed Insufficient number of network buffers on local linux env
+        // Refer to https://stackoverflow.com/questions/49283934/flink-ioexception-insufficient-number-of-network-buffers
+        flinkConfig.setString("taskmanager.memory.network.max", "2gb");
+        return StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(flinkConfig);
     }
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceEnumType = getRulesSourceType(parameters);
-        switch (rulesSourceEnumType) {
+        RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
+        switch (rulesSourceType) {
             case SOCKET:
                 env.setRestartStrategy(
                         RestartStrategies.fixedDelayRestart(
