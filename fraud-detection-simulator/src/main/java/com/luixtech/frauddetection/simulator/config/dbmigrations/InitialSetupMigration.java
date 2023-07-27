@@ -1,9 +1,9 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
+import com.luixtech.frauddetection.simulator.domain.Rule;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.FlinkRulesService;
-import com.luixtech.frauddetection.simulator.domain.Rule;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -11,16 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class InitialSetupMigration implements ApplicationRunner {
 
     private final RuleRepository    ruleRepository;
     private final FlinkRulesService flinkRulesService;
-
-    @Autowired
-    public InitialSetupMigration(RuleRepository userRepository, FlinkRulesService flinkRulesService) {
-        this.ruleRepository = userRepository;
-        this.flinkRulesService = flinkRulesService;
-    }
 
     public void run(ApplicationArguments args) {
         String payload1 =
@@ -77,6 +72,6 @@ public class InitialSetupMigration implements ApplicationRunner {
         ruleRepository.save(rule4);
 
         List<Rule> rules = ruleRepository.findAll();
-        rules.forEach(rule -> flinkRulesService.addRule(rule));
+        rules.forEach(flinkRulesService::addRule);
     }
 }
