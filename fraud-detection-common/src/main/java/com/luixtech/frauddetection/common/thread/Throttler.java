@@ -1,23 +1,30 @@
-package com.luixtech.frauddetection.flinkjob.utils;
+package com.luixtech.frauddetection.common.thread;
 
-import org.apache.flink.util.Preconditions;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Utility to throttle a thread to a given number of executions (records) per second.
  */
 public final class Throttler {
 
-    private final long throttleBatchSize;
-    private final long nanosPerBatch;
-    private       long endOfNextBatchNanos;
-    private       int  currentBatch;
+    private long throttleBatchSize;
+    private long nanosPerBatch;
+    private long endOfNextBatchNanos;
+    private int  currentBatch;
 
     public Throttler(long maxRecordsPerSecond, int numberOfParallelSubtasks) {
-        Preconditions.checkArgument(
+        setup(maxRecordsPerSecond, numberOfParallelSubtasks);
+    }
+
+    public void adjustMaxRecordsPerSecond(long maxRecordsPerSecond) {
+        setup(maxRecordsPerSecond, 1);
+    }
+
+    private void setup(long maxRecordsPerSecond, int numberOfParallelSubtasks) {
+        Validate.isTrue(
                 maxRecordsPerSecond == -1 || maxRecordsPerSecond > 0,
                 "maxRecordsPerSecond must be positive or -1 (infinite)");
-        Preconditions.checkArgument(
-                numberOfParallelSubtasks > 0, "numberOfParallelSubtasks must be greater than 0");
+        Validate.isTrue(numberOfParallelSubtasks > 0, "numberOfParallelSubtasks must be greater than 0");
 
         if (maxRecordsPerSecond == -1) {
             // unlimited speed
@@ -40,6 +47,7 @@ public final class Throttler {
         this.endOfNextBatchNanos = System.nanoTime() + nanosPerBatch;
         this.currentBatch = 0;
     }
+
 
     public void throttle() throws InterruptedException {
         if (throttleBatchSize == -1) {

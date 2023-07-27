@@ -1,5 +1,6 @@
 package com.luixtech.frauddetection.simulator.datasource;
 
+import com.luixtech.frauddetection.common.thread.Throttler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
     public AbstractTransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
         this.consumer = consumer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
-        this.throttler = new Throttler(maxRecordsPerSecond);
+        this.throttler = new Throttler(maxRecordsPerSecond, 1);
     }
 
     public void adjustMaxRecordsPerSecond(long maxRecordsPerSecond) {
