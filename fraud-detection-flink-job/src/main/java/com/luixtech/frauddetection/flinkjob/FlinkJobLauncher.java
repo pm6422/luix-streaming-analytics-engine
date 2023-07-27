@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.flinkjob;
 
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
-import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
+import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
 
 /**
  * Main class to launch the Flink job with CLI params:

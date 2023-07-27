@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.transaction.rule;
+package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;

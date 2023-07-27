@@ -22,7 +22,7 @@ import com.luixtech.frauddetection.flinkjob.dynamicrules.util.AssertUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamKeyedOperatorTestHarness;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamNonKeyedOperatorTestHarness;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
-import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
+import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
 import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
 import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
 
