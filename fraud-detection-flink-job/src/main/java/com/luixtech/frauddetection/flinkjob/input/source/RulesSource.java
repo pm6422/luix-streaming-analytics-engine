@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +57,10 @@ public class RulesSource {
         return dataStreamSource;
     }
 
-    public static DataStream<Rule> stringsStreamToRules(DataStream<String> ruleStrings) {
+    public static DataStream<Rule> stringsStreamToRules(Parameters parameters, DataStream<String> ruleStrings) {
         return ruleStrings
                 .flatMap(new RuleDeserializer())
+                .name("RuleDeserializer")
                 .setParallelism(1)
                 .assignTimestampsAndWatermarks(
                         new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {
@@ -68,7 +69,8 @@ public class RulesSource {
                                 // Prevents connected data+update stream watermark stalling.
                                 return Long.MAX_VALUE;
                             }
-                        });
+                        })
+                .name("Timestamps");
     }
 
     @Getter

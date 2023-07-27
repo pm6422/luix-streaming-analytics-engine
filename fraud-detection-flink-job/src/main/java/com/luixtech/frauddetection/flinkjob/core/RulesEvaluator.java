@@ -132,16 +132,15 @@ public class RulesEvaluator {
         DataStream<String> rulesStringStream = initRulesSource(parameters, env)
                 // todo: put below in initRulesSource method
                 .setParallelism(1);
-        return stringsStreamToRules(rulesStringStream);
+        return stringsStreamToRules(parameters, rulesStringStream);
     }
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
         TransactionsSource.Type transactionsSourceType = getTransactionSourceType(parameters);
         DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env)
                 // todo: put below in initTransactionsSource method
-                .name(transactionsSourceType.getName())
                 .setParallelism(parameters.getValue(SOURCE_PARALLELISM));
-        DataStream<Transaction> transactionsStream = stringsStreamToTransactions(transactionsStringsStream);
+        DataStream<Transaction> transactionsStream = stringsStreamToTransactions(parameters, transactionsStringsStream);
         return transactionsStream.assignTimestampsAndWatermarks(
                 new SimpleBoundedOutOfOrdernessTimestampExtractor<>(parameters.getValue(OUT_OF_ORDERNESS)));
     }
