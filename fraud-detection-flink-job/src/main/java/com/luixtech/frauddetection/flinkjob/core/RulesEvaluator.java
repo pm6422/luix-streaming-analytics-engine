@@ -54,7 +54,7 @@ public class RulesEvaluator {
                 .process(new DynamicKeyFunction())
                 .uid("DynamicKeyFunction")
                 .name("Dynamic Partitioning Function")
-                .keyBy((keyed) -> keyed.getKey())
+                .keyBy(Keyed::getKey)
                 .connect(broadcastRulesStream)
                 .process(new DynamicAlertFunction())
                 .uid("DynamicAlertFunction")
