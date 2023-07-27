@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.output.sinks.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.output.sinks.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.output.sinks.LatencySink;
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
 import com.luixtech.frauddetection.common.dto.Transaction;
@@ -27,7 +27,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions.*;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.*;
 

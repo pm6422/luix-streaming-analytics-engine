@@ -20,8 +20,8 @@ package com.luixtech.frauddetection.flinkjob.output.sinks;
 
 import com.luixtech.frauddetection.flinkjob.domain.Alert;
 import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
-import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;

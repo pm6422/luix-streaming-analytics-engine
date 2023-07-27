@@ -18,11 +18,11 @@
 
 package com.luixtech.frauddetection.flinkjob.utils;
 
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 
 import java.util.Properties;
 
-import static com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions.*;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 
 public class KafkaUtils {
 

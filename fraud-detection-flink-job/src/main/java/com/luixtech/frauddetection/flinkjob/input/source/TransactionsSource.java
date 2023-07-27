@@ -3,8 +3,8 @@ package com.luixtech.frauddetection.flinkjob.input.source;
 import com.luixtech.frauddetection.flinkjob.core.function.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
-import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import static com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions.TRANSACTIONS_SOURCE;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.TRANSACTIONS_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
 
 @Slf4j

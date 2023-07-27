@@ -2,8 +2,8 @@ package com.luixtech.frauddetection.flinkjob.config;
 
 import static org.junit.Assert.assertEquals;
 
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
-import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import org.junit.Test;
 
 public class ConfigTest {

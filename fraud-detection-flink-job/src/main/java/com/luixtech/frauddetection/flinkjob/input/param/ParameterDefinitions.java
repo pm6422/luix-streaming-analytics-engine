@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.input;
+package com.luixtech.frauddetection.flinkjob.input.param;
 
 import lombok.AllArgsConstructor;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -33,7 +33,7 @@ public class ParameterDefinitions {
     public static final InputParam<String>  LATENCY_SINK                         = InputParam.string("latency-sink", "STDOUT");
     public static final InputParam<String>  RULES_EXPORT_SINK                    = InputParam.string("rules-export-sink", "STDOUT");
     public static final InputParam<Integer> RECORDS_PER_SECOND                   = InputParam.integer("records-per-second", 2);
-    public static final InputParam<Boolean> LOCAL_WEBSERVER                      = InputParam.bool("local", false);
+    public static final InputParam<Boolean> LOCAL_WEBSERVER                      = InputParam.bool("local-webserver", false);
     public static final InputParam<Integer> SOURCE_PARALLELISM                   = InputParam.integer("source-parallelism", 2);
     public static final InputParam<Boolean> ENABLE_CHECKPOINTS                   = InputParam.bool("checkpoints", false);
     public static final InputParam<Integer> CHECKPOINT_INTERVAL                  = InputParam.integer("checkpoint-interval", 60_000_0);

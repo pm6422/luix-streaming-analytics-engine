@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
-import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
-import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions.RULES_SOURCE;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.RULES_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
 
 @Slf4j

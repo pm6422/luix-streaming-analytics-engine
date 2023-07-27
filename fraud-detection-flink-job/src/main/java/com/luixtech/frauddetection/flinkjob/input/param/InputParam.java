@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.input;
+package com.luixtech.frauddetection.flinkjob.input.param;
 
 import lombok.Getter;
 
