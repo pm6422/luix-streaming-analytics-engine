@@ -18,13 +18,17 @@
 
 package com.luixtech.frauddetection.flinkjob.dynamicrules;
 
+import com.luixtech.frauddetection.flinkjob.core.Keyed;
+import com.luixtech.frauddetection.flinkjob.core.RuleParser;
+import com.luixtech.frauddetection.flinkjob.domain.Alert;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.AssertUtils;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamKeyedOperatorTestHarness;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamNonKeyedOperatorTestHarness;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
-import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
-import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
+import com.luixtech.frauddetection.flinkjob.core.DynamicAlertFunction;
+import com.luixtech.frauddetection.flinkjob.core.DynamicKeyFunction;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

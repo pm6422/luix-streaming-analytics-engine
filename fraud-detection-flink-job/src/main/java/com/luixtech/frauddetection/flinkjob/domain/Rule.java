@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.flinkjob.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +15,6 @@ import java.util.List;
 @ToString
 @Data
 public class Rule {
-
     private Integer                ruleId;
     private RuleState              ruleState;
     private List<String>           groupingKeyNames; // aggregation

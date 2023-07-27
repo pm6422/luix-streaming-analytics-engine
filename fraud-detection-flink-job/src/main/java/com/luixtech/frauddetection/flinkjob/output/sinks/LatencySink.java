@@ -16,13 +16,11 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.sinks;
+package com.luixtech.frauddetection.flinkjob.output.sinks;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.KafkaUtils;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
-import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
@@ -35,27 +33,28 @@ import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import java.io.IOException;
 import java.util.Properties;
 
-public class AlertsSink {
+public class LatencySink {
 
-    public static DataStreamSink<String> addAlertsSink(Parameters parameters, DataStream<String> stream) throws IOException {
-        String sinkType = parameters.getValue(ParameterDefinitions.ALERTS_SINK);
-        AlertsSink.Type alertsSinkType = AlertsSink.Type.valueOf(sinkType.toUpperCase());
+    public static DataStreamSink<String> addLatencySink(Parameters parameters, DataStream<String> stream)
+            throws IOException {
+
+        String latencySink = parameters.getValue(ParameterDefinitions.LATENCY_SINK);
+        LatencySink.Type latencySinkType = LatencySink.Type.valueOf(latencySink.toUpperCase());
         DataStreamSink<String> dataStreamSink;
 
-        switch (alertsSinkType) {
+        switch (latencySinkType) {
             case KAFKA:
                 Properties kafkaProps = KafkaUtils.initProducerProperties(parameters);
-                String alertsTopic = parameters.getValue(ParameterDefinitions.ALERTS_TOPIC);
-
+                String latencyTopic = parameters.getValue(ParameterDefinitions.LATENCY_TOPIC);
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
                                 .setKafkaProducerConfig(kafkaProps)
                                 .setRecordSerializer(
                                         KafkaRecordSerializationSchema.builder()
-                                                .setTopic(alertsTopic)
+                                                .setTopic(latencyTopic)
                                                 .setValueSerializationSchema(new SimpleStringSchema())
                                                 .build())
-                                .setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
+                                .setDeliverGuarantee(DeliveryGuarantee.NONE)
                                 .build();
                 dataStreamSink = stream.sinkTo(kafkaSink);
                 break;
@@ -64,20 +63,16 @@ public class AlertsSink {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Source \"" + alertsSinkType + "\" unknown. Known values are:" + Type.values());
+                        "Source \"" + latencySinkType + "\" unknown. Known values are:" + Type.values());
         }
         return dataStreamSink;
     }
 
-    public static DataStream<String> alertsStreamToJson(DataStream<Alert> alerts) {
-        return alerts.flatMap(new JsonSerializer<>(Alert.class)).name("Alerts Deserialization");
-    }
-
     @Getter
     public enum Type {
-        KAFKA("Alerts Sink (Kafka)"),
-        PUBSUB("Alerts Sink (Pub/Sub)"),
-        STDOUT("Alerts Sink (Std. Out)");
+        KAFKA("Latency Sink (Kafka)"),
+        PUBSUB("Latency Sink (Pub/Sub)"),
+        STDOUT("Latency Sink (Std. Out)");
 
         private final String name;
 

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.accumulators;
+package com.luixtech.frauddetection.flinkjob.core.accumulator;
 
 import org.apache.flink.annotation.PublicEvolving;
 import org.apache.flink.api.common.accumulators.Accumulator;
@@ -25,24 +25,20 @@ import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import java.math.BigDecimal;
 
 /**
- * An accumulator that finds the maximum {@code BigDecimal} value.
- *
- * <p>Supports numbers greater than Double.MIN_VALUE.
+ * An accumulator that sums up {@code double} values.
  */
 @PublicEvolving
-public class BigDecimalMaximum implements SimpleAccumulator<BigDecimal> {
+public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
 
     private static final long serialVersionUID = 1L;
 
-    private BigDecimal max = BigDecimal.valueOf(Double.MIN_VALUE);
+    private BigDecimal localValue = BigDecimal.ZERO;
 
-    private final BigDecimal limit = BigDecimal.valueOf(Double.MIN_VALUE);
-
-    public BigDecimalMaximum() {
+    public BigDecimalCounter() {
     }
 
-    public BigDecimalMaximum(BigDecimal value) {
-        this.max = value;
+    public BigDecimalCounter(BigDecimal value) {
+        this.localValue = value;
     }
 
     // ------------------------------------------------------------------------
@@ -51,33 +47,29 @@ public class BigDecimalMaximum implements SimpleAccumulator<BigDecimal> {
 
     @Override
     public void add(BigDecimal value) {
-        if (value.compareTo(limit) < 0) {
-            throw new IllegalArgumentException(
-                    "BigDecimalMaximum accumulator only supports values greater than Double.MIN_VALUE");
-        }
-        this.max = max.max(value);
+        localValue = localValue.add(value);
     }
 
     @Override
     public BigDecimal getLocalValue() {
-        return this.max;
+        return localValue;
     }
 
     @Override
     public void merge(Accumulator<BigDecimal, BigDecimal> other) {
-        this.max = max.max(other.getLocalValue());
+        localValue = localValue.add(other.getLocalValue());
     }
 
     @Override
     public void resetLocal() {
-        this.max = BigDecimal.valueOf(Double.MIN_VALUE);
+        this.localValue = BigDecimal.ZERO;
     }
 
     @Override
-    public BigDecimalMaximum clone() {
-        BigDecimalMaximum clone = new BigDecimalMaximum();
-        clone.max = this.max;
-        return clone;
+    public BigDecimalCounter clone() {
+        BigDecimalCounter result = new BigDecimalCounter();
+        result.localValue = localValue;
+        return result;
     }
 
     // ------------------------------------------------------------------------
@@ -86,6 +78,6 @@ public class BigDecimalMaximum implements SimpleAccumulator<BigDecimal> {
 
     @Override
     public String toString() {
-        return "BigDecimal " + this.max;
+        return "BigDecimalCounter " + this.localValue;
     }
 }

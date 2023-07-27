@@ -16,27 +16,17 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.flinkjob.core.function;
 
-import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.frauddetection.common.dto.TimestampAssignable;
+import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.util.Collector;
 
-import java.io.IOException;
+public class TimeStamper<T extends TimestampAssignable<Long>> extends RichFlatMapFunction<T, T> {
 
-public class JsonMapper<T> {
-
-    private final Class<T>     targetClass;
-    private final ObjectMapper objectMapper;
-
-    public JsonMapper(Class<T> targetClass) {
-        this.targetClass = targetClass;
-        objectMapper = new ObjectMapper();
-    }
-
-    public T fromString(String line) throws IOException {
-        return objectMapper.readValue(line, targetClass);
-    }
-
-    public String toString(T line) throws IOException {
-        return objectMapper.writeValueAsString(line);
+    @Override
+    public void flatMap(T value, Collector<T> out) throws Exception {
+        value.assignIngestionTimestamp(System.currentTimeMillis());
+        out.collect(value);
     }
 }

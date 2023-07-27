@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.serializer;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.RuleParser;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.core.RuleParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;

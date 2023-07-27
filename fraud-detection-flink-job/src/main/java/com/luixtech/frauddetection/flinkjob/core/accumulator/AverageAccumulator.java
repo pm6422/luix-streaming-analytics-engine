@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.accumulators;
+package com.luixtech.frauddetection.flinkjob.core.accumulator;
 
 import org.apache.flink.annotation.Public;
 import org.apache.flink.api.common.accumulators.Accumulator;

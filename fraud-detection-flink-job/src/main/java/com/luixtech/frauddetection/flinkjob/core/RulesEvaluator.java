@@ -1,18 +1,16 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Alert;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.AverageAggregate;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.AlertsSink;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.CurrentRulesSink;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.LatencySink;
+import com.luixtech.frauddetection.flinkjob.domain.Alert;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
+import com.luixtech.frauddetection.flinkjob.output.sinks.AlertsSink;
+import com.luixtech.frauddetection.flinkjob.output.sinks.CurrentRulesSink;
+import com.luixtech.frauddetection.flinkjob.output.sinks.LatencySink;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
-import com.luixtech.frauddetection.flinkjob.transaction.alert.DynamicAlertFunction;
 import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.flinkjob.transaction.key.DynamicKeyFunction;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

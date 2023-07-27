@@ -1,6 +1,5 @@
 package com.luixtech.frauddetection.flinkjob.serializer;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.JsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;

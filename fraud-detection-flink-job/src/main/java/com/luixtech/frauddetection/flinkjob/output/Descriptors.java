@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;

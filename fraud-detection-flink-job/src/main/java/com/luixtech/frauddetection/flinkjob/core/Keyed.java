@@ -16,17 +16,17 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.functions;
+package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.dto.TimestampAssignable;
-import org.apache.flink.api.common.functions.RichFlatMapFunction;
-import org.apache.flink.util.Collector;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class TimeStamper<T extends TimestampAssignable<Long>> extends RichFlatMapFunction<T, T> {
-
-    @Override
-    public void flatMap(T value, Collector<T> out) throws Exception {
-        value.assignIngestionTimestamp(System.currentTimeMillis());
-        out.collect(value);
-    }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Keyed<IN, KEY, ID> {
+    private IN  wrapped;
+    private KEY key;
+    private ID  id;
 }

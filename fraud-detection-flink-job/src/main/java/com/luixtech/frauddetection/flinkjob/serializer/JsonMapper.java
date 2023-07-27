@@ -16,17 +16,27 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.flinkjob.serializer;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Keyed<IN, KEY, ID> {
-    private IN  wrapped;
-    private KEY key;
-    private ID  id;
+import java.io.IOException;
+
+public class JsonMapper<T> {
+
+    private final Class<T>     targetClass;
+    private final ObjectMapper objectMapper;
+
+    public JsonMapper(Class<T> targetClass) {
+        this.targetClass = targetClass;
+        objectMapper = new ObjectMapper();
+    }
+
+    public T fromString(String line) throws IOException {
+        return objectMapper.readValue(line, targetClass);
+    }
+
+    public String toString(T line) throws IOException {
+        return objectMapper.writeValueAsString(line);
+    }
 }

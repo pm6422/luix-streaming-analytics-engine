@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.TimeStamper;
+import com.luixtech.frauddetection.flinkjob.core.function.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;

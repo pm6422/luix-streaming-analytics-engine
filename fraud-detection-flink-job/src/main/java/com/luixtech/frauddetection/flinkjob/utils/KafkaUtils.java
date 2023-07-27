@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.flinkjob.utils;
 
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 

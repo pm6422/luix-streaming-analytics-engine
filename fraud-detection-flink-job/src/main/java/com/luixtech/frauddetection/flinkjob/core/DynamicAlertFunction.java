@@ -16,11 +16,15 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.transaction.alert;
+package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.*;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.ControlType;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.core.FieldsExtractor;
+import com.luixtech.frauddetection.flinkjob.core.Keyed;
+import com.luixtech.frauddetection.flinkjob.core.RuleHelper;
+import com.luixtech.frauddetection.flinkjob.domain.Alert;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +48,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.luixtech.frauddetection.flinkjob.dynamicrules.functions.ProcessingUtils.addToStateValuesSet;
-import static com.luixtech.frauddetection.flinkjob.dynamicrules.functions.ProcessingUtils.handleRuleBroadcast;
+import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
+import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.handleRuleBroadcast;
 
 /**
  * Implements main rule evaluation and alerting logic.

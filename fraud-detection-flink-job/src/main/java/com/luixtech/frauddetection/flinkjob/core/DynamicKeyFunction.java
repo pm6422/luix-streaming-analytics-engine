@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.transaction.key;
+package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Keyed;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.KeysExtractor;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.ControlType;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.ProcessingUtils;
+import com.luixtech.frauddetection.flinkjob.core.Keyed;
+import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;

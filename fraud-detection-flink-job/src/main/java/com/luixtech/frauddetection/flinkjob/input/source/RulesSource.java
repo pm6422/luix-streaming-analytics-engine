@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;

@@ -20,9 +20,11 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules;
 
 import static org.junit.Assert.assertEquals;
 
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.AggregatorFunctionType;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.LimitOperatorType;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.core.RuleParser;
+import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.AggregatorFunctionType;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.LimitOperatorType;
+import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
