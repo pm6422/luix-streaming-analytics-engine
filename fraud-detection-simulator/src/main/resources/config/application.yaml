@@ -87,7 +87,7 @@ server:
   port: 5656
 logging:
   level:
-    root: DEBUG
+    root: INFO
     org.springframework.boot.devtools.autoconfigure: INFO
     org.apache: WARN
     sun.rmi: WARN
