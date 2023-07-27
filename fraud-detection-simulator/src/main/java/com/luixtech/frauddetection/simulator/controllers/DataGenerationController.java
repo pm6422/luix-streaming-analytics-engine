@@ -51,7 +51,7 @@ public class DataGenerationController {
 
     @Autowired
     public DataGenerationController(KafkaTransactionsPusher transactionsPusher, KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry) {
-        transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
+        this.transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
         this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
     }
 
