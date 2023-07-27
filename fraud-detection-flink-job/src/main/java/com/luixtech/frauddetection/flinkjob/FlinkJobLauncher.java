@@ -13,10 +13,7 @@ public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         Parameters inputParams = new Parameters(parameterTool);
-        InputConfig inputConfig = new InputConfig(inputParams,
-                Parameters.STRING_INPUT_PARAMS,
-                Parameters.INT_INPUT_PARAMS,
-                Parameters.BOOL_INPUT_PARAMS);
+        InputConfig inputConfig = new InputConfig(inputParams, Parameters.STRING_INPUT_PARAMS, Parameters.INT_INPUT_PARAMS, Parameters.BOOL_INPUT_PARAMS);
         RulesEvaluator rulesEvaluator = new RulesEvaluator(inputConfig);
         rulesEvaluator.run();
     }
