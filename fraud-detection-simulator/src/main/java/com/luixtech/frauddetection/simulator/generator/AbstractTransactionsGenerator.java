@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.simulator.datasource;
+package com.luixtech.frauddetection.simulator.generator;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.thread.Throttler;

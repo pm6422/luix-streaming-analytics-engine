@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.simulator.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.model.RulePayload;
+import com.luixtech.frauddetection.simulator.dto.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

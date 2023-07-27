@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.simulator.datasource;
+package com.luixtech.frauddetection.simulator.generator;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;

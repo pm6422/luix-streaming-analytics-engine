@@ -6,7 +6,7 @@ import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.model.Alert;
+import com.luixtech.frauddetection.simulator.dto.Alert;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.KafkaTransactionsPusher;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ public class AlertsController {
     private final        ApplicationProperties   applicationProperties;
 
     @GetMapping("/rules/{id}/alert")
-    Alert mockAlert(@PathVariable Integer id) throws JsonProcessingException {
+    public Alert mockAlert(@PathVariable Integer id) throws JsonProcessingException {
         Rule rule = repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
         Transaction triggeringEvent = transactionsPusher.getLastTransaction();
         String violatedRule = rule.getRulePayload();

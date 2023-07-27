@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.model.RulePayload;
+import com.luixtech.frauddetection.simulator.dto.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.FlinkRulesService;
 import lombok.AllArgsConstructor;

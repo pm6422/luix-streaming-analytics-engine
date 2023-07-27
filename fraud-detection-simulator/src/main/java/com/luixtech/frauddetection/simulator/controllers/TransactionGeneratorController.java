@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.datasource.TransactionsGenerator;
+import com.luixtech.frauddetection.simulator.generator.TransactionsGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
