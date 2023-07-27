@@ -17,18 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class FlinkController {
 
-    private final FlinkRulesService flinkRulesService;
+    private static final ObjectMapper      OBJECT_MAPPER = new ObjectMapper();
+    private final        FlinkRulesService flinkRulesService;
 
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    @GetMapping("/syncRules")
+    @GetMapping("/flink/sync-rules")
     void syncRules() throws JsonProcessingException {
         Rule command = createControlCommand(ControlType.EXPORT_RULES_CURRENT);
         flinkRulesService.addRule(command);
     }
 
-    @GetMapping("/clearState")
+    @GetMapping("/flink/clear-state")
     void clearState() throws JsonProcessingException {
         Rule command = createControlCommand(ControlType.CLEAR_STATE_ALL);
         flinkRulesService.addRule(command);

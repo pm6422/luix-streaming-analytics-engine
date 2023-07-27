@@ -40,7 +40,7 @@ class RuleController {
         return result;
     }
 
-    @GetMapping("/rules/pushToFlink")
+    @GetMapping("/rules/push-to-flink")
     void pushToFlink() {
         List<Rule> rules = repository.findAll();
         for (Rule rule : rules) {

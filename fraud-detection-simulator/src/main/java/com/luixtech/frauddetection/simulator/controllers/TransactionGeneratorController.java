@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 @RestController
 @Slf4j
-public class DataGenerationController {
+public class TransactionGeneratorController {
 
     private static final ExecutorService               EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
     @Resource
@@ -28,27 +28,22 @@ public class DataGenerationController {
     private boolean generatingTransactions   = false;
     private boolean listenerContainerRunning = true;
 
-    @GetMapping("/api/startTransactionsGeneration")
-    public void startTransactionsGeneration() throws Exception {
-        log.info("{}", "startTransactionsGeneration called");
-        generateTransactions();
-    }
-
-    private void generateTransactions() {
+    @GetMapping("/api/transaction-generator/start")
+    public void startTransactionsGeneration() {
         if (!generatingTransactions) {
             EXECUTOR_SERVICE.submit(transactionsGenerator);
             generatingTransactions = true;
         }
     }
 
-    @GetMapping("/api/stopTransactionsGeneration")
+    @GetMapping("/api/transaction-generator/stop")
     public void stopTransactionsGeneration() {
         transactionsGenerator.cancel();
         generatingTransactions = false;
         log.info("{}", "stopTransactionsGeneration called");
     }
 
-    @GetMapping("/api/generatorSpeed/{speed}")
+    @GetMapping("/api/transaction-generator/speed/{speed}")
     public void setGeneratorSpeed(@PathVariable Long speed) {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {
@@ -56,7 +51,7 @@ public class DataGenerationController {
             generatingTransactions = false;
             return;
         } else {
-            generateTransactions();
+            startTransactionsGeneration();
         }
 
         MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry
