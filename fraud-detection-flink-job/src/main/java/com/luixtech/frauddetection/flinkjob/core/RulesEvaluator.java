@@ -9,7 +9,6 @@ import com.luixtech.frauddetection.flinkjob.output.sinks.LatencySink;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
-import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.AllArgsConstructor;
@@ -46,7 +45,7 @@ public class RulesEvaluator {
         DataStream<Rule> rulesStream = getRulesStream(env);
         DataStream<Transaction> transactionsStream = getTransactionsStream(env);
         // Create a broadcast rules stream
-        BroadcastStream<Rule> broadcastRulesStream = rulesStream.broadcast(Descriptors.rulesDescriptor);
+        BroadcastStream<Rule> broadcastRulesStream = rulesStream.broadcast(Descriptors.RULES_DESCRIPTOR);
 
         // Processing pipeline setup
         DataStream<Alert> alertsStream = transactionsStream
@@ -62,13 +61,13 @@ public class RulesEvaluator {
                 .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.demoSinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
 
         DataStream<Long> latency =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.latencySinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
 
         DataStream<Rule> currentRules =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.currentRulesSinkTag);
+                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
 
         alertsStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");

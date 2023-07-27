@@ -18,13 +18,11 @@
 
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.core.Keyed;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
-import com.luixtech.frauddetection.flinkjob.output.Descriptors;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -54,7 +52,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
 
     @Override
     public void processElement(Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
-        ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
+        ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         forkEventForEachGroupingKey(event, rulesState, out);
     }
 
@@ -72,7 +70,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     @Override
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         log.info("{}", rule);
-        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.rulesDescriptor);
+        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState);
