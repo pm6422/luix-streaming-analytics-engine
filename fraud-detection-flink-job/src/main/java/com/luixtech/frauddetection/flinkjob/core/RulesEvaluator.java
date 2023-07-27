@@ -38,7 +38,7 @@ public class RulesEvaluator {
     private final Parameters parameters;
 
     public void run() throws Exception {
-        // Configure execution environment
+        // Create stream execution environment
         StreamExecutionEnvironment env = createExecutionEnv();
 
         DataStream<Rule> ruleStream = createRuleStream(env);
