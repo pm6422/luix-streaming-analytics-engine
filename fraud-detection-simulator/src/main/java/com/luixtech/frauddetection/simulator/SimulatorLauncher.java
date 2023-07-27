@@ -1,10 +1,13 @@
 package com.luixtech.frauddetection.simulator;
 
 import com.luixtech.framework.EnableLuixFramework;
+import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties({ApplicationProperties.class})
 @EnableLuixFramework
 public class SimulatorLauncher {
     /**

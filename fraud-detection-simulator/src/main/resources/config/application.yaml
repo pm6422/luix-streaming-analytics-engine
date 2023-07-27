@@ -108,11 +108,7 @@ kafka:
     current-rules: current-rules
   listeners:
     transactions.id: transactions-listener
-web-socket:
-  topic:
-    transactions: /topic/transactions
-    alerts: /topic/alerts
-    latency: /topic/latency
+
 # ===================================================================
 # Luix framework specific properties
 # ===================================================================
@@ -155,4 +151,12 @@ luix:
 # ===================================================================
 # Application specific properties
 # ===================================================================
+application:
+  web-socket:
+    topic:
+      transactions: /topic/transactions
+      alerts: /topic/alerts
+      latency: /topic/latency
+
+
 transactionsRateDisplayLimit: 50

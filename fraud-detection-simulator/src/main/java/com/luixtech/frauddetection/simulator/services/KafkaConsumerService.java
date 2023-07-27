@@ -18,60 +18,50 @@
 package com.luixtech.frauddetection.simulator.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.frauddetection.simulator.repository.RuleRepository;
+import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.Rule;
 import com.luixtech.frauddetection.simulator.model.RulePayload;
-
-import java.io.IOException;
-import java.util.Optional;
+import com.luixtech.frauddetection.simulator.repository.RuleRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.Optional;
+
 @Service
+@AllArgsConstructor
 @Slf4j
 public class KafkaConsumerService {
 
-  private final SimpMessagingTemplate simpTemplate;
-  private final RuleRepository        ruleRepository;
-  private final ObjectMapper          mapper = new ObjectMapper();
+    private static final ObjectMapper          OBJECT_MAPPER = new ObjectMapper();
+    private final        SimpMessagingTemplate simpTemplate;
+    private final        RuleRepository        ruleRepository;
+    private final        ApplicationProperties applicationProperties;
 
-  @Value("${web-socket.topic.alerts}")
-  private String alertsWebSocketTopic;
-
-  @Value("${web-socket.topic.latency}")
-  private String latencyWebSocketTopic;
-
-  @Autowired
-  public KafkaConsumerService(SimpMessagingTemplate simpTemplate, RuleRepository ruleRepository) {
-    this.simpTemplate = simpTemplate;
-    this.ruleRepository = ruleRepository;
-  }
-
-  @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
-  public void templateAlerts(@Payload String message) {
-    log.warn("Detected alert {}", message);
-    simpTemplate.convertAndSend(alertsWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
-  public void templateLatency(@Payload String message) {
-    log.warn("Found latency {}", message);
-    simpTemplate.convertAndSend(latencyWebSocketTopic, message);
-  }
-
-  @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
-  public void templateCurrentFlinkRules(@Payload String message) throws IOException {
-    log.info("{}", message);
-    RulePayload payload = mapper.readValue(message, RulePayload.class);
-    Integer payloadId = payload.getRuleId();
-    Optional<Rule> existingRule = ruleRepository.findById(payloadId);
-    if (!existingRule.isPresent()) {
-      ruleRepository.save(new Rule(payloadId, mapper.writeValueAsString(payload)));
+    @KafkaListener(topics = "${kafka.topic.alerts}", groupId = "alerts")
+    public void templateAlerts(@Payload String message) {
+        log.warn("Detected alert {}", message);
+        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlerts(), message);
     }
-  }
+
+    @KafkaListener(topics = "${kafka.topic.latency}", groupId = "latency")
+    public void templateLatency(@Payload String message) {
+        log.warn("Found latency {}", message);
+        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
+    }
+
+    @KafkaListener(topics = "${kafka.topic.current-rules}", groupId = "current-rules")
+    public void templateCurrentFlinkRules(@Payload String message) throws IOException {
+        log.info("{}", message);
+        RulePayload payload = OBJECT_MAPPER.readValue(message, RulePayload.class);
+        Integer payloadId = payload.getRuleId();
+        Optional<Rule> existingRule = ruleRepository.findById(payloadId);
+        if (!existingRule.isPresent()) {
+            ruleRepository.save(new Rule(payloadId, OBJECT_MAPPER.writeValueAsString(payload)));
+        }
+    }
 }
