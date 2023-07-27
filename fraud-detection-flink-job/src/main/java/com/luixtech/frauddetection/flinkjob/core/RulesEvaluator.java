@@ -39,40 +39,39 @@ public class RulesEvaluator {
 
     public void run() throws Exception {
         // Configure execution environment
-        StreamExecutionEnvironment env = configureExecutionEnv();
+        StreamExecutionEnvironment env = createExecutionEnv();
 
-        // Streams setup
-        DataStream<Rule> rulesStream = getRulesStream(env);
-        DataStream<Transaction> transactionsStream = getTransactionsStream(env);
-        // Create a broadcast rules stream
-        BroadcastStream<Rule> broadcastRulesStream = rulesStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        DataStream<Rule> ruleStream = createRuleStream(env);
+        // Rule must be broadcast to all flink servers on the same cluster
+        BroadcastStream<Rule> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        DataStream<Transaction> transactionStream = createTransactionStream(env);
 
         // Processing pipeline setup
-        DataStream<Alert> alertsStream = transactionsStream
-                .connect(broadcastRulesStream)
+        DataStream<Alert> alertStream = transactionStream
+                .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
                 .uid("DynamicKeyFunction")
                 .name("Dynamic Partitioning Function")
                 // cannot be optimized by lambda
                 .keyBy((keyed) -> keyed.getKey())
-                .connect(broadcastRulesStream)
+                .connect(broadcastRuleStream)
                 .process(new DynamicAlertFunction())
                 .uid("DynamicAlertFunction")
                 .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
+                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
 
         DataStream<Long> latency =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
+                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
 
         DataStream<Rule> currentRules =
-                ((SingleOutputStreamOperator<Alert>) alertsStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
+                ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
 
-        alertsStream.print().name("Alert STDOUT Sink");
+        alertStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
-        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertsStream);
+        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
         DataStream<String> currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules);
 
         currentRulesJson.print();
@@ -94,7 +93,7 @@ public class RulesEvaluator {
         env.execute("Fraud Detection Engine");
     }
 
-    private StreamExecutionEnvironment configureExecutionEnv() {
+    private StreamExecutionEnvironment createExecutionEnv() {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
@@ -134,7 +133,7 @@ public class RulesEvaluator {
         }
     }
 
-    private DataStream<Rule> getRulesStream(StreamExecutionEnvironment env) throws IOException {
+    private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) throws IOException {
         RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
         DataStream<String> rulesStringStream = initRulesSource(parameters, env)
                 // todo: put below in initRulesSource method
@@ -142,7 +141,7 @@ public class RulesEvaluator {
         return stringsStreamToRules(rulesStringStream);
     }
 
-    private DataStream<Transaction> getTransactionsStream(StreamExecutionEnvironment env) {
+    private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
         TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(parameters);
         DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env)
                 // todo: put below in initTransactionsSource method
