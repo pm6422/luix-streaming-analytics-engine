@@ -107,8 +107,8 @@ kafka:
     latency: latency
     current-rules: current-rules
   listeners:
-    transactions.id: transactions-listener
-
+    transactions:
+      id: transactions-listener
 # ===================================================================
 # Luix framework specific properties
 # ===================================================================
