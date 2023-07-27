@@ -5,14 +5,13 @@ import com.luixtech.frauddetection.simulator.datasource.DemoTransactionsGenerato
 import com.luixtech.frauddetection.simulator.datasource.TransactionsGenerator;
 import com.luixtech.frauddetection.simulator.services.KafkaTransactionsPusher;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,23 +20,17 @@ import java.util.concurrent.Executors;
 public class DataGenerationController {
 
     private static final ExecutorService               EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
-    private final        TransactionsGenerator         transactionsGenerator;
-    private final        KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
-    private final        ApplicationProperties         applicationProperties;
+    private              TransactionsGenerator         transactionsGenerator;
+    @Resource
+    private              KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    @Resource
+    private              ApplicationProperties         applicationProperties;
 
     private boolean generatingTransactions   = false;
     private boolean listenerContainerRunning = true;
 
-    @Value("${kafka.listeners.transactions.id}")
-    private String transactionListenerId;
-
-    @Autowired
-    public DataGenerationController(KafkaTransactionsPusher transactionsPusher,
-                                    KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry,
-                                    ApplicationProperties applicationProperties) {
+    public DataGenerationController(KafkaTransactionsPusher transactionsPusher) {
         this.transactionsGenerator = new DemoTransactionsGenerator(transactionsPusher, 1);
-        this.kafkaListenerEndpointRegistry = kafkaListenerEndpointRegistry;
-        this.applicationProperties = applicationProperties;
     }
 
     @GetMapping("/api/startTransactionsGeneration")
@@ -71,7 +64,8 @@ public class DataGenerationController {
             generateTransactions();
         }
 
-        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry.getListenerContainer(transactionListenerId);
+        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry
+                .getListenerContainer(applicationProperties.getKafka().getListeners().getTransactions().getId());
         if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
             listenerContainer.stop();
             listenerContainerRunning = false;

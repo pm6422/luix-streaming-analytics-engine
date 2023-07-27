@@ -21,6 +21,7 @@ public class ApplicationProperties {
 
     private final WebSocket   webSocket   = new WebSocket();
     private final Transaction transaction = new Transaction();
+    private final Kafka       kafka       = new Kafka();
 
     @Data
     public static class WebSocket {
@@ -37,6 +38,31 @@ public class ApplicationProperties {
     @Data
     public static class Transaction {
         private long maxTransactionSpeed;
+    }
+
+    @Data
+    public static class Kafka {
+        private Topic     topic;
+        private Listeners listeners;
+
+        @Data
+        public static class Topic {
+            private String transactions;
+            private String alerts;
+            private String latency;
+            private String rules;
+            private String currentRules;
+        }
+
+        @Data
+        public static class Listeners {
+            private Transactions transactions;
+
+            @Data
+            public static class Transactions {
+                private String id;
+            }
+        }
     }
 
 }

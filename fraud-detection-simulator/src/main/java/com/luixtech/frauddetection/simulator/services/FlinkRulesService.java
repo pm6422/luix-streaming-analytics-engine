@@ -19,39 +19,32 @@ package com.luixtech.frauddetection.simulator.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.Rule;
 import com.luixtech.frauddetection.simulator.model.RulePayload;
 import com.luixtech.frauddetection.simulator.model.RulePayload.RuleState;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class FlinkRulesService {
 
-  private final KafkaTemplate<String, String> kafkaTemplate;
+    private static final ObjectMapper                  OBJECT_MAPPER = new ObjectMapper();
+    private final        KafkaTemplate<String, String> kafkaTemplate;
+    private final        ApplicationProperties         applicationProperties;
 
-  @Value("${kafka.topic.rules}")
-  private String topic;
+    public void addRule(Rule rule) {
+        String payload = rule.getRulePayload();
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), payload);
+    }
 
-  private final ObjectMapper mapper = new ObjectMapper();
-
-  @Autowired
-  public FlinkRulesService(KafkaTemplate<String, String> kafkaTemplate) {
-    this.kafkaTemplate = kafkaTemplate;
-  }
-
-  public void addRule(Rule rule) {
-    String payload = rule.getRulePayload();
-    kafkaTemplate.send(topic, payload);
-  }
-
-  public void deleteRule(int ruleId) throws JsonProcessingException {
-    RulePayload payload = new RulePayload();
-    payload.setRuleId(ruleId);
-    payload.setRuleState(RuleState.DELETE);
-    String payloadJson = mapper.writeValueAsString(payload);
-    kafkaTemplate.send(topic, payloadJson);
-  }
+    public void deleteRule(int ruleId) throws JsonProcessingException {
+        RulePayload payload = new RulePayload();
+        payload.setRuleId(ruleId);
+        payload.setRuleState(RuleState.DELETE);
+        String payloadJson = OBJECT_MAPPER.writeValueAsString(payload);
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), payloadJson);
+    }
 }

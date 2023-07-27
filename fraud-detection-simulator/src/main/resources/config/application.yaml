@@ -99,16 +99,6 @@ springdoc: # https://springdoc.org/#migrating-from-springfox
   api-docs:
     enabled: true
   show-actuator: true
-kafka:
-  topic:
-    transactions: livetransactions
-    rules: rules
-    alerts: alerts
-    latency: latency
-    current-rules: current-rules
-  listeners:
-    transactions:
-      id: transactions-listener
 # ===================================================================
 # Luix framework specific properties
 # ===================================================================
@@ -159,3 +149,13 @@ application:
       latency: /topic/latency
   transaction:
     max-transaction-speed: 50
+  kafka:
+    topic:
+      transactions: livetransactions
+      alerts: alerts
+      latency: latency
+      rules: rules
+      current-rules: current-rules
+    listeners:
+      transactions:
+        id: transactions-listener
