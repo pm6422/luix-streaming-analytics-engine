@@ -111,8 +111,8 @@
                             <version>[${maven.version},)</version>
                         </requireMavenVersion>
                         <requireJavaVersion>
-                            <message>You are running an incompatible version of Java. Application only supports JDK 11 to 18.</message>
-                            <version>[11,19)</version>
+                            <message>You are running an incompatible version of Java. Application only supports JDK 11 to 17.</message>
+                            <version>[11,18)</version>
                         </requireJavaVersion>
                     </rules>
                 </configuration>
