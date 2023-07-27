@@ -20,7 +20,7 @@ package com.luixtech.frauddetection.flinkjob.dynamicrules;
 
 import static org.junit.Assert.assertEquals;
 
-import com.luixtech.frauddetection.flinkjob.core.RuleParser;
+import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.AggregatorFunctionType;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.LimitOperatorType;

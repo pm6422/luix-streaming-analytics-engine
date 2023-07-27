@@ -60,7 +60,6 @@ public class RulesSource {
     public static DataStream<Rule> stringsStreamToRules(DataStream<String> ruleStrings) {
         return ruleStrings
                 .flatMap(new RuleDeserializer())
-                .name("Rule Deserialization")
                 .setParallelism(1)
                 .assignTimestampsAndWatermarks(
                         new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {

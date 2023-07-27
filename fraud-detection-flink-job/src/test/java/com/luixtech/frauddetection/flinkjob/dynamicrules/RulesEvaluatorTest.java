@@ -19,7 +19,7 @@
 package com.luixtech.frauddetection.flinkjob.dynamicrules;
 
 import com.luixtech.frauddetection.flinkjob.core.Keyed;
-import com.luixtech.frauddetection.flinkjob.core.RuleParser;
+import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
 import com.luixtech.frauddetection.flinkjob.domain.Alert;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.util.AssertUtils;

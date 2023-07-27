@@ -2,7 +2,6 @@ package com.luixtech.frauddetection.flinkjob.serializer;
 
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
-import com.luixtech.frauddetection.flinkjob.core.RuleParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.configuration.Configuration;
@@ -25,11 +24,11 @@ public class RuleDeserializer extends RichFlatMapFunction<String, Rule> {
         try {
             Rule rule = ruleParser.fromString(value);
             if (rule.getRuleState() != RuleState.CONTROL && rule.getRuleId() == null) {
-                throw new NullPointerException("ruleId cannot be null: " + rule);
+                throw new NullPointerException("Rule ID cannot be null");
             }
             out.collect(rule);
         } catch (Exception e) {
-            log.warn("Failed parsing rule, dropping it:", e);
+            log.warn("Failed to parse rule", e);
         }
     }
 }

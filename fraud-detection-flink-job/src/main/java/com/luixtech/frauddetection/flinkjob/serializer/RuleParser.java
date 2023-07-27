@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.core;
+package com.luixtech.frauddetection.flinkjob.serializer;
 
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.AggregatorFunctionType;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RuleParser {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public Rule fromString(String line) throws IOException {
         if (line.length() > 0 && '{' == line.charAt(0)) {
@@ -26,7 +26,7 @@ public class RuleParser {
     }
 
     private Rule parseJson(String ruleString) throws IOException {
-        return objectMapper.readValue(ruleString, Rule.class);
+        return OBJECT_MAPPER.readValue(ruleString, Rule.class);
     }
 
     private static Rule parsePlain(String ruleString) throws IOException {

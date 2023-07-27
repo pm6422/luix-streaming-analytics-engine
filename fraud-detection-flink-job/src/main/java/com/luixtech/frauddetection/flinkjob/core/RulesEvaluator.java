@@ -138,7 +138,6 @@ public class RulesEvaluator {
         RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
         DataStream<String> rulesStringStream = initRulesSource(parameters, env)
                 // todo: put below in initRulesSource method
-                .name(rulesSourceType.getName())
                 .setParallelism(1);
         return stringsStreamToRules(rulesStringStream);
     }
