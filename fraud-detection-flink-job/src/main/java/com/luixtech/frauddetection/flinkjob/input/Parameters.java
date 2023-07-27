@@ -13,9 +13,9 @@ public class Parameters {
             List<InputParam<String>> stringInputParams,
             List<InputParam<Integer>> intInputParams,
             List<InputParam<Boolean>> boolInputParams) {
-        overrideDefaults(parameterDefinitions, stringInputParams);
-        overrideDefaults(parameterDefinitions, intInputParams);
-        overrideDefaults(parameterDefinitions, boolInputParams);
+        overrideDefaults(stringInputParams, parameterDefinitions);
+        overrideDefaults(intInputParams, parameterDefinitions);
+        overrideDefaults(boolInputParams, parameterDefinitions);
     }
 
     public static Parameters fromDefinitions(ParameterDefinitions parameterDefinitions) {
@@ -23,14 +23,10 @@ public class Parameters {
                 parameterDefinitions, ParameterDefinitions.STRING_INPUT_PARAMS, ParameterDefinitions.INT_INPUT_PARAMS, ParameterDefinitions.BOOL_INPUT_PARAMS);
     }
 
-    private <T> void overrideDefaults(ParameterDefinitions parameterDefinitions, List<InputParam<T>> inputParams) {
+    private <T> void overrideDefaults(List<InputParam<T>> inputParams, ParameterDefinitions parameterDefinitions) {
         for (InputParam<T> inputParam : inputParams) {
-            put(inputParam, parameterDefinitions.getOrDefaultValue(inputParam));
+            HOLDER.put(inputParam, parameterDefinitions.getOrDefaultValue(inputParam));
         }
-    }
-
-    private <T> void put(InputParam<T> inputParam, T value) {
-        HOLDER.put(inputParam, value);
     }
 
     public <T> T getValue(InputParam<T> key) {
