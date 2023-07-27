@@ -135,8 +135,6 @@ public class RulesEvaluator {
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
         DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env);
-        DataStream<Transaction> transactionsStream = stringsStreamToTransactions(parameters, transactionsStringsStream);
-        return transactionsStream.assignTimestampsAndWatermarks(
-                new SimpleBoundedOutOfOrdernessTimestampExtractor<>(parameters.getValue(OUT_OF_ORDERNESS)));
+        return stringsStreamToTransactions(parameters, transactionsStringsStream);
     }
 }

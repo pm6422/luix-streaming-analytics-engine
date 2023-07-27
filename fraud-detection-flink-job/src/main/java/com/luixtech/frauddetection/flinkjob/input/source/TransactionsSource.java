@@ -7,6 +7,7 @@ import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
@@ -15,9 +16,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.SOURCE_PARALLELISM;
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.TRANSACTIONS_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 
 @Slf4j
 public class TransactionsSource {
@@ -59,13 +59,14 @@ public class TransactionsSource {
                 .setParallelism(parameters.getValue(SOURCE_PARALLELISM))
                 .returns(Transaction.class)
                 .flatMap(new TimeStamper<>())
-                .returns(Transaction.class);
+                .returns(Transaction.class)
+                .assignTimestampsAndWatermarks(new SimpleBoundedOutOfOrdernessTimestampExtractor<>(parameters.getValue(OUT_OF_ORDERNESS)));
     }
 
     @Getter
     public enum Type {
-        GENERATOR("Transactions Source (generated locally)"),
-        KAFKA("Transactions Source (Kafka)");
+        GENERATOR("Transactions (generated locally)"),
+        KAFKA("Transactions (Kafka)");
 
         private final String name;
 

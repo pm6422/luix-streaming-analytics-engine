@@ -60,7 +60,7 @@ public class RulesSource {
     public static DataStream<Rule> stringsStreamToRules(Parameters parameters, DataStream<String> ruleStrings) {
         return ruleStrings
                 .flatMap(new RuleDeserializer())
-                .name("RuleDeserializer")
+                .name(getRuleSourceType(parameters).getName())
                 .setParallelism(1)
                 .assignTimestampsAndWatermarks(
                         new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {
@@ -69,15 +69,14 @@ public class RulesSource {
                                 // Prevents connected data+update stream watermark stalling.
                                 return Long.MAX_VALUE;
                             }
-                        })
-                .name("Timestamps");
+                        });
     }
 
     @Getter
     public enum Type {
-        KAFKA("Rules Source (Kafka)"),
-        PUBSUB("Rules Source (Pub/Sub)"),
-        SOCKET("Rules Source (Socket)");
+        KAFKA("Rules (Kafka)"),
+        SOCKET("Rules (Socket)");
+//        PUBSUB("Rules (Pub/Sub)");
 
         private final String name;
 
