@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob;
 
-import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
 import com.luixtech.frauddetection.flinkjob.input.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
 
 /**
@@ -10,9 +10,9 @@ import com.luixtech.frauddetection.flinkjob.transaction.rule.RulesEvaluator;
  */
 public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {
-        Parameters parameters = Parameters.fromArgs(args);
-        ParamHolder paramHolder = ParamHolder.fromParameters(parameters);
-        RulesEvaluator rulesEvaluator = new RulesEvaluator(paramHolder);
+        ParameterDefinitions definitions = ParameterDefinitions.fromArgs(args);
+        Parameters parameters = Parameters.fromDefinitions(definitions);
+        RulesEvaluator rulesEvaluator = new RulesEvaluator(parameters);
         rulesEvaluator.run();
     }
 }

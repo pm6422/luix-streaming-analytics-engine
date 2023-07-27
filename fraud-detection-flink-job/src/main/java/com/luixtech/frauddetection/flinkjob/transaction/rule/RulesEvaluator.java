@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.flinkjob.dynamicrules.functions.AverageAggreg
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.dynamicrules.sinks.LatencySink;
-import com.luixtech.frauddetection.flinkjob.input.ParamHolder;
+import com.luixtech.frauddetection.flinkjob.input.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
 import com.luixtech.frauddetection.flinkjob.output.Descriptors;
@@ -30,7 +30,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.Parameters.*;
+import static com.luixtech.frauddetection.flinkjob.input.ParameterDefinitions.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.*;
 
@@ -38,7 +38,7 @@ import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSour
 @AllArgsConstructor
 public class RulesEvaluator {
 
-    private final ParamHolder paramHolder;
+    private final Parameters parameters;
 
     public void run() throws Exception {
         // Configure execution environment
@@ -79,10 +79,10 @@ public class RulesEvaluator {
 
         currentRulesJson.print();
 
-        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(paramHolder, alertsJson);
+        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(parameters, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
-        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(paramHolder, currentRulesJson);
+        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(parameters, currentRulesJson);
         currentRulesSink.setParallelism(1);
 
         DataStream<String> latencies = latency
@@ -90,7 +90,7 @@ public class RulesEvaluator {
                 .aggregate(new AverageAggregate())
                 .map(String::valueOf);
 
-        DataStreamSink<String> latencySink = LatencySink.addLatencySink(paramHolder, latencies);
+        DataStreamSink<String> latencySink = LatencySink.addLatencySink(parameters, latencies);
         latencySink.name("Latency Sink");
 
         env.execute("Fraud Detection Engine");
@@ -100,16 +100,16 @@ public class RulesEvaluator {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        if (paramHolder.getValue(ENABLE_CHECKPOINTS)) {
-            env.enableCheckpointing(paramHolder.getValue(CHECKPOINT_INTERVAL));
-            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(paramHolder.getValue(MIN_PAUSE_BETWEEN_CHECKPOINTS));
+        if (parameters.getValue(ENABLE_CHECKPOINTS)) {
+            env.enableCheckpointing(parameters.getValue(CHECKPOINT_INTERVAL));
+            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(parameters.getValue(MIN_PAUSE_BETWEEN_CHECKPOINTS));
         }
         configureRestartStrategy(env);
         return env;
     }
 
     private StreamExecutionEnvironment getStreamExecutionEnv() {
-        if (paramHolder.getValue(LOCAL_EXECUTION)) {
+        if (parameters.getValue(LOCAL_EXECUTION)) {
             // Create an embedded Flink execution environment with flink UI dashboard
             Configuration flinkConfig = new Configuration();
             flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
@@ -122,7 +122,7 @@ public class RulesEvaluator {
     }
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceEnumType = getRulesSourceType(paramHolder);
+        RulesSource.Type rulesSourceEnumType = getRulesSourceType(parameters);
         switch (rulesSourceEnumType) {
             case SOCKET:
                 env.setRestartStrategy(
@@ -136,8 +136,8 @@ public class RulesEvaluator {
     }
 
     private DataStream<Rule> getRulesStream(StreamExecutionEnvironment env) throws IOException {
-        RulesSource.Type rulesSourceType = getRulesSourceType(paramHolder);
-        DataStream<String> rulesStringStream = initRulesSource(paramHolder, env)
+        RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
+        DataStream<String> rulesStringStream = initRulesSource(parameters, env)
                 // todo: put below in initRulesSource method
                 .name(rulesSourceType.getName())
                 .setParallelism(1);
@@ -145,13 +145,13 @@ public class RulesEvaluator {
     }
 
     private DataStream<Transaction> getTransactionsStream(StreamExecutionEnvironment env) {
-        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(paramHolder);
-        DataStream<String> transactionsStringsStream = initTransactionsSource(paramHolder, env)
+        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(parameters);
+        DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env)
                 // todo: put below in initTransactionsSource method
                 .name(transactionsSourceType.getName())
-                .setParallelism(paramHolder.getValue(SOURCE_PARALLELISM));
+                .setParallelism(parameters.getValue(SOURCE_PARALLELISM));
         DataStream<Transaction> transactionsStream = stringsStreamToTransactions(transactionsStringsStream);
         return transactionsStream.assignTimestampsAndWatermarks(
-                new SimpleBoundedOutOfOrdernessTimestampExtractor<>(paramHolder.getValue(OUT_OF_ORDERNESS)));
+                new SimpleBoundedOutOfOrdernessTimestampExtractor<>(parameters.getValue(OUT_OF_ORDERNESS)));
     }
 }
