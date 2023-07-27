@@ -6,6 +6,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
+        <module>fraud-detection-common</module>
         <module>fraud-detection-flink-job</module>
         <module>fraud-detection-simulator</module>
     </modules>
