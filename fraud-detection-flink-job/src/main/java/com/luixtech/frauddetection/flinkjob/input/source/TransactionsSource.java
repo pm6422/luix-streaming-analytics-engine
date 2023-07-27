@@ -49,6 +49,7 @@ public class TransactionsSource {
             dataStreamSource = env.addSource(generatorSource);
             log.info("Created local generator based transactions source");
         }
+        dataStreamSource.setParallelism(parameters.getValue(SOURCE_PARALLELISM));
         return dataStreamSource;
     }
 
@@ -56,7 +57,6 @@ public class TransactionsSource {
         return transactionStrings
                 .flatMap(new JsonDeserializer<>(Transaction.class))
                 .name(getTransactionSourceType(parameters).getName())
-                .setParallelism(parameters.getValue(SOURCE_PARALLELISM))
                 .returns(Transaction.class)
                 .flatMap(new TimeStamper<>())
                 .returns(Transaction.class)

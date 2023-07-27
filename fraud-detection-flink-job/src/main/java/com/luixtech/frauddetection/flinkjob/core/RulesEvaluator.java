@@ -128,7 +128,7 @@ public class RulesEvaluator {
         }
     }
 
-    private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) throws IOException {
+    private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) {
         DataStream<String> rulesStringStream = initRulesSource(parameters, env);
         return stringsStreamToRules(parameters, rulesStringStream);
     }

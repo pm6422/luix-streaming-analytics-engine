@@ -54,13 +54,14 @@ public class RulesSource {
                 throw new IllegalArgumentException(
                         "Source \"" + rulesSourceType + "\" unknown. Known values are:" + Arrays.toString(Type.values()));
         }
+        dataStreamSource.setParallelism(1);
         return dataStreamSource;
     }
 
     public static DataStream<Rule> stringsStreamToRules(Parameters parameters, DataStream<String> ruleStrings) {
         return ruleStrings
                 .flatMap(new RuleDeserializer())
-                .name(getRuleSourceType(parameters).getName())
+//                .name(getRuleSourceType(parameters).getName())
                 .setParallelism(1)
                 .assignTimestampsAndWatermarks(
                         new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {
