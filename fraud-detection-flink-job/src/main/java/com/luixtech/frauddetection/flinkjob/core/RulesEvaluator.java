@@ -115,7 +115,7 @@ public class RulesEvaluator {
     }
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
+        RulesSource.Type rulesSourceType = getRuleSourceType(parameters);
         switch (rulesSourceType) {
             case SOCKET:
                 env.setRestartStrategy(
@@ -136,7 +136,7 @@ public class RulesEvaluator {
     }
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
-        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(parameters);
+        TransactionsSource.Type transactionsSourceType = getTransactionSourceType(parameters);
         DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env)
                 // todo: put below in initTransactionsSource method
                 .name(transactionsSourceType.getName())

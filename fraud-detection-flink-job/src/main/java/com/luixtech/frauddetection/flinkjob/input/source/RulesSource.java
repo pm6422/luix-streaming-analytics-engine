@@ -23,13 +23,13 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 
 @Slf4j
 public class RulesSource {
-    public static RulesSource.Type getRulesSourceType(Parameters parameters) {
+    public static RulesSource.Type getRuleSourceType(Parameters parameters) {
         String rulesSource = parameters.getValue(RULES_SOURCE);
         return RulesSource.Type.valueOf(rulesSource.toUpperCase());
     }
 
     public static DataStreamSource<String> initRulesSource(Parameters parameters, StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceType = getRulesSourceType(parameters);
+        RulesSource.Type rulesSourceType = getRuleSourceType(parameters);
         DataStreamSource<String> dataStreamSource;
 
         switch (rulesSourceType) {

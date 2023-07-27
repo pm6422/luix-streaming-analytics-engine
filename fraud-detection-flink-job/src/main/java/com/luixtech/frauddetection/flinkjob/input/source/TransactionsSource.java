@@ -21,13 +21,13 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 @Slf4j
 public class TransactionsSource {
 
-    public static TransactionsSource.Type getTransactionsSourceType(Parameters parameters) {
+    public static TransactionsSource.Type getTransactionSourceType(Parameters parameters) {
         String transactionsSource = parameters.getValue(TRANSACTIONS_SOURCE);
         return TransactionsSource.Type.valueOf(transactionsSource.toUpperCase());
     }
 
     public static DataStreamSource<String> initTransactionsSource(Parameters parameters, StreamExecutionEnvironment env) {
-        TransactionsSource.Type transactionsSourceType = getTransactionsSourceType(parameters);
+        TransactionsSource.Type transactionsSourceType = getTransactionSourceType(parameters);
         DataStreamSource<String> dataStreamSource;
 
         if (transactionsSourceType == Type.KAFKA) {
