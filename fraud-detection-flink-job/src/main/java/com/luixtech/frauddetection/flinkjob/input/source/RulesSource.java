@@ -84,6 +84,5 @@ public class RulesSource {
         Type(String name) {
             this.name = name;
         }
-
     }
 }
