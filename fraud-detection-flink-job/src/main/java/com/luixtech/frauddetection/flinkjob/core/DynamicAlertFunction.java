@@ -116,7 +116,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - ingestionTime);
 
         Rule rule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
-
         if (noRuleAvailable(rule)) {
             log.error("Rule with ID {} does not exist", value.getId());
             return;

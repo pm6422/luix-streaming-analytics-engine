@@ -6,9 +6,9 @@ import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
-import com.luixtech.frauddetection.flinkjob.output.sinks.AlertsSink;
-import com.luixtech.frauddetection.flinkjob.output.sinks.CurrentRulesSink;
-import com.luixtech.frauddetection.flinkjob.output.sinks.LatencySink;
+import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
+import com.luixtech.frauddetection.flinkjob.output.CurrentRulesSink;
+import com.luixtech.frauddetection.flinkjob.output.LatencySink;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -57,28 +57,22 @@ public class RulesEvaluator {
                 .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
-        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
         DataStream<Rule> currentRules = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
+        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
 
         alertStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
-        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
         DataStream<String> currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules);
-
         currentRulesJson.print();
-
-        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(parameters, alertsJson);
-        alertsSink.setParallelism(1).name("Alerts JSON Sink");
-
         DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(parameters, currentRulesJson);
         currentRulesSink.setParallelism(1);
 
-        DataStream<String> latencies = latency
-                .timeWindowAll(Time.seconds(10))
-                .aggregate(new AverageAggregate())
-                .map(String::valueOf);
+        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
+        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(parameters, alertsJson);
+        alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
+        DataStream<String> latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(parameters, latencies);
         latencySink.name("Latency Sink");
 

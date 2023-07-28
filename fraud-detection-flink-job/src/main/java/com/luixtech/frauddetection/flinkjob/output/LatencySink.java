@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.output.sinks;
+package com.luixtech.frauddetection.flinkjob.output;
 
 import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;

@@ -12,10 +12,11 @@ public class ParameterDefinitions {
     public static final InputParam<String>  KAFKA_HOST                           = InputParam.string("kafka-host", "localhost");
     public static final InputParam<Integer> KAFKA_PORT                           = InputParam.integer("kafka-port", 9092);
     public static final InputParam<String>  DATA_TOPIC                           = InputParam.string("data-topic", "livetransactions");
-    public static final InputParam<String>  ALERTS_TOPIC                         = InputParam.string("alerts-topic", "alerts");
     public static final InputParam<String>  RULES_TOPIC                          = InputParam.string("rules-topic", "rules");
+    public static final InputParam<String>  CURRENT_RULES_TOPIC                  = InputParam.string("current-rules-topic", "current-rules");
+    public static final InputParam<String>  ALERTS_TOPIC                         = InputParam.string("alerts-topic", "alerts");
+    //todo: check usage
     public static final InputParam<String>  LATENCY_TOPIC                        = InputParam.string("latency-topic", "latency");
-    public static final InputParam<String>  RULES_EXPORT_TOPIC                   = InputParam.string("current-rules-topic", "current-rules");
     public static final InputParam<String>  OFFSET                               = InputParam.string("offset", "latest");
     // GCP PubSub:
     public static final InputParam<String>  GCP_PROJECT_NAME                     = InputParam.string("gcp-project", "da-fe-212612");
@@ -40,7 +41,7 @@ public class ParameterDefinitions {
     public static final InputParam<Integer> MIN_PAUSE_BETWEEN_CHECKPOINTS        = InputParam.integer("min-pause-btwn-checkpoints", 10000);
     public static final InputParam<Integer> OUT_OF_ORDERNESS                     = InputParam.integer("out-of-orderdness", 500);
 
-    public static final List<InputParam<?>> ALL = Arrays.asList(KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, RULES_EXPORT_TOPIC, OFFSET, GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, GCP_PUBSUB_ALERTS_SUBSCRIPTION, GCP_PUBSUB_LATENCY_SUBSCRIPTION, GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION, RULES_SOURCE, TRANSACTIONS_SOURCE, ALERTS_SINK, LATENCY_SINK, RULES_EXPORT_SINK,
+    public static final List<InputParam<?>> ALL = Arrays.asList(KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, CURRENT_RULES_TOPIC, OFFSET, GCP_PROJECT_NAME, GCP_PUBSUB_RULES_SUBSCRIPTION, GCP_PUBSUB_ALERTS_SUBSCRIPTION, GCP_PUBSUB_LATENCY_SUBSCRIPTION, GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION, RULES_SOURCE, TRANSACTIONS_SOURCE, ALERTS_SINK, LATENCY_SINK, RULES_EXPORT_SINK,
             KAFKA_PORT, SOCKET_PORT, RECORDS_PER_SECOND, SOURCE_PARALLELISM, CHECKPOINT_INTERVAL, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERNESS,
             LOCAL_WEBSERVER, ENABLE_CHECKPOINTS);
 

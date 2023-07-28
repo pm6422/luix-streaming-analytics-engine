@@ -51,7 +51,7 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latency")
     public void templateLatency(@Payload String message) {
-        log.warn("Found latency {}", message);
+        log.warn("Found latency {}ms", message);
         // Send to websocket
         simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
     }

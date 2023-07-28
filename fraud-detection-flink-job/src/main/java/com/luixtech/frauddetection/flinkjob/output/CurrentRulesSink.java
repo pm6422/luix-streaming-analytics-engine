@@ -1,28 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.luixtech.frauddetection.flinkjob.output;
 
-package com.luixtech.frauddetection.flinkjob.output.sinks;
-
-import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
@@ -32,23 +14,26 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
+
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.RULES_EXPORT_SINK;
 
 public class CurrentRulesSink {
 
-    public static DataStreamSink<String> addRulesSink(Parameters parameters, DataStream<String> stream)
-            throws IOException {
+    public static CurrentRulesSink.Type getRuleSourceType(Parameters parameters) {
+        String currentRules = parameters.getValue(RULES_EXPORT_SINK);
+        return CurrentRulesSink.Type.valueOf(currentRules.toUpperCase());
+    }
 
-        String sinkType = parameters.getValue(ParameterDefinitions.RULES_EXPORT_SINK);
-        CurrentRulesSink.Type currentRulesSinkType =
-                CurrentRulesSink.Type.valueOf(sinkType.toUpperCase());
+    public static DataStreamSink<String> addRulesSink(Parameters parameters, DataStream<String> stream) {
+        CurrentRulesSink.Type currentRulesSinkType = getRuleSourceType(parameters);
         DataStreamSink<String> dataStreamSink;
 
         switch (currentRulesSinkType) {
             case KAFKA:
                 Properties kafkaProps = KafkaUtils.initProducerProperties(parameters);
-                String rulesExportTopic = parameters.getValue(ParameterDefinitions.RULES_EXPORT_TOPIC);
+                String rulesExportTopic = parameters.getValue(ParameterDefinitions.CURRENT_RULES_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
@@ -67,7 +52,7 @@ public class CurrentRulesSink {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Source \"" + currentRulesSinkType + "\" unknown. Known values are:" + Type.values());
+                        "Source \"" + currentRulesSinkType + "\" unknown. Known values are:" + Arrays.toString(Type.values()));
         }
         return dataStreamSink;
     }
@@ -79,7 +64,7 @@ public class CurrentRulesSink {
     @Getter
     public enum Type {
         KAFKA("Current Rules Sink (Kafka)"),
-        PUBSUB("Current Rules Sink (Pub/Sub)"),
+        //        PUBSUB("Current Rules Sink (Pub/Sub)"),
         STDOUT("Current Rules Sink (Std. Out)");
 
         private final String name;
@@ -87,6 +72,5 @@ public class CurrentRulesSink {
         Type(String name) {
             this.name = name;
         }
-
     }
 }
