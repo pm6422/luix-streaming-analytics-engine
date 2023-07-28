@@ -35,9 +35,7 @@ import java.util.Properties;
 
 public class LatencySink {
 
-    public static DataStreamSink<String> addLatencySink(Parameters parameters, DataStream<String> stream)
-            throws IOException {
-
+    public static DataStreamSink<String> addLatencySink(Parameters parameters, DataStream<String> stream) {
         String latencySink = parameters.getValue(ParameterDefinitions.LATENCY_SINK);
         LatencySink.Type latencySinkType = LatencySink.Type.valueOf(latencySink.toUpperCase());
         DataStreamSink<String> dataStreamSink;
@@ -71,7 +69,7 @@ public class LatencySink {
     @Getter
     public enum Type {
         KAFKA("Latency Sink (Kafka)"),
-        PUBSUB("Latency Sink (Pub/Sub)"),
+//        PUBSUB("Latency Sink (Pub/Sub)"),
         STDOUT("Latency Sink (Std. Out)");
 
         private final String name;

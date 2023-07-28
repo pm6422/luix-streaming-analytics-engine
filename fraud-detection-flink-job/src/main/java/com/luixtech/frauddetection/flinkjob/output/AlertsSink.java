@@ -37,7 +37,7 @@ import java.util.Properties;
 
 public class AlertsSink {
 
-    public static DataStreamSink<String> addAlertsSink(Parameters parameters, DataStream<String> stream) throws IOException {
+    public static DataStreamSink<String> addAlertsSink(Parameters parameters, DataStream<String> stream) {
         String sinkType = parameters.getValue(ParameterDefinitions.ALERTS_SINK);
         AlertsSink.Type alertsSinkType = AlertsSink.Type.valueOf(sinkType.toUpperCase());
         DataStreamSink<String> dataStreamSink;
@@ -76,7 +76,7 @@ public class AlertsSink {
     @Getter
     public enum Type {
         KAFKA("Alerts Sink (Kafka)"),
-        PUBSUB("Alerts Sink (Pub/Sub)"),
+//        PUBSUB("Alerts Sink (Pub/Sub)"),
         STDOUT("Alerts Sink (Std. Out)");
 
         private final String name;
