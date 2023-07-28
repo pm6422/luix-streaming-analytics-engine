@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
-import com.luixtech.frauddetection.flinkjob.dto.Alert;
+import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;

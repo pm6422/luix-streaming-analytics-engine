@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.dto;
+package com.luixtech.frauddetection.common.dto;
 
 import com.luixtech.frauddetection.common.dto.Rule;
 import lombok.AllArgsConstructor;
