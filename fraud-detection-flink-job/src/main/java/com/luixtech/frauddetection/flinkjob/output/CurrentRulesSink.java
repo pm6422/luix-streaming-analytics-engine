@@ -33,14 +33,14 @@ public class CurrentRulesSink {
         switch (currentRulesSinkType) {
             case KAFKA:
                 Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(parameters);
-                String rulesExportTopic = parameters.getValue(ParameterDefinitions.CURRENT_RULES_TOPIC);
+                String currentRulesTopic = parameters.getValue(ParameterDefinitions.CURRENT_RULES_TOPIC);
 
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
                                 .setKafkaProducerConfig(kafkaProps)
                                 .setRecordSerializer(
                                         KafkaRecordSerializationSchema.builder()
-                                                .setTopic(rulesExportTopic)
+                                                .setTopic(currentRulesTopic)
                                                 .setValueSerializationSchema(new SimpleStringSchema())
                                                 .build())
                                 .setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)
