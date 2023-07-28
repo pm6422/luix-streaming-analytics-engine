@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 @Service
 @Slf4j
-public class KafkaTransactionsPusher implements Consumer<Transaction> {
+public class KafkaTransactionPusher implements Consumer<Transaction> {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -24,7 +24,7 @@ public class KafkaTransactionsPusher implements Consumer<Transaction> {
     @Override
     public void accept(Transaction transaction) {
         lastTransaction = transaction;
-        log.debug("{}", transaction);
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getTransactions(), transaction);
+        log.debug("Pushed transaction with content {}", transaction);
     }
 }

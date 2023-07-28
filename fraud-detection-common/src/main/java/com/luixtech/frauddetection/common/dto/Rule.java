@@ -4,8 +4,8 @@ import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
-//import org.apache.flink.api.common.time.Time;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,11 +16,12 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @Data
+@NoArgsConstructor
 public class Rule {
-    private Integer      ruleId;
-    private RuleState    ruleState;
-    private ControlType  controlType;
-    private List<String> groupingKeyNames; // aggregation
+    private Integer                ruleId;
+    private RuleState              ruleState;
+    private ControlType            controlType;
+    private List<String>           groupingKeyNames; // aggregation
     private List<String>           unique;
     private String                 aggregateFieldName;
     private AggregatorFunctionType aggregatorFunctionType;

@@ -15,13 +15,13 @@ public class TransactionsGenerator extends AbstractTransactionsGenerator {
     private final BigDecimal beneficiaryLimit                  = new BigDecimal(10000000);
     private final BigDecimal payeeBeneficiaryLimit             = new BigDecimal(20000000);
 
-    public TransactionsGenerator(Consumer<Transaction> consumer, int maxRecordsPerSecond) {
-        super(consumer, maxRecordsPerSecond);
+    public TransactionsGenerator(Consumer<Transaction> transactionConsumer, int maxRecordsPerSecond) {
+        super(transactionConsumer, maxRecordsPerSecond);
     }
 
     @Override
-    protected Transaction randomEvent(SplittableRandom rnd) {
-        Transaction transaction = super.randomEvent(rnd);
+    protected Transaction randomTransaction(SplittableRandom rnd) {
+        Transaction transaction = super.randomTransaction(rnd);
         long now = System.currentTimeMillis();
         if (now - lastBeneficiaryIdTriggered > 8000 + rnd.nextInt(5000)) {
             transaction.setPaymentAmount(beneficiaryLimit.add(new BigDecimal(rnd.nextInt(1000000))));

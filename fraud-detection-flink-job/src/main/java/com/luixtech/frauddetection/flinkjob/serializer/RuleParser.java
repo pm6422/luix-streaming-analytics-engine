@@ -18,7 +18,7 @@ public class RuleParser {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public Rule fromString(String line) throws IOException {
-        if (line.length() > 0 && '{' == line.charAt(0)) {
+        if (!line.isEmpty() && line.startsWith("{") && line.endsWith("}")) {
             return parseJson(line);
         } else {
             return parsePlain(line);
@@ -58,7 +58,7 @@ public class RuleParser {
 
     private static List<String> getNames(String expression) {
         String keyNamesString = expression.replaceAll("[()]", "");
-        if (!"".equals(keyNamesString)) {
+        if (!keyNamesString.isEmpty()) {
             String[] tokens = keyNamesString.split("&", -1);
             return Arrays.asList(tokens);
         } else {

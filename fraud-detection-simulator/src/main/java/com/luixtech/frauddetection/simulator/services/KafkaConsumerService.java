@@ -58,10 +58,9 @@ public class KafkaConsumerService {
     public void templateCurrentFlinkRules(@Payload String message) throws IOException {
         log.info("{}", message);
         Rule rule = OBJECT_MAPPER.readValue(message, Rule.class);
-        Integer payloadId = rule.getRuleId();
-        Optional<RulePayload> existingRule = ruleRepository.findById(payloadId);
+        Optional<RulePayload> existingRule = ruleRepository.findById(rule.getRuleId());
         if (!existingRule.isPresent()) {
-            ruleRepository.save(new RulePayload(payloadId, OBJECT_MAPPER.writeValueAsString(rule)));
+            ruleRepository.save(RulePayload.fromRule(rule));
         }
     }
 }

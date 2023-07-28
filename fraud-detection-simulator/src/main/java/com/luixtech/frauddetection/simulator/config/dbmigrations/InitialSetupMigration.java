@@ -72,6 +72,6 @@ public class InitialSetupMigration implements ApplicationRunner {
         ruleRepository.save(rulePayload4);
 
         List<RulePayload> rulePayloads = ruleRepository.findAll();
-        rulePayloads.forEach(flinkRulesService::addRule);
+        rulePayloads.stream().map(RulePayload::toRule).forEach(flinkRulesService::addRule);
     }
 }
