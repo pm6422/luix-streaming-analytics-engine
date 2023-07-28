@@ -149,10 +149,10 @@ application:
   kafka:
     topic:
       transactions: transactions
-      alerts: alerts
-      latency: latency
       rules: rules
       current-rules: current-rules
+      alerts: alerts
+      latency: latency
     listeners:
       transactions:
         id: transactions-listener
