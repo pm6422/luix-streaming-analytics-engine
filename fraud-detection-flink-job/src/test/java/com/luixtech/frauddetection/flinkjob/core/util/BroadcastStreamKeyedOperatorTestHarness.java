@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules.util;
+package com.luixtech.frauddetection.flinkjob.core.util;
 
 import java.util.Arrays;
 import org.apache.flink.api.common.ExecutionConfig;

@@ -16,19 +16,14 @@
  * limitations under the License.
  */
 
-package com.luixtech.frauddetection.flinkjob.dynamicrules;
+package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.core.Keyed;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.util.AssertUtils;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamKeyedOperatorTestHarness;
-import com.luixtech.frauddetection.flinkjob.dynamicrules.util.BroadcastStreamNonKeyedOperatorTestHarness;
-import com.luixtech.frauddetection.flinkjob.core.Descriptors;
-import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
-import com.luixtech.frauddetection.flinkjob.core.DynamicAlertFunction;
-import com.luixtech.frauddetection.flinkjob.core.DynamicKeyFunction;
+import com.luixtech.frauddetection.flinkjob.core.util.AssertUtils;
+import com.luixtech.frauddetection.flinkjob.core.util.BroadcastStreamKeyedOperatorTestHarness;
+import com.luixtech.frauddetection.flinkjob.core.util.BroadcastStreamNonKeyedOperatorTestHarness;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

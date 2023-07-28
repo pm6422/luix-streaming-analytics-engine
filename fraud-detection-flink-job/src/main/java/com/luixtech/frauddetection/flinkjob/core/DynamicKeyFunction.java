@@ -59,12 +59,12 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         forkEventForEachGroupingKey(event, rulesState, out);
     }
 
-    private void forkEventForEachGroupingKey(Transaction event, ReadOnlyBroadcastState<Integer, Rule> rulesState,
+    private void forkEventForEachGroupingKey(Transaction transaction, ReadOnlyBroadcastState<Integer, Rule> rulesState,
                                              Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();
-            out.collect(new Keyed<>(event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
+            out.collect(new Keyed<>(transaction, KeysExtractor.getKey(rule.getGroupingKeyNames(), transaction), rule.getRuleId()));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);
