@@ -23,7 +23,7 @@ class RuleController {
     }
 
     @PostMapping("/rules")
-    RulePayload save(@RequestBody RulePayload newRulePayload) {
+    RulePayload createOrUpdate(@RequestBody RulePayload newRulePayload) {
         RulePayload savedRulePayload = ruleRepository.save(newRulePayload);
         kafkaRuleProducer.addRule(savedRulePayload.toRule());
         return savedRulePayload;
