@@ -1,10 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.dto.Alert;
+import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.rule.ControlType;
-import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.rule.RuleState;
-import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -114,12 +114,12 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         // Add Transaction to state
         addToStateValuesSet(windowState, eventTime, transaction);
 
-        long ingestionTime = value.getWrapped().getIngestionTimestamp();
-        ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - ingestionTime);
+        ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
+        // Get rule by ID
         Rule rule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
-        if (noRuleAvailable(rule)) {
-            log.error("Rule with ID {} does not exist", value.getId());
+        if (rule == null) {
+            log.error("Rule with ID [{}] does not exist", value.getId());
             return;
         }
 
@@ -179,17 +179,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
-    private boolean noRuleAvailable(Rule rule) {
-        // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
-        // updated and used in `DynamicKeyFunction`
-        return rule == null;
-    }
-
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
         Rule widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
 
-        Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(rule-> TimeUnit.MINUTES.toMillis(rule.getWindowMinutes()));
+        Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(rule -> TimeUnit.MINUTES.toMillis(rule.getWindowMinutes()));
         Optional<Long> cleanupEventTimeThreshold = cleanupEventTimeWindow.map(window -> timestamp - window);
         cleanupEventTimeThreshold.ifPresent(this::evictAgedElementsFromWindow);
     }
