@@ -5,6 +5,7 @@ import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.common.dto.Alert;
+import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;

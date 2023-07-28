@@ -1,7 +1,5 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
-import com.luixtech.frauddetection.flinkjob.core.FieldsExtractor;
-
 import java.util.Iterator;
 import java.util.List;
 
