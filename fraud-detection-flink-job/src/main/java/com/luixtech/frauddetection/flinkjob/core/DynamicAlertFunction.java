@@ -23,6 +23,7 @@ import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
 import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -77,6 +78,42 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     }
 
     @Override
+    public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
+        log.debug("Received {}", rule);
+        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
+        ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
+        updateWidestWindowRule(rule, broadcastState);
+        if (rule.getRuleState() == RuleState.CONTROL) {
+            handleControlCommand(rule, broadcastState, ctx);
+        }
+    }
+
+    private void handleControlCommand(Rule command, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
+        ControlType controlType = command.getControlType();
+        switch (controlType) {
+            case EXPORT_RULES_CURRENT:
+                for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
+                    ctx.output(Descriptors.CURRENT_RULES_SINK_TAG, entry.getValue());
+                }
+                break;
+            case CLEAR_STATE_ALL:
+                ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
+                break;
+            case CLEAR_STATE_ALL_STOP:
+                rulesState.remove(CLEAR_STATE_COMMAND_KEY);
+                break;
+            case DELETE_RULES_ALL:
+                Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
+                while (entriesIterator.hasNext()) {
+                    Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                    rulesState.remove(ruleEntry.getKey());
+                    log.info("Removed Rule {}", ruleEntry.getValue());
+                }
+                break;
+        }
+    }
+
+    @Override
     public void processElement(Keyed<Transaction, String, Integer> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         long currentEventTime = value.getWrapped().getEventTime();
         // Add Transaction to state
@@ -127,42 +164,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                 alertMeter.markEvent();
                 out.collect(new Alert<>(rule.getRuleId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
             }
-        }
-    }
-
-    @Override
-    public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
-        log.info("Found rule {}", rule);
-        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        handleRuleBroadcast(rule, broadcastState);
-        updateWidestWindowRule(rule, broadcastState);
-        if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule, broadcastState, ctx);
-        }
-    }
-
-    private void handleControlCommand(Rule command, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
-        ControlType controlType = command.getControlType();
-        switch (controlType) {
-            case EXPORT_RULES_CURRENT:
-                for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
-                    ctx.output(Descriptors.CURRENT_RULES_SINK_TAG, entry.getValue());
-                }
-                break;
-            case CLEAR_STATE_ALL:
-                ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
-                break;
-            case CLEAR_STATE_ALL_STOP:
-                rulesState.remove(CLEAR_STATE_COMMAND_KEY);
-                break;
-            case DELETE_RULES_ALL:
-                Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-                while (entriesIterator.hasNext()) {
-                    Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                    rulesState.remove(ruleEntry.getKey());
-                    log.info("Removed Rule {}", ruleEntry.getValue());
-                }
-                break;
         }
     }
 

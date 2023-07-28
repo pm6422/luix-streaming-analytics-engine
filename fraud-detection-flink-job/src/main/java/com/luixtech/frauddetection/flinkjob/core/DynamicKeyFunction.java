@@ -51,25 +51,8 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processElement(Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
-        ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        forkEventForEachGroupingKey(event, rulesState, out);
-    }
-
-    private void forkEventForEachGroupingKey(Transaction event, ReadOnlyBroadcastState<Integer, Rule> rulesState,
-                                             Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
-        int ruleCounter = 0;
-        for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
-            final Rule rule = entry.getValue();
-            out.collect(new Keyed<>(event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
-            ruleCounter++;
-        }
-        ruleCounterGauge.setValue(ruleCounter);
-    }
-
-    @Override
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
-        log.info("{}", rule);
+        log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
@@ -86,6 +69,23 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
                 log.info("Removed Rule {}", ruleEntry.getValue());
             }
         }
+    }
+
+    @Override
+    public void processElement(Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+        ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
+        forkEventForEachGroupingKey(event, rulesState, out);
+    }
+
+    private void forkEventForEachGroupingKey(Transaction event, ReadOnlyBroadcastState<Integer, Rule> rulesState,
+                                             Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+        int ruleCounter = 0;
+        for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
+            final Rule rule = entry.getValue();
+            out.collect(new Keyed<>(event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
+            ruleCounter++;
+        }
+        ruleCounterGauge.setValue(ruleCounter);
     }
 
     private static class RuleCounterGauge implements Gauge<Integer> {
