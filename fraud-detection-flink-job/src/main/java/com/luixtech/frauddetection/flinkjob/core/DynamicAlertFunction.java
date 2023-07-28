@@ -109,9 +109,10 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void processElement(Keyed<Transaction, String, Integer> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
-        long currentEventTime = value.getWrapped().getEventTime();
+        Transaction transaction = value.getWrapped();
+        long eventTime = transaction.getEventTime();
         // Add Transaction to state
-        addToStateValuesSet(windowState, currentEventTime, value.getWrapped());
+        addToStateValuesSet(windowState, eventTime, transaction);
 
         long ingestionTime = value.getWrapped().getIngestionTimestamp();
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - ingestionTime);
@@ -123,15 +124,15 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
 
         if (rule.getRuleState() == RuleState.ACTIVE) {
-            Long windowStartForEvent = currentEventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
-            long cleanupTime = (currentEventTime / 1000) * 1000;
+            long cleanupTime = (eventTime / 1000) * 1000;
             ctx.timerService().registerEventTimeTimer(cleanupTime);
 
             // Calculate the aggregate value
             SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
             for (Long stateEventTime : windowState.keys()) {
-                if (isStateValueInWindow(stateEventTime, windowStartForEvent, currentEventTime)) {
+                if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
                     aggregateValuesInState(stateEventTime, aggregator, rule);
                 }
             }
@@ -172,8 +173,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             }
         } else {
             for (Transaction event : inWindow) {
-                BigDecimal aggregatedValue =
-                        FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), event);
+                BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), event);
                 aggregator.add(aggregatedValue);
             }
         }
