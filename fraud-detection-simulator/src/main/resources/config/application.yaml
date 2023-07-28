@@ -146,13 +146,6 @@ luix:
 # Application specific properties
 # ===================================================================
 application:
-  web-socket:
-    topic:
-      transactions: /topic/transactions
-      alerts: /topic/alerts
-      latency: /topic/latency
-  transaction:
-    max-transaction-speed: 50
   kafka:
     topic:
       transactions: livetransactions
@@ -163,3 +156,10 @@ application:
     listeners:
       transactions:
         id: transactions-listener
+  web-socket:
+    topic:
+      transactions: /topic/transactions
+      alerts: /topic/alerts
+      latency: /topic/latency
+  transaction:
+    max-transaction-speed: 50

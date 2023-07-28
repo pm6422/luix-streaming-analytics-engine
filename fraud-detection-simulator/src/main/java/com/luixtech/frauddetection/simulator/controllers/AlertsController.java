@@ -8,7 +8,7 @@ import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaTransactionPusher;
+import com.luixtech.frauddetection.simulator.services.KafkaTransactionProducer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +27,9 @@ import java.math.BigDecimal;
 public class AlertsController {
 
     private static final ObjectMapper            OBJECT_MAPPER = new ObjectMapper();
-    private final RuleRepository         ruleRepository;
-    private final KafkaTransactionPusher transactionsPusher;
-    private final SimpMessagingTemplate  simpSender;
+    private final RuleRepository           ruleRepository;
+    private final KafkaTransactionProducer transactionsPusher;
+    private final SimpMessagingTemplate    simpSender;
     private final        ApplicationProperties   applicationProperties;
 
     @GetMapping("/alerts/mock")

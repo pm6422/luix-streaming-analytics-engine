@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.simulator.controllers;
 import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaRulePusher;
+import com.luixtech.frauddetection.simulator.services.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 class RuleController {
 
-    private final RuleRepository  ruleRepository;
-    private final KafkaRulePusher kafkaRulePusher;
+    private final RuleRepository    ruleRepository;
+    private final KafkaRuleProducer kafkaRuleProducer;
 
     @GetMapping("/rules")
     List<RulePayload> find() {
@@ -25,7 +25,7 @@ class RuleController {
     @PostMapping("/rules")
     RulePayload save(@RequestBody RulePayload newRulePayload) {
         RulePayload savedRulePayload = ruleRepository.save(newRulePayload);
-        kafkaRulePusher.addRule(savedRulePayload.toRule());
+        kafkaRuleProducer.addRule(savedRulePayload.toRule());
         return savedRulePayload;
     }
 
@@ -37,7 +37,7 @@ class RuleController {
     @DeleteMapping("/rules/{id}")
     void delete(@PathVariable Integer id) {
         ruleRepository.deleteById(id);
-        kafkaRulePusher.deleteRule(id);
+        kafkaRuleProducer.deleteRule(id);
     }
 
     @DeleteMapping("/rules")
@@ -45,7 +45,7 @@ class RuleController {
         List<RulePayload> rulePayloads = ruleRepository.findAll();
         for (RulePayload rulePayload : rulePayloads) {
             ruleRepository.deleteById(rulePayload.getId());
-            kafkaRulePusher.deleteRule(rulePayload.getId());
+            kafkaRuleProducer.deleteRule(rulePayload.getId());
         }
     }
 }

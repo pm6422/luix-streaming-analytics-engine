@@ -5,7 +5,7 @@ import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaRulePusher;
+import com.luixtech.frauddetection.simulator.services.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,27 +18,27 @@ import java.util.List;
 @AllArgsConstructor
 public class FlinkController {
 
-    private final RuleRepository  ruleRepository;
-    private final KafkaRulePusher kafkaRulePusher;
+    private final RuleRepository    ruleRepository;
+    private final KafkaRuleProducer kafkaRuleProducer;
 
     @GetMapping("/flink/sync-rules")
     void syncRules() {
         List<RulePayload> rulePayloads = ruleRepository.findAll();
         for (RulePayload rulePayload : rulePayloads) {
-            kafkaRulePusher.addRule(rulePayload.toRule());
+            kafkaRuleProducer.addRule(rulePayload.toRule());
         }
     }
 
     @GetMapping("/flink/export-current-rules")
     void exportCurrentRules() {
         RulePayload command = createControlCommand(ControlType.EXPORT_CURRENT_RULES);
-        kafkaRulePusher.addRule(command.toRule());
+        kafkaRuleProducer.addRule(command.toRule());
     }
 
     @GetMapping("/flink/clear-state")
     void clearState() {
         RulePayload command = createControlCommand(ControlType.CLEAR_STATE_ALL);
-        kafkaRulePusher.addRule(command.toRule());
+        kafkaRuleProducer.addRule(command.toRule());
     }
 
     private RulePayload createControlCommand(ControlType clearStateAll) {

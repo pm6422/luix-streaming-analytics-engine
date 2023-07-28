@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 @Slf4j
 @Deprecated
-public class KafkaAlertPusher implements Consumer<Alert> {
+public class KafkaAlertProducer implements Consumer<Alert> {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ApplicationProperties         applicationProperties;

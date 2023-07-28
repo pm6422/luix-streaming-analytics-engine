@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 @Service
 @Slf4j
-public class KafkaRulePusher {
+public class KafkaRuleProducer {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;

@@ -15,14 +15,15 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class KafkaTransactionsConsumerService implements ConsumerSeekAware {
+public class KafkaTransactionConsumer implements ConsumerSeekAware {
 
     private final SimpMessagingTemplate simpTemplate;
     private final ApplicationProperties applicationProperties;
 
     @KafkaListener(id = "${application.kafka.listeners.transactions.id}", topics = "${application.kafka.topic.transactions}", groupId = "transactions")
     public void consumeTransactions(@Payload String message) {
-        log.debug("{}", message);
+        log.debug("Received transaction {}", message);
+        // Send to websocket
         simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransactions(), message);
     }
 

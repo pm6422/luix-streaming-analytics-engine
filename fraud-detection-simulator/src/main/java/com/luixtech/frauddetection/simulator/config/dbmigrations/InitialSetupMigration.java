@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaRulePusher;
+import com.luixtech.frauddetection.simulator.services.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class InitialSetupMigration implements ApplicationRunner {
 
-    private final RuleRepository  ruleRepository;
-    private final KafkaRulePusher kafkaRulePusher;
+    private final RuleRepository    ruleRepository;
+    private final KafkaRuleProducer kafkaRuleProducer;
 
     public void run(ApplicationArguments args) {
         String payload1 =
@@ -72,6 +72,6 @@ public class InitialSetupMigration implements ApplicationRunner {
         ruleRepository.save(rulePayload4);
 
         List<RulePayload> rulePayloads = ruleRepository.findAll();
-        rulePayloads.stream().map(RulePayload::toRule).forEach(kafkaRulePusher::addRule);
+        rulePayloads.stream().map(RulePayload::toRule).forEach(kafkaRuleProducer::addRule);
     }
 }

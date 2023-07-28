@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 @Service
 @Slf4j
-public class KafkaTransactionPusher implements Consumer<Transaction> {
+public class KafkaTransactionProducer implements Consumer<Transaction> {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;

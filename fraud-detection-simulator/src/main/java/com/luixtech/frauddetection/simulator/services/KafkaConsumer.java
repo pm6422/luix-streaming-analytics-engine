@@ -35,7 +35,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class KafkaConsumerService {
+public class KafkaConsumer {
 
     private static final ObjectMapper          OBJECT_MAPPER = new ObjectMapper();
     private final        SimpMessagingTemplate simpTemplate;
@@ -45,18 +45,20 @@ public class KafkaConsumerService {
     @KafkaListener(topics = "${application.kafka.topic.alerts}", groupId = "alerts")
     public void templateAlerts(@Payload String message) {
         log.warn("Detected alert {}", message);
+        // Send to websocket
         simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlerts(), message);
     }
 
     @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latency")
     public void templateLatency(@Payload String message) {
         log.warn("Found latency {}", message);
+        // Send to websocket
         simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
     }
 
     @KafkaListener(topics = "${application.kafka.topic.current-rules}", groupId = "current-rules")
     public void templateCurrentFlinkRules(@Payload String message) throws IOException {
-        log.info("{}", message);
+        log.info("Found current rule {}", message);
         Rule rule = OBJECT_MAPPER.readValue(message, Rule.class);
         Optional<RulePayload> existingRule = ruleRepository.findById(rule.getRuleId());
         if (!existingRule.isPresent()) {
