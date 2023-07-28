@@ -68,7 +68,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-
         if (rule.getRuleState() != Rule.RuleState.ACTIVE) {
             return;
         }
