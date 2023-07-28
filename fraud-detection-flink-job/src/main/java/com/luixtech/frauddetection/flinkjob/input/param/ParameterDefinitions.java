@@ -8,6 +8,10 @@ import java.util.List;
 
 @AllArgsConstructor
 public class ParameterDefinitions {
+    /**
+     * Message channel to use: kafka, socket
+     */
+    public static final InputParam<String>  MESSAGE_CHANNEL               = InputParam.string("message-channel", "kafka");
     // Kafka:
     public static final InputParam<String>  KAFKA_HOST                    = InputParam.string("kafka-host", "localhost");
     public static final InputParam<Integer> KAFKA_PORT                    = InputParam.integer("kafka-port", 9092);
@@ -34,7 +38,7 @@ public class ParameterDefinitions {
     public static final InputParam<Integer> MIN_PAUSE_BETWEEN_CHECKPOINTS = InputParam.integer("min-pause-btwn-checkpoints", 10000);
     public static final InputParam<Integer> OUT_OF_ORDERNESS              = InputParam.integer("out-of-orderdness", 500);
 
-    public static final List<InputParam<?>> ALL = Arrays.asList(KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, CURRENT_RULES_TOPIC, OFFSET,
+    public static final List<InputParam<?>> ALL = Arrays.asList(MESSAGE_CHANNEL, KAFKA_HOST, DATA_TOPIC, ALERTS_TOPIC, RULES_TOPIC, LATENCY_TOPIC, CURRENT_RULES_TOPIC, OFFSET,
             RULES_SOURCE, TRANSACTIONS_SOURCE, ALERTS_SINK, LATENCY_SINK, CURRENT_RULES_SINK,
             KAFKA_PORT, RULE_SOCKET_PORT, RECORDS_PER_SECOND, SOURCE_PARALLELISM, CHECKPOINT_INTERVAL, MIN_PAUSE_BETWEEN_CHECKPOINTS, OUT_OF_ORDERNESS,
             LOCAL_WEBSERVER, ENABLE_CHECKPOINTS);
