@@ -1,16 +1,14 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.domain.Alert;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
-import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
+import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.output.sinks.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.output.sinks.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.output.sinks.LatencySink;
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
-import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
-import com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource;
-import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -24,12 +22,12 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.*;
-import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.*;
+import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
+import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.stringsStreamToTransactions;
 
 @Slf4j
 @AllArgsConstructor
