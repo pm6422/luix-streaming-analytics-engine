@@ -1,5 +1,6 @@
-package com.luixtech.frauddetection.flinkjob.domain;
+package com.luixtech.frauddetection.flinkjob.dto;
 
+import com.luixtech.frauddetection.common.dto.Rule;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

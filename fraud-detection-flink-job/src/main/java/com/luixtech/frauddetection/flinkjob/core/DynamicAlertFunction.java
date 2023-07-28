@@ -1,10 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.flinkjob.domain.Alert;
-import com.luixtech.frauddetection.flinkjob.domain.Rule;
-import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
-import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
+import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.dto.Alert;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
 
@@ -68,21 +69,22 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (rule.getRuleState() != Rule.RuleState.ACTIVE) {
+        if (rule.getRuleState() != RuleState.ACTIVE) {
             return;
         }
         if (widestWindowRule == null) {
             broadcastState.put(WIDEST_RULE_KEY, rule);
             return;
         }
-        if (widestWindowRule.getWindowMillis() < rule.getWindowMillis()) {
+
+        if (TimeUnit.MINUTES.toMillis(widestWindowRule.getWindowMinutes()) < TimeUnit.MINUTES.toMillis(rule.getWindowMinutes())) {
             broadcastState.put(WIDEST_RULE_KEY, rule);
         }
     }
 
     private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
         switch (controlType) {
-            case EXPORT_RULES_CURRENT:
+            case EXPORT_CURRENT_RULES:
                 for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
                     ctx.output(Descriptors.CURRENT_RULES_SINK_TAG, entry.getValue());
                 }
@@ -120,8 +122,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             return;
         }
 
-        if (rule.getRuleState() == Rule.RuleState.ACTIVE) {
-            Long windowStartForEvent = rule.getWindowStartFor(currentEventTime);
+        if (rule.getRuleState() == RuleState.ACTIVE) {
+            Long windowStartForEvent = currentEventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
             long cleanupTime = (currentEventTime / 1000) * 1000;
             ctx.timerService().registerEventTimeTimer(cleanupTime);
@@ -187,7 +189,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
         Rule widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
 
-        Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(Rule::getWindowMillis);
+        Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(rule-> TimeUnit.MINUTES.toMillis(rule.getWindowMinutes()));
         Optional<Long> cleanupEventTimeThreshold = cleanupEventTimeWindow.map(window -> timestamp - window);
         cleanupEventTimeThreshold.ifPresent(this::evictAgedElementsFromWindow);
     }

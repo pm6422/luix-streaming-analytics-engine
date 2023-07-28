@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
-import com.luixtech.frauddetection.simulator.domain.Rule;
+import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.FlinkRulesService;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"ruleState\":\"ACTIVE\","
                         + "\"windowMinutes\":\"43200\"}";
 
-        Rule rule1 = new Rule(payload1);
+        RulePayload rulePayload1 = new RulePayload(payload1);
 
         String payload2 =
                 "{\"ruleId\":\"2\","
@@ -40,7 +40,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"ruleState\":\"PAUSE\","
                         + "\"windowMinutes\":\"1440\"}";
 
-        Rule rule2 = new Rule(payload2);
+        RulePayload rulePayload2 = new RulePayload(payload2);
 
         String payload3 =
                 "{\"ruleId\":\"3\","
@@ -52,7 +52,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"ruleState\":\"ACTIVE\","
                         + "\"windowMinutes\":\"1440\"}";
 
-        Rule rule3 = new Rule(payload3);
+        RulePayload rulePayload3 = new RulePayload(payload3);
 
         String payload4 =
                 "{\"ruleId\":\"4\","
@@ -64,14 +64,14 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"ruleState\":\"ACTIVE\","
                         + "\"windowMinutes\":\"1440\"}";
 
-        Rule rule4 = new Rule(payload4);
+        RulePayload rulePayload4 = new RulePayload(payload4);
 
-        ruleRepository.save(rule1);
-        ruleRepository.save(rule2);
-        ruleRepository.save(rule3);
-        ruleRepository.save(rule4);
+        ruleRepository.save(rulePayload1);
+        ruleRepository.save(rulePayload2);
+        ruleRepository.save(rulePayload3);
+        ruleRepository.save(rulePayload4);
 
-        List<Rule> rules = ruleRepository.findAll();
-        rules.forEach(flinkRulesService::addRule);
+        List<RulePayload> rulePayloads = ruleRepository.findAll();
+        rulePayloads.forEach(flinkRulesService::addRule);
     }
 }

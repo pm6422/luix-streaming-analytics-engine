@@ -33,7 +33,7 @@ rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName fi
 
 
 ##### Examles of CLI params:
---local true --data-source kafka --rules-source kafka --alerts-sink kafka --rules-export-sink kafka --latency-sink kafka --kafka-port 9092
+--local true --data-source kafka --rulePayloads-source kafka --alerts-sink kafka --rulePayloads-export-sink kafka --latency-sink kafka --kafka-port 9092
 
 ##### Special functions:
 1,(active),(paymentType),,(COUNT_FLINK),(SUM),(>),(50),(20)

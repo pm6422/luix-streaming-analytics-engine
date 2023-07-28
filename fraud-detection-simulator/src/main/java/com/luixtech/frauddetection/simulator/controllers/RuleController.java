@@ -3,8 +3,8 @@ package com.luixtech.frauddetection.simulator.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.framework.exception.DataNotFoundException;
-import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.dto.RulePayload;
+import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.FlinkRulesService;
 import lombok.AllArgsConstructor;
@@ -23,33 +23,33 @@ class RuleController {
     private final        FlinkRulesService flinkRulesService;
 
     @GetMapping("/rules")
-    List<Rule> all() {
+    List<RulePayload> all() {
         return repository.findAll();
     }
 
     @PostMapping("/rules")
-    Rule newRule(@RequestBody Rule newRule) throws IOException {
-        Rule savedRule = repository.save(newRule);
-        Integer id = savedRule.getId();
-        RulePayload payload = OBJECT_MAPPER.readValue(savedRule.getRulePayload(), RulePayload.class);
-        payload.setRuleId(id);
-        String payloadJson = OBJECT_MAPPER.writeValueAsString(payload);
-        savedRule.setRulePayload(payloadJson);
-        Rule result = repository.save(savedRule);
+    RulePayload newRule(@RequestBody RulePayload newRulePayload) throws IOException {
+        RulePayload savedRulePayload = repository.save(newRulePayload);
+        Integer id = savedRulePayload.getId();
+        Rule rule = OBJECT_MAPPER.readValue(savedRulePayload.getRulePayload(), Rule.class);
+        rule.setRuleId(id);
+        String payloadJson = OBJECT_MAPPER.writeValueAsString(rule);
+        savedRulePayload.setRulePayload(payloadJson);
+        RulePayload result = repository.save(savedRulePayload);
         flinkRulesService.addRule(result);
         return result;
     }
 
     @GetMapping("/rules/push-to-flink")
     void pushToFlink() {
-        List<Rule> rules = repository.findAll();
-        for (Rule rule : rules) {
-            flinkRulesService.addRule(rule);
+        List<RulePayload> rulePayloads = repository.findAll();
+        for (RulePayload rulePayload : rulePayloads) {
+            flinkRulesService.addRule(rulePayload);
         }
     }
 
     @GetMapping("/rules/{id}")
-    Rule one(@PathVariable Integer id) {
+    RulePayload one(@PathVariable Integer id) {
         return repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
     }
 
@@ -61,10 +61,10 @@ class RuleController {
 
     @DeleteMapping("/rules")
     void deleteAllRules() throws JsonProcessingException {
-        List<Rule> rules = repository.findAll();
-        for (Rule rule : rules) {
-            repository.deleteById(rule.getId());
-            flinkRulesService.deleteRule(rule.getId());
+        List<RulePayload> rulePayloads = repository.findAll();
+        for (RulePayload rulePayload : rulePayloads) {
+            repository.deleteById(rulePayload.getId());
+            flinkRulesService.deleteRule(rulePayload.getId());
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.luixtech.frauddetection.flinkjob.serializer;
 
-import com.luixtech.frauddetection.flinkjob.domain.Rule;
-import com.luixtech.frauddetection.flinkjob.domain.Rule.AggregatorFunctionType;
-import com.luixtech.frauddetection.flinkjob.domain.Rule.LimitOperatorType;
-import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
+import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType;
+import com.luixtech.frauddetection.common.dto.Rule.LimitOperatorType;
+import com.luixtech.frauddetection.common.rule.RuleState;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;

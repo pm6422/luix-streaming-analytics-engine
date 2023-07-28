@@ -18,9 +18,9 @@
 package com.luixtech.frauddetection.simulator.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.dto.RulePayload;
+import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,11 +57,11 @@ public class KafkaConsumerService {
     @KafkaListener(topics = "${application.kafka.topic.current-rules}", groupId = "current-rules")
     public void templateCurrentFlinkRules(@Payload String message) throws IOException {
         log.info("{}", message);
-        RulePayload payload = OBJECT_MAPPER.readValue(message, RulePayload.class);
-        Integer payloadId = payload.getRuleId();
-        Optional<Rule> existingRule = ruleRepository.findById(payloadId);
+        Rule rule = OBJECT_MAPPER.readValue(message, Rule.class);
+        Integer payloadId = rule.getRuleId();
+        Optional<RulePayload> existingRule = ruleRepository.findById(payloadId);
         if (!existingRule.isPresent()) {
-            ruleRepository.save(new Rule(payloadId, OBJECT_MAPPER.writeValueAsString(payload)));
+            ruleRepository.save(new RulePayload(payloadId, OBJECT_MAPPER.writeValueAsString(rule)));
         }
     }
 }

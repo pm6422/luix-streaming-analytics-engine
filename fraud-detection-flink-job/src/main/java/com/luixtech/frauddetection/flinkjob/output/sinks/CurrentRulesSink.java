@@ -19,7 +19,7 @@
 package com.luixtech.frauddetection.flinkjob.output.sinks;
 
 import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
-import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;

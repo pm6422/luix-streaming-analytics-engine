@@ -1,9 +1,11 @@
-package com.luixtech.frauddetection.simulator.dto;
+package com.luixtech.frauddetection.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.rule.RuleState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+//import org.apache.flink.api.common.time.Time;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,19 +16,26 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RulePayload {
-
-    private Integer                ruleId;
-    private RuleState              ruleState;
-    private List<String>           groupingKeyNames; // aggregation
+public class Rule {
+    private Integer      ruleId;
+    private RuleState    ruleState;
+    private ControlType  controlType;
+    private List<String> groupingKeyNames; // aggregation
     private List<String>           unique;
     private String                 aggregateFieldName;
     private AggregatorFunctionType aggregatorFunctionType;
     private LimitOperatorType      limitOperatorType;
     private BigDecimal             limit;
     private Integer                windowMinutes;
-    private ControlType            controlType;
+
+//    public Long getWindowMillis() {
+//        return Time.minutes(this.windowMinutes).toMilliseconds();
+//    }
+
+//    public long getWindowStartFor(Long timestamp) {
+//        Long ruleWindowMillis = getWindowMillis();
+//        return (timestamp - ruleWindowMillis);
+//    }
 
     /**
      * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
@@ -83,17 +92,4 @@ public class RulePayload {
         }
     }
 
-    public enum RuleState {
-        ACTIVE,
-        PAUSE,
-        DELETE,
-        CONTROL
-    }
-
-    public enum ControlType {
-        CLEAR_STATE_ALL,
-        CLEAR_STATE_ALL_STOP,
-        DELETE_RULES_ALL,
-        EXPORT_RULES_CURRENT
-    }
 }

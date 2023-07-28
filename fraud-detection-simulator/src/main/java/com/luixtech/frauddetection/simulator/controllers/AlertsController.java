@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.domain.Rule;
+import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.dto.Alert;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.services.KafkaTransactionsPusher;
@@ -31,12 +31,12 @@ public class AlertsController {
 
     @GetMapping("/rules/{id}/alert")
     public Alert mockAlert(@PathVariable Integer id) throws JsonProcessingException {
-        Rule rule = repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
+        RulePayload rulePayload = repository.findById(id).orElseThrow(() -> new DataNotFoundException(id.toString()));
         Transaction triggeringEvent = transactionsPusher.getLastTransaction();
-        String violatedRule = rule.getRulePayload();
+        String violatedRule = rulePayload.getRulePayload();
         BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
 
-        Alert alert = new Alert(rule.getId(), violatedRule, triggeringEvent, triggeringValue);
+        Alert alert = new Alert(rulePayload.getId(), violatedRule, triggeringEvent, triggeringValue);
         String result = OBJECT_MAPPER.writeValueAsString(alert);
         simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlerts(), result);
         return alert;

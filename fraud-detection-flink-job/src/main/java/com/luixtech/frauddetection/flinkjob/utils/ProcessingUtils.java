@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
-import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.common.dto.Rule;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
 

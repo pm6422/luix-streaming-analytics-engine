@@ -18,7 +18,7 @@
 
 package com.luixtech.frauddetection.flinkjob.output.sinks;
 
-import com.luixtech.frauddetection.flinkjob.domain.Alert;
+import com.luixtech.frauddetection.flinkjob.dto.Alert;
 import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;

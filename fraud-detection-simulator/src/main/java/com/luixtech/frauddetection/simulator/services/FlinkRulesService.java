@@ -19,10 +19,10 @@ package com.luixtech.frauddetection.simulator.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.domain.Rule;
-import com.luixtech.frauddetection.simulator.dto.RulePayload;
-import com.luixtech.frauddetection.simulator.dto.RulePayload.RuleState;
+import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -35,16 +35,16 @@ public class FlinkRulesService {
     private final        KafkaTemplate<String, String> kafkaTemplate;
     private final        ApplicationProperties         applicationProperties;
 
-    public void addRule(Rule rule) {
-        String payload = rule.getRulePayload();
+    public void addRule(RulePayload rulePayload) {
+        String payload = rulePayload.getRulePayload();
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), payload);
     }
 
     public void deleteRule(int ruleId) throws JsonProcessingException {
-        RulePayload payload = new RulePayload();
-        payload.setRuleId(ruleId);
-        payload.setRuleState(RuleState.DELETE);
-        String payloadJson = OBJECT_MAPPER.writeValueAsString(payload);
+        Rule rule = new Rule();
+        rule.setRuleId(ruleId);
+        rule.setRuleState(RuleState.DELETE);
+        String payloadJson = OBJECT_MAPPER.writeValueAsString(rule);
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), payloadJson);
     }
 }

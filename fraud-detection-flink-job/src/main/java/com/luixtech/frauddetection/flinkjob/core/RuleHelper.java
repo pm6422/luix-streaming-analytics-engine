@@ -4,7 +4,7 @@ import com.luixtech.frauddetection.flinkjob.core.accumulator.AverageAccumulator;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalCounter;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMaximum;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMinimum;
-import com.luixtech.frauddetection.flinkjob.domain.Rule;
+import com.luixtech.frauddetection.common.dto.Rule;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 
 import java.math.BigDecimal;

@@ -30,9 +30,9 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Rule {
+public class RulePayload {
 
-    public Rule(String rulePayload) {
+    public RulePayload(String rulePayload) {
         this.rulePayload = rulePayload;
     }
 
