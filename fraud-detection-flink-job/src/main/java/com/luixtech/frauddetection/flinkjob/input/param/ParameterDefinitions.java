@@ -18,16 +18,9 @@ public class ParameterDefinitions {
     //todo: check usage
     public static final InputParam<String>  LATENCY_TOPIC                        = InputParam.string("latency-topic", "latency");
     public static final InputParam<String>  OFFSET                               = InputParam.string("offset", "latest");
-    // GCP PubSub:
-    public static final InputParam<String>  GCP_PROJECT_NAME                     = InputParam.string("gcp-project", "da-fe-212612");
-    public static final InputParam<String>  GCP_PUBSUB_RULES_SUBSCRIPTION        = InputParam.string("pubsub-rules", "rules-demo");
-    public static final InputParam<String>  GCP_PUBSUB_ALERTS_SUBSCRIPTION       = InputParam.string("pubsub-alerts", "alerts-demo");
-    public static final InputParam<String>  GCP_PUBSUB_LATENCY_SUBSCRIPTION      = InputParam.string("pubsub-latency", "latency-demo");
-    public static final InputParam<String>  GCP_PUBSUB_RULES_EXPORT_SUBSCRIPTION = InputParam.string("pubsub-rules-export", "current-rules-demo");
     // Socket
     public static final InputParam<Integer> SOCKET_PORT                          = InputParam.integer("pubsub-rules-export", 9999);
-    // General:
-    //    source/sink types: kafka / pubsub / socket
+    // source types: kafka / pubsub / socket
     public static final InputParam<String>  RULES_SOURCE                         = InputParam.string("rules-source", "SOCKET");
     public static final InputParam<String>  TRANSACTIONS_SOURCE                  = InputParam.string("data-source", "GENERATOR");
     public static final InputParam<String>  ALERTS_SINK                          = InputParam.string("alerts-sink", "STDOUT");
