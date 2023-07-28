@@ -29,7 +29,7 @@ public class TransactionGeneratorController {
     private boolean listenerContainerRunning = true;
 
     @GetMapping("/api/transaction-generator/start")
-    public void startTransactionsGeneration() {
+    public void start() {
         if (!generatingTransactions) {
             EXECUTOR_SERVICE.submit(transactionsGenerator);
             generatingTransactions = true;
@@ -37,7 +37,7 @@ public class TransactionGeneratorController {
     }
 
     @GetMapping("/api/transaction-generator/stop")
-    public void stopTransactionsGeneration() {
+    public void stop() {
         transactionsGenerator.cancel();
         generatingTransactions = false;
         log.info("{}", "stopTransactionsGeneration called");
@@ -51,7 +51,7 @@ public class TransactionGeneratorController {
             generatingTransactions = false;
             return;
         } else {
-            startTransactionsGeneration();
+            start();
         }
 
         MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry

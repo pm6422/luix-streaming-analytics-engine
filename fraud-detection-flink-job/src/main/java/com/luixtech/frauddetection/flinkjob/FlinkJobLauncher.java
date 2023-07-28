@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
 
 /**
  * Main class to launch the Flink job with CLI params:
- * --local-webserver true --data-source kafka --rules-source kafka --alerts-sink kafka --current-rules-sink kafka --latency-sink kafka --kafka-port 9092
+ * --message-channel socket --flink-server true
  */
 public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {

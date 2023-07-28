@@ -1,11 +1,11 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.flinkjob.core.MessageChannel;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
-import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
@@ -17,20 +17,16 @@ import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import java.util.Arrays;
 import java.util.Properties;
 
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.CURRENT_RULES_SINK;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.MESSAGE_CHANNEL;
+import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 
 public class CurrentRulesSink {
 
-    public static CurrentRulesSink.Type getRuleSourceType(Parameters parameters) {
-        String currentRules = parameters.getValue(CURRENT_RULES_SINK);
-        return CurrentRulesSink.Type.valueOf(currentRules.toUpperCase());
-    }
-
     public static DataStreamSink<String> addRulesSink(Parameters parameters, DataStream<String> stream) {
-        CurrentRulesSink.Type currentRulesSinkType = getRuleSourceType(parameters);
+        MessageChannel messageChannel = getEnumByValue(MessageChannel.class, parameters.getValue(MESSAGE_CHANNEL));
         DataStreamSink<String> dataStreamSink;
 
-        switch (currentRulesSinkType) {
+        switch (messageChannel) {
             case KAFKA:
                 Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(parameters);
                 String currentRulesTopic = parameters.getValue(ParameterDefinitions.CURRENT_RULES_TOPIC);
@@ -47,30 +43,17 @@ public class CurrentRulesSink {
                                 .build();
                 dataStreamSink = stream.sinkTo(kafkaSink);
                 break;
-            case STDOUT:
+            case SOCKET:
                 dataStreamSink = stream.addSink(new PrintSinkFunction<>(true));
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Source \"" + currentRulesSinkType + "\" unknown. Known values are:" + Arrays.toString(Type.values()));
+                        "Source \"" + messageChannel + "\" unknown. Known values are:" + Arrays.toString(messageChannel.values()));
         }
         return dataStreamSink;
     }
 
     public static DataStream<String> rulesStreamToJson(DataStream<Rule> alerts) {
         return alerts.flatMap(new JsonSerializer<>(Rule.class)).name("Rules Deserialization");
-    }
-
-    @Getter
-    public enum Type {
-        KAFKA("Current Rules Sink (Kafka)"),
-        //        PUBSUB("Current Rules Sink (Pub/Sub)"),
-        STDOUT("Current Rules Sink (Std. Out)");
-
-        private final String name;
-
-        Type(String name) {
-            this.name = name;
-        }
     }
 }

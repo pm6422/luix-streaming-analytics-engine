@@ -1,11 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
-import com.luixtech.frauddetection.flinkjob.input.source.RulesSource;
 import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.output.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.output.LatencySink;
@@ -25,9 +24,11 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
-import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.*;
+import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.initRulesSource;
+import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.stringsStreamToRules;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.stringsStreamToTransactions;
+import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 
 @Slf4j
 @AllArgsConstructor
@@ -92,7 +93,7 @@ public class RulesEvaluator {
     }
 
     private StreamExecutionEnvironment getStreamExecutionEnv() {
-        if (!parameters.getValue(LOCAL_WEBSERVER)) {
+        if (!parameters.getValue(FLINK_SERVER)) {
             return StreamExecutionEnvironment.getExecutionEnvironment();
         }
 
@@ -106,8 +107,8 @@ public class RulesEvaluator {
     }
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceType = getRuleSourceType(parameters);
-        switch (rulesSourceType) {
+        MessageChannel messageChannel = getEnumByValue(MessageChannel.class, parameters.getValue(MESSAGE_CHANNEL));
+        switch (messageChannel) {
             case SOCKET:
                 env.setRestartStrategy(
                         RestartStrategies.fixedDelayRestart(

@@ -1,10 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.input.source;
 
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.flinkjob.core.MessageChannel;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -18,21 +18,18 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.RULES_SOURCE;
 import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.MESSAGE_CHANNEL;
+import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 
 @Slf4j
 public class RulesSource {
-    public static RulesSource.Type getRuleSourceType(Parameters parameters) {
-        String rulesSource = parameters.getValue(RULES_SOURCE);
-        return RulesSource.Type.valueOf(rulesSource.toUpperCase());
-    }
 
     public static DataStreamSource<String> initRulesSource(Parameters parameters, StreamExecutionEnvironment env) {
-        RulesSource.Type rulesSourceType = getRuleSourceType(parameters);
+        MessageChannel messageChannel = getEnumByValue(MessageChannel.class, parameters.getValue(MESSAGE_CHANNEL));
         DataStreamSource<String> dataStreamSource;
 
-        switch (rulesSourceType) {
+        switch (messageChannel) {
             case KAFKA:
                 // Specify the topic from which the rules are read
                 String rulesTopic = parameters.getValue(ParameterDefinitions.RULES_TOPIC);
@@ -41,7 +38,7 @@ public class RulesSource {
                 // NOTE: Idiomatically, watermarks should be assigned here, but this done later
                 // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
                 // TODO: refactor when FLIP-238 is added
-                dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), rulesSourceType.getName());
+                dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), messageChannel.getValue());
                 log.info("Created kafka based rules source");
                 break;
             case SOCKET:
@@ -52,7 +49,7 @@ public class RulesSource {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Source \"" + rulesSourceType + "\" unknown. Known values are:" + Arrays.toString(Type.values()));
+                        "Source \"" + messageChannel + "\" unknown. Known values are:" + Arrays.toString(messageChannel.values()));
         }
         dataStreamSource.setParallelism(1);
         return dataStreamSource;
@@ -71,18 +68,5 @@ public class RulesSource {
                                 return Long.MAX_VALUE;
                             }
                         });
-    }
-
-    @Getter
-    public enum Type {
-        KAFKA("Rules (Kafka)"),
-        SOCKET("Rules (Socket)");
-//        PUBSUB("Rules (Pub/Sub)");
-
-        private final String name;
-
-        Type(String name) {
-            this.name = name;
-        }
     }
 }
