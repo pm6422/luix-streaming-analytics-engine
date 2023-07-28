@@ -54,12 +54,12 @@ limitOperatorType in [EQUAL("="), NOT_EQUAL("!="), GREATER_EQUAL(">="), LESS_EQU
 H2 Console:
 
 ```
-URL: http://localhost:5656/h2-console/
+http://localhost:5656/h2-console/
 ```
 
-| Setting      | Value              |
-| ------------ | ------------------ |
-| Driver Class | org.h2.Driver      |
-| JDBC URL     | jdbc:h2:mem:testdb |
-| User Name    | sa                 |
-| Password     |                    |
+| Setting      | Value                 |
+| ------------ |-----------------------|
+| Driver Class | org.h2.Driver         |
+| JDBC URL     | jdbc:h2:mem:simulator |
+| User Name    | sa                    |
+| Password     |                       |

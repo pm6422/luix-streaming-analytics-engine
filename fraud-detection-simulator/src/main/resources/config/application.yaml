@@ -77,7 +77,11 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-  h2.console.enabled: true
+  datasource:
+    url: jdbc:h2:mem:simulator
+  h2:
+    console:
+      enabled: true
   kafka:
     producer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
