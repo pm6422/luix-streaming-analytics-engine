@@ -38,7 +38,6 @@ public class RulesEvaluator {
     public void run() throws Exception {
         // Create stream execution environment
         StreamExecutionEnvironment env = createExecutionEnv();
-
         DataStream<Rule> ruleStream = createRuleStream(env);
         // Rule must be broadcast to all flink servers on the same cluster
         BroadcastStream<Rule> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
