@@ -98,7 +98,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                 while (entriesIterator.hasNext()) {
                     Entry<Integer, Rule> ruleEntry = entriesIterator.next();
                     rulesState.remove(ruleEntry.getKey());
-                    log.info("Removed Rule {}", ruleEntry.getValue());
+                    log.info("Removed {}", ruleEntry.getValue());
                 }
                 break;
         }

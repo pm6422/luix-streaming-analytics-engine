@@ -48,7 +48,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
             while (entriesIterator.hasNext()) {
                 Entry<Integer, Rule> ruleEntry = entriesIterator.next();
                 rulesState.remove(ruleEntry.getKey());
-                log.info("Removed Rule {}", ruleEntry.getValue());
+                log.info("Removed {}", ruleEntry.getValue());
             }
         }
     }
