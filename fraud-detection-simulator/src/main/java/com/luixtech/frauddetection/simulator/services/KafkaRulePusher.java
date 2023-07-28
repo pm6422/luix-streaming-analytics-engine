@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 @Service
 @Slf4j
-public class FlinkRulesService {
+public class KafkaRulePusher {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
