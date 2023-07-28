@@ -1,11 +1,11 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
+import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
-import com.luixtech.frauddetection.common.dto.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;

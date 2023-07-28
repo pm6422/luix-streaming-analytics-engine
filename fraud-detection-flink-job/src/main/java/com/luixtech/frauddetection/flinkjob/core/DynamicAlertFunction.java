@@ -62,7 +62,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule, broadcastState, ctx);
+            handleControlCommand(rule.getControlType(), broadcastState, ctx);
         }
     }
 
@@ -80,8 +80,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
-    private void handleControlCommand(Rule command, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
-        ControlType controlType = command.getControlType();
+    private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
         switch (controlType) {
             case EXPORT_RULES_CURRENT:
                 for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
