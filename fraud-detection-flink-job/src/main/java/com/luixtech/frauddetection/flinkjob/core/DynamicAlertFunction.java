@@ -18,11 +18,11 @@
 
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.domain.Alert;
 import com.luixtech.frauddetection.flinkjob.domain.Rule;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.domain.Rule.RuleState;
-import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -46,7 +46,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
-import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.handleRuleBroadcast;
 
 /**
  * Implements main rule evaluation and alerting logic.
@@ -54,20 +53,17 @@ import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.handleR
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
 
-    private static final String COUNT            = "COUNT_FLINK";
-    private static final String COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK";
-
-    private static final int WIDEST_RULE_KEY         = Integer.MIN_VALUE;
-    private static final int CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
-
-    private transient MapState<Long, Set<Transaction>> windowState;
-    private           Meter                            alertMeter;
-
-    private final MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor =
+    private static final String                                     COUNT                   = "COUNT_FLINK";
+    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
+    private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
+    private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
+    private transient    MapState<Long, Set<Transaction>>           windowState;
+    private              Meter                                      alertMeter;
+    private final        MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor   =
             new MapStateDescriptor<>(
                     "windowState",
                     BasicTypeInfo.LONG_TYPE_INFO,
-                    TypeInformation.of(new TypeHint<Set<Transaction>>() {
+                    TypeInformation.of(new TypeHint<>() {
                     }));
 
     @Override
@@ -85,6 +81,21 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule, broadcastState, ctx);
+        }
+    }
+
+    private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
+        Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
+
+        if (rule.getRuleState() != Rule.RuleState.ACTIVE) {
+            return;
+        }
+        if (widestWindowRule == null) {
+            broadcastState.put(WIDEST_RULE_KEY, rule);
+            return;
+        }
+        if (widestWindowRule.getWindowMillis() < rule.getWindowMillis()) {
+            broadcastState.put(WIDEST_RULE_KEY, rule);
         }
     }
 
@@ -190,21 +201,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
         // updated and used in `DynamicKeyFunction`
         return rule == null;
-    }
-
-    private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
-        Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-
-        if (rule.getRuleState() != Rule.RuleState.ACTIVE) {
-            return;
-        }
-        if (widestWindowRule == null) {
-            broadcastState.put(WIDEST_RULE_KEY, rule);
-            return;
-        }
-        if (widestWindowRule.getWindowMillis() < rule.getWindowMillis()) {
-            broadcastState.put(WIDEST_RULE_KEY, rule);
-        }
     }
 
     @Override
