@@ -11,7 +11,7 @@ public class ParameterDefinitions {
     // Kafka:
     public static final InputParam<String>  KAFKA_HOST                    = InputParam.string("kafka-host", "localhost");
     public static final InputParam<Integer> KAFKA_PORT                    = InputParam.integer("kafka-port", 9092);
-    public static final InputParam<String>  DATA_TOPIC                    = InputParam.string("data-topic", "livetransactions");
+    public static final InputParam<String>  DATA_TOPIC                    = InputParam.string("data-topic", "transactions");
     public static final InputParam<String>  RULES_TOPIC                   = InputParam.string("rules-topic", "rules");
     public static final InputParam<String>  CURRENT_RULES_TOPIC           = InputParam.string("current-rules-topic", "current-rules");
     //todo: check usage

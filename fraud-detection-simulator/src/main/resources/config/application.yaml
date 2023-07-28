@@ -148,7 +148,7 @@ luix:
 application:
   kafka:
     topic:
-      transactions: livetransactions
+      transactions: transactions
       alerts: alerts
       latency: latency
       rules: rules
