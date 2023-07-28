@@ -24,7 +24,7 @@ public class KafkaPropertyUtils {
 
     public static Properties initConsumerProperties(Parameters parameters) {
         Properties kafkaProps = initProperties(parameters);
-        String offset = parameters.getValue(OFFSET);
+        String offset = parameters.getValue(KAFKA_OFFSET);
         kafkaProps.setProperty("auto.offset.reset", offset);
         return kafkaProps;
     }
