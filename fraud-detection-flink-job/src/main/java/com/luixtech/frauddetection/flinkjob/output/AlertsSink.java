@@ -19,7 +19,7 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
 import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
@@ -32,7 +32,6 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class AlertsSink {
@@ -44,7 +43,7 @@ public class AlertsSink {
 
         switch (alertsSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(parameters);
+                Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(parameters);
                 String alertsTopic = parameters.getValue(ParameterDefinitions.ALERTS_TOPIC);
 
                 KafkaSink<String> kafkaSink =

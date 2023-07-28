@@ -4,7 +4,7 @@ import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
-import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
 import lombok.Getter;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
@@ -32,7 +32,7 @@ public class CurrentRulesSink {
 
         switch (currentRulesSinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(parameters);
+                Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(parameters);
                 String rulesExportTopic = parameters.getValue(ParameterDefinitions.CURRENT_RULES_TOPIC);
 
                 KafkaSink<String> kafkaSink =

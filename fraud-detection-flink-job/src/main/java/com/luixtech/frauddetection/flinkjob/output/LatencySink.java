@@ -18,7 +18,7 @@
 
 package com.luixtech.frauddetection.flinkjob.output;
 
-import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions;
 import lombok.Getter;
@@ -30,7 +30,6 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class LatencySink {
@@ -42,7 +41,7 @@ public class LatencySink {
 
         switch (latencySinkType) {
             case KAFKA:
-                Properties kafkaProps = KafkaUtils.initProducerProperties(parameters);
+                Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(parameters);
                 String latencyTopic = parameters.getValue(ParameterDefinitions.LATENCY_TOPIC);
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
