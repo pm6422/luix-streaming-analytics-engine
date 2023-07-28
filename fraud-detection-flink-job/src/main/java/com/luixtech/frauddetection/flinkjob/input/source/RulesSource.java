@@ -47,7 +47,7 @@ public class RulesSource {
             case SOCKET:
                 log.info("Created local socket based rules source");
                 SocketTextStreamFunction socketSourceFunction =
-                        new SocketTextStreamFunction("localhost", parameters.getValue(ParameterDefinitions.SOCKET_PORT), "\n", -1);
+                        new SocketTextStreamFunction("localhost", parameters.getValue(ParameterDefinitions.RULE_SOCKET_PORT), "\n", -1);
                 dataStreamSource = env.addSource(socketSourceFunction);
                 break;
             default:

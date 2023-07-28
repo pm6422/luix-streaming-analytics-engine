@@ -42,7 +42,7 @@ public class TransactionsSource {
             dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), transactionsSourceType.getName());
             log.info("Created kafka based transactions source");
         } else {
-            // Local generator mode
+            // Local transaction generator mode
             // todo: need to remove local generator
             int transactionsPerSecond = parameters.getValue(ParameterDefinitions.RECORDS_PER_SECOND);
             JsonGeneratorWrapper<Transaction> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));

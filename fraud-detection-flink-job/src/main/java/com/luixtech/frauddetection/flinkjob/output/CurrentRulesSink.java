@@ -17,12 +17,12 @@ import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 import java.util.Arrays;
 import java.util.Properties;
 
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.RULES_EXPORT_SINK;
+import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.CURRENT_RULES_SINK;
 
 public class CurrentRulesSink {
 
     public static CurrentRulesSink.Type getRuleSourceType(Parameters parameters) {
-        String currentRules = parameters.getValue(RULES_EXPORT_SINK);
+        String currentRules = parameters.getValue(CURRENT_RULES_SINK);
         return CurrentRulesSink.Type.valueOf(currentRules.toUpperCase());
     }
 
