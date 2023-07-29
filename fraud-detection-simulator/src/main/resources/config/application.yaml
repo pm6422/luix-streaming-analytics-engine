@@ -152,7 +152,6 @@ application:
     topic:
       transaction: transaction
       rule: rule
-      current-rule: current-rule
       alert: alert
       latency: latency
     listener:

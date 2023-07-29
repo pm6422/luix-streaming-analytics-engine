@@ -85,11 +85,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
         switch (controlType) {
-            case EXPORT_CURRENT_RULES:
-                for (Map.Entry<Integer, Rule> entry : rulesState.entries()) {
-                    ctx.output(Descriptors.CURRENT_RULES_SINK_TAG, entry.getValue());
-                }
-                break;
             case CLEAR_STATE_ALL:
                 ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
                 break;

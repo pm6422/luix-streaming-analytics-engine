@@ -39,7 +39,6 @@ public class ApplicationProperties {
             private String alert;
             private String latency;
             private String rule;
-            private String currentRule;
         }
 
         @Data

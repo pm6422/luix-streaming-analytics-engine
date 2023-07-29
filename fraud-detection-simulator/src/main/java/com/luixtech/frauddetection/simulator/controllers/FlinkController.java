@@ -29,12 +29,6 @@ public class FlinkController {
         }
     }
 
-    @GetMapping("/flink/export-current-rules")
-    void exportCurrentRules() {
-        RulePayload command = createControlCommand(ControlType.EXPORT_CURRENT_RULES);
-        kafkaRuleProducer.addRule(command.toRule());
-    }
-
     @GetMapping("/flink/clear-state")
     void clearState() {
         RulePayload command = createControlCommand(ControlType.CLEAR_STATE_ALL);

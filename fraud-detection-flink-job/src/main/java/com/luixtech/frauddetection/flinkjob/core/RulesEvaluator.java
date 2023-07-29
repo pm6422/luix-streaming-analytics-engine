@@ -6,7 +6,6 @@ import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
 import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
-import com.luixtech.frauddetection.flinkjob.output.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.output.LatencySink;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.init
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.stringsStreamToRules;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.stringsStreamToTransactions;
-import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 
 @Slf4j
 @AllArgsConstructor
@@ -57,16 +55,10 @@ public class RulesEvaluator {
                 .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
-        DataStream<Rule> currentRules = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.CURRENT_RULES_SINK_TAG);
         DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
 
         alertStream.print().name("Alert STDOUT Sink");
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
-
-        DataStream<String> currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules);
-        currentRulesJson.print();
-        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(arguments, currentRulesJson);
-        currentRulesSink.setParallelism(1);
 
         DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
         DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(arguments, alertsJson);

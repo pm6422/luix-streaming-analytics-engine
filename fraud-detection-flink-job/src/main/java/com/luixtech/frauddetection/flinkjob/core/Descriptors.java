@@ -12,6 +12,4 @@ public class Descriptors {
     };
     public static final OutputTag<Long>                   LATENCY_SINK_TAG       = new OutputTag<Long>("latency-sink") {
     };
-    public static final OutputTag<Rule>                   CURRENT_RULES_SINK_TAG = new OutputTag<Rule>("current-rules-sink") {
-    };
 }
