@@ -2,8 +2,8 @@ package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.generator.TransactionsGenerator;
+import com.luixtech.frauddetection.simulator.kafka.consumer.KafkaTransactionConsumer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,15 +18,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class TransactionGeneratorController {
 
-    private static final ExecutorService               EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
+    private static final ExecutorService          EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
     @Resource
-    private              TransactionsGenerator         transactionsGenerator;
+    private              TransactionsGenerator    transactionsGenerator;
     @Resource
-    private              KafkaListenerEndpointRegistry listenerEndpointRegistry;
+    private              ApplicationProperties    applicationProperties;
     @Resource
-    private              ApplicationProperties         applicationProperties;
-    private              boolean                       listenerContainerRunning = true;
-    private static final AtomicBoolean                 GENERATING               = new AtomicBoolean(false);
+    private              KafkaTransactionConsumer kafkaTransactionConsumer;
+    private              boolean                  listenerContainerRunning = true;
+    private static final AtomicBoolean            GENERATING               = new AtomicBoolean(false);
 
     @GetMapping("/api/transaction-generator/start")
     public void start() {
@@ -53,13 +53,11 @@ public class TransactionGeneratorController {
             start();
         }
 
-        MessageListenerContainer transactionConsumerListener = listenerEndpointRegistry
-                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction());
         if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
-            transactionConsumerListener.stop();
+            kafkaTransactionConsumer.stop();
             listenerContainerRunning = false;
         } else if (!listenerContainerRunning) {
-            transactionConsumerListener.start();
+            kafkaTransactionConsumer.start();
         }
 
         if (transactionsGenerator != null) {
