@@ -1,6 +1,6 @@
 # The file name should be identical to the fully-qualified name of extension interface.
 # The file must be encoded in UTF-8.
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.KafkaSourceCreator
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.SocketSourceCreator
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionKafkaSourceCreator
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionSocketSourceCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.RuleSourceKafkaCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.RuleSourceSocketCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionSourceKafkaCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionSourceSocketCreator

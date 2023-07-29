@@ -8,7 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SocketTextStreamFunction;
 
 @SpiName("rule-" + Arguments.CHANNEL_SOCKET)
-public class SocketSourceCreator implements SourceCreator {
+public class RuleSourceSocketCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
         SocketTextStreamFunction socketSourceFunction =

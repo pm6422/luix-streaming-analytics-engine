@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 @SpiName("transaction-" + Arguments.CHANNEL_SOCKET)
-public class TransactionSocketSourceCreator implements SourceCreator {
+public class TransactionSourceSocketCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
         int transactionsPerSecond = arguments.recordsPerSecond;

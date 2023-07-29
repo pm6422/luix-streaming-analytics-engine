@@ -10,11 +10,11 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaSource;
 
-@SpiName("rule-" + Arguments.CHANNEL_KAFKA)
-public class KafkaSourceCreator implements SourceCreator {
+@SpiName("transaction-" + Arguments.CHANNEL_KAFKA)
+public class TransactionSourceKafkaCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
-        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.ruleTopic);
+        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.transactionTopic);
 
         // NOTE: Idiomatically, watermarks should be assigned here, but this done later
         // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
