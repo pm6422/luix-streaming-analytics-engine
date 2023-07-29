@@ -5,7 +5,7 @@ import com.beust.jcommander.Parameters;
 
 @Parameters(separators = "=")
 public class Arguments {
-    @Parameter(names = "--flink.server.enabled", description = "Start Flink dashboard", arity = 1)
+    @Parameter(names = "--flink.dashboard.enabled", description = "Start Flink dashboard", arity = 1)
     public boolean flinkServerEnabled         = false;
     @Parameter(names = "--message.channel", description = "Message channel: kafka/socket")
     public  String  messageChannel             = "kafka";

@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.flinkjob.input.Arguments;
 
 /**
  * Main class to launch the Flink job with CLI params example:
- * --flink.server.enabled=true --message.channel=socket
+ * --flink.dashboard.enabled=true --message.channel=socket
  */
 public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {
