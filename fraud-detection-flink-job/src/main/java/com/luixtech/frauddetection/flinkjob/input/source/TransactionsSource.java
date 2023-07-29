@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaSource;
 
 @Slf4j
 public class TransactionsSource {
@@ -24,7 +24,7 @@ public class TransactionsSource {
 
         if (arguments.messageChannel == "kafka") {
             // Specify the topic from which the transactions are read
-            KafkaSource<String> kafkaSource = getKafkaSource(arguments, arguments.transactionTopic);
+            KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.transactionTopic);
 
             // NOTE: Idiomatically, watermarks should be assigned here, but this done later
             // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.

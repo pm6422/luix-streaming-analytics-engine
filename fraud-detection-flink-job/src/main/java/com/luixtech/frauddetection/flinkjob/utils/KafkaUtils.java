@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class KafkaUtils {
 
-    public static KafkaSource<String> getKafkaSource(Arguments arguments, String topic) {
+    public static KafkaSource<String> createKafkaSource(Arguments arguments, String topic) {
         Properties kafkaProps = initConsumerProperties(arguments);
         return KafkaSource.<String>builder()
                 .setProperties(kafkaProps)

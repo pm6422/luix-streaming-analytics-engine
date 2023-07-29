@@ -15,7 +15,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaSource;
 
 
 @Slf4j
@@ -27,7 +27,7 @@ public class RulesSource {
         switch (arguments.messageChannel) {
             case "kafka":
                 // Specify the topic from which the rules are read
-                KafkaSource<String> kafkaSource = getKafkaSource(arguments, arguments.ruleTopic);
+                KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.ruleTopic);
 
                 // NOTE: Idiomatically, watermarks should be assigned here, but this done later
                 // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
