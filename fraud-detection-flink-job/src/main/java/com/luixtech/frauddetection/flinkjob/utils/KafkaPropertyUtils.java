@@ -6,24 +6,19 @@ import java.util.Properties;
 
 public class KafkaPropertyUtils {
 
-
     public static Properties initProducerProperties(Arguments arguments) {
         return initProperties(arguments);
     }
 
-    private static Properties initProperties(Arguments arguments) {
-        Properties kafkaProps = new Properties();
-        String kafkaHost = arguments.kafkaHost;
-        int kafkaPort = arguments.kafkaPort;
-        String servers = String.format("%s:%s", kafkaHost, kafkaPort);
-        kafkaProps.setProperty("bootstrap.servers", servers);
+    public static Properties initConsumerProperties(Arguments arguments) {
+        Properties kafkaProps = initProperties(arguments);
+        kafkaProps.setProperty("auto.offset.reset", arguments.kafkaOffset);
         return kafkaProps;
     }
 
-    public static Properties initConsumerProperties(Arguments arguments) {
-        Properties kafkaProps = initProperties(arguments);
-        String offset = arguments.kafkaOffset;
-        kafkaProps.setProperty("auto.offset.reset", offset);
+    private static Properties initProperties(Arguments arguments) {
+        Properties kafkaProps = new Properties();
+        kafkaProps.setProperty("bootstrap.servers", arguments.kafkaHost + ":" + arguments.kafkaPort);
         return kafkaProps;
     }
 }
