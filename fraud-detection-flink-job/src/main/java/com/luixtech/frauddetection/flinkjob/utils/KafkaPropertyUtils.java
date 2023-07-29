@@ -1,30 +1,28 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
+import com.luixtech.frauddetection.flinkjob.input.Arguments;
 
 import java.util.Properties;
-
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 
 public class KafkaPropertyUtils {
 
 
-    public static Properties initProducerProperties(Parameters params) {
-        return initProperties(params);
+    public static Properties initProducerProperties(Arguments arguments) {
+        return initProperties(arguments);
     }
 
-    private static Properties initProperties(Parameters parameters) {
+    private static Properties initProperties(Arguments arguments) {
         Properties kafkaProps = new Properties();
-        String kafkaHost = parameters.getValue(KAFKA_HOST);
-        int kafkaPort = parameters.getValue(KAFKA_PORT);
+        String kafkaHost = arguments.kafkaHost;
+        int kafkaPort = arguments.kafkaPort;
         String servers = String.format("%s:%s", kafkaHost, kafkaPort);
         kafkaProps.setProperty("bootstrap.servers", servers);
         return kafkaProps;
     }
 
-    public static Properties initConsumerProperties(Parameters parameters) {
-        Properties kafkaProps = initProperties(parameters);
-        String offset = parameters.getValue(KAFKA_OFFSET);
+    public static Properties initConsumerProperties(Arguments arguments) {
+        Properties kafkaProps = initProperties(arguments);
+        String offset = arguments.kafkaOffset;
         kafkaProps.setProperty("auto.offset.reset", offset);
         return kafkaProps;
     }

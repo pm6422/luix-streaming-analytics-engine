@@ -5,7 +5,6 @@ import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.output.CurrentRulesSink;
 import com.luixtech.frauddetection.flinkjob.output.LatencySink;
@@ -24,7 +23,6 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.param.ParameterDefinitions.*;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.initRulesSource;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.stringsStreamToRules;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
@@ -35,8 +33,7 @@ import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 @AllArgsConstructor
 public class RulesEvaluator {
 
-    private final Arguments  arguments;
-    private final Parameters parameters;
+    private final Arguments arguments;
 
     public void run() throws Exception {
         // Create stream execution environment
@@ -68,15 +65,15 @@ public class RulesEvaluator {
 
         DataStream<String> currentRulesJson = CurrentRulesSink.rulesStreamToJson(currentRules);
         currentRulesJson.print();
-        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(parameters, currentRulesJson);
+        DataStreamSink<String> currentRulesSink = CurrentRulesSink.addRulesSink(arguments, currentRulesJson);
         currentRulesSink.setParallelism(1);
 
         DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
-        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(parameters, alertsJson);
+        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(arguments, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
         DataStream<String> latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
-        DataStreamSink<String> latencySink = LatencySink.addLatencySink(parameters, latencies);
+        DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Latency Sink");
 
         env.execute("Fraud Detection Engine");
@@ -86,16 +83,16 @@ public class RulesEvaluator {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        if (parameters.getValue(ENABLE_CHECKPOINTS)) {
-            env.enableCheckpointing(parameters.getValue(CHECKPOINT_INTERVAL));
-            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(parameters.getValue(MIN_PAUSE_BETWEEN_CHECKPOINTS));
+        if (arguments.checkpointsEnabled) {
+            env.enableCheckpointing(arguments.checkpointInterval);
+            env.getCheckpointConfig().setMinPauseBetweenCheckpoints(arguments.minPauseBetweenCheckpoints);
         }
         configureRestartStrategy(env);
         return env;
     }
 
     private StreamExecutionEnvironment getStreamExecutionEnv() {
-        if (!parameters.getValue(FLINK_SERVER)) {
+        if (!arguments.flinkServerEnabled) {
             return StreamExecutionEnvironment.getExecutionEnvironment();
         }
 
@@ -109,26 +106,23 @@ public class RulesEvaluator {
     }
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
-        MessageChannel messageChannel = getEnumByValue(MessageChannel.class, parameters.getValue(MESSAGE_CHANNEL));
-        switch (messageChannel) {
-            case SOCKET:
-                env.setRestartStrategy(
-                        RestartStrategies.fixedDelayRestart(
-                                10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
+        switch (arguments.messageChannel) {
+            case "socket":
+                env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
                 break;
-            case KAFKA:
+            case "kafka":
                 // Default - unlimited restart strategy.
                 //        env.setRestartStrategy(RestartStrategies.noRestart());
         }
     }
 
     private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) {
-        DataStream<String> rulesStringStream = initRulesSource(parameters, env);
-        return stringsStreamToRules(parameters, rulesStringStream);
+        DataStream<String> rulesStringStream = initRulesSource(arguments, env);
+        return stringsStreamToRules(arguments, rulesStringStream);
     }
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
-        DataStream<String> transactionsStringsStream = initTransactionsSource(arguments, parameters, env);
+        DataStream<String> transactionsStringsStream = initTransactionsSource(arguments, env);
         return stringsStreamToTransactions(arguments, transactionsStringsStream);
     }
 }

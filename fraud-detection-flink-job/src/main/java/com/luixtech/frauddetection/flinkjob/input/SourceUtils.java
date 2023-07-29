@@ -1,6 +1,5 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -9,8 +8,8 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import java.util.Properties;
 
 public abstract class SourceUtils {
-    public static KafkaSource<String> getKafkaSource(Parameters parameters, String topic) {
-        Properties kafkaProps = KafkaPropertyUtils.initConsumerProperties(parameters);
+    public static KafkaSource<String> getKafkaSource(Arguments arguments, String topic) {
+        Properties kafkaProps = KafkaPropertyUtils.initConsumerProperties(arguments);
         return KafkaSource.<String>builder()
                 .setProperties(kafkaProps)
                 .setTopics(topic)

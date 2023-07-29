@@ -1,11 +1,11 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
 import com.beust.jcommander.Parameter;
-//import com.beust.jcommander.Parameters;
+import com.beust.jcommander.Parameters;
 
-//@Parameters(separators = "=")
+@Parameters(separators = "=")
 public class Arguments {
-    @Parameter(names = "-flinkServerEnabled", description = "Start Flink dashboard")
+    @Parameter(names = "--flink.server.enabled", description = "Start Flink dashboard", arity = 1)
     public boolean flinkServerEnabled         = false;
     @Parameter(names = "-messageChannel", description = "Message channel: kafka/socket")
     public  String  messageChannel             = "kafka";

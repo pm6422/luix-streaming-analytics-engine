@@ -5,7 +5,6 @@ import com.luixtech.frauddetection.flinkjob.core.function.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +19,17 @@ import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSou
 @Slf4j
 public class TransactionsSource {
 
-    public static DataStreamSource<String> initTransactionsSource(Arguments arguments, Parameters parameters, StreamExecutionEnvironment env) {
+    public static DataStreamSource<String> initTransactionsSource(Arguments arguments, StreamExecutionEnvironment env) {
         DataStreamSource<String> dataStreamSource;
 
         if (arguments.messageChannel == "kafka") {
             // Specify the topic from which the transactions are read
-            KafkaSource<String> kafkaSource = getKafkaSource(parameters, arguments.transactionTopic);
+            KafkaSource<String> kafkaSource = getKafkaSource(arguments, arguments.transactionTopic);
 
             // NOTE: Idiomatically, watermarks should be assigned here, but this done later
             // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
             // TODO: refactor when FLIP-238 is added
-            dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), arguments.messageChannel);
+            dataStreamSource = env.fromSource(kafkaSource, WatermarkStrategy.noWatermarks(), "transaction " + arguments.messageChannel);
             log.info("Created kafka based transactions source");
         } else {
             // Local transaction generator mode
