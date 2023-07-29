@@ -1,9 +1,8 @@
-package com.luixtech.frauddetection.flinkjob.input.source;
+package com.luixtech.frauddetection.flinkjob.input;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.TimeStamper;
-import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.source.creator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.input.source.creator;
+package com.luixtech.frauddetection.flinkjob.input.sourcecreator;
 
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
 import com.luixtech.utilities.serviceloader.ServiceLoader;

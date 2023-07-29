@@ -1,8 +1,7 @@
-package com.luixtech.frauddetection.flinkjob.input.source;
+package com.luixtech.frauddetection.flinkjob.input;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.source.creator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.DataStream;

@@ -24,10 +24,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.input.Arguments.CHANNEL_KAFKA;
 import static com.luixtech.frauddetection.flinkjob.input.Arguments.CHANNEL_SOCKET;
-import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.initRulesSource;
-import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.stringsStreamToRules;
-import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
-import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.stringsStreamToTransactions;
+import static com.luixtech.frauddetection.flinkjob.input.RulesSource.initRulesSource;
+import static com.luixtech.frauddetection.flinkjob.input.RulesSource.stringsStreamToRules;
+import static com.luixtech.frauddetection.flinkjob.input.TransactionsSource.initTransactionsSource;
+import static com.luixtech.frauddetection.flinkjob.input.TransactionsSource.stringsStreamToTransactions;
 
 @Slf4j
 @AllArgsConstructor

@@ -1,7 +1,7 @@
-package com.luixtech.frauddetection.flinkjob.input.source.creator.impl;
+package com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl;
 
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.source.creator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
