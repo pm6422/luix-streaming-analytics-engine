@@ -26,11 +26,11 @@ import java.math.BigDecimal;
 @Slf4j
 public class AlertsController {
 
-    private static final ObjectMapper            OBJECT_MAPPER = new ObjectMapper();
-    private final RuleRepository           ruleRepository;
-    private final KafkaTransactionProducer transactionsPusher;
-    private final SimpMessagingTemplate    simpSender;
-    private final        ApplicationProperties   applicationProperties;
+    private static final ObjectMapper             OBJECT_MAPPER = new ObjectMapper();
+    private final        RuleRepository           ruleRepository;
+    private final        KafkaTransactionProducer transactionsPusher;
+    private final        SimpMessagingTemplate    simpSender;
+    private final        ApplicationProperties    applicationProperties;
 
     @GetMapping("/alerts/mock")
     public Alert mockAlert(@RequestParam(value = "ruleId") Integer ruleId) throws JsonProcessingException {
