@@ -10,11 +10,11 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.util.Optional;
 
 @Spi(scope = SpiScope.SINGLETON)
-public interface RuleSourceCreator {
+public interface SourceCreator {
     DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments);
 
-    static RuleSourceCreator getInstance(String name) {
-        return Optional.ofNullable(ServiceLoader.forClass(RuleSourceCreator.class).load(name))
+    static SourceCreator getInstance(String name) {
+        return Optional.ofNullable(ServiceLoader.forClass(SourceCreator.class).load(name))
                 .orElseThrow(() -> new IllegalArgumentException("Data stream source creator [" + name + "] does NOT exist"));
     }
 }

@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class RulesSource {
 
     public static DataStreamSource<String> initRulesSource(Arguments arguments, StreamExecutionEnvironment env) {
-        DataStreamSource<String> dataStreamSource = RuleSourceCreator
+        DataStreamSource<String> dataStreamSource = SourceCreator
                 .getInstance("rule-" + arguments.messageChannel)
                 .create(env, arguments);
         dataStreamSource.setParallelism(1);

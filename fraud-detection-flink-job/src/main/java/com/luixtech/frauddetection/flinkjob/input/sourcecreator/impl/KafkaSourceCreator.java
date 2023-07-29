@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl;
 
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
 import com.luixtech.utilities.serviceloader.annotation.SpiName;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaSource;
 
 @SpiName("rule-" + Arguments.CHANNEL_KAFKA)
-public class RuleKafkaSourceCreator implements RuleSourceCreator {
+public class KafkaSourceCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
         KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.ruleTopic);

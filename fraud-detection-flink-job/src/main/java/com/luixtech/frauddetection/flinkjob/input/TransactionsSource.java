@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.flinkjob.input;
 
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.TimeStamper;
-import com.luixtech.frauddetection.flinkjob.input.sourcecreator.RuleSourceCreator;
+import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
 import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 public class TransactionsSource {
 
     public static DataStreamSource<String> initTransactionsSource(Arguments arguments, StreamExecutionEnvironment env) {
-        DataStreamSource<String> dataStreamSource = RuleSourceCreator
+        DataStreamSource<String> dataStreamSource = SourceCreator
                 .getInstance("transaction-" + arguments.messageChannel)
                 .create(env, arguments);
         dataStreamSource.setParallelism(arguments.sourceParallelism);
