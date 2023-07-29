@@ -1,4 +1,4 @@
 # The file name should be identical to the fully-qualified name of extension interface.
 # The file must be encoded in UTF-8.
-com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertKafkaSinkCreator
-com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertSocketSinkCreator
+com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertSinkKafkaCreator
+com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertSinkSocketCreator
