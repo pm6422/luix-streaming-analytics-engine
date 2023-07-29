@@ -82,6 +82,8 @@ spring:
   h2:
     console:
       enabled: true
+  jpa:
+    open-in-view: false
   kafka:
     producer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
