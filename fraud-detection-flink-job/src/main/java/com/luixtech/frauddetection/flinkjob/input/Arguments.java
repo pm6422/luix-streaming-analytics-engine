@@ -12,7 +12,7 @@ public class Arguments {
     @Parameter(names = "-kafkaHost", description = "Kafka host")
     public  String  kafkaHost                  = "localhost";
     @Parameter(names = "-kafkaPort", description = "Kafka port")
-    public  Integer kafkaPort                  = 9002;
+    public  Integer kafkaPort                  = 9092;
     @Parameter(names = "-ruleSocketPort", description = "Socket port for rules import")
     public  Integer ruleSocketPort             = 9999;
     @Parameter(names = "-kafkaOffset", description = "Kafka offset")
