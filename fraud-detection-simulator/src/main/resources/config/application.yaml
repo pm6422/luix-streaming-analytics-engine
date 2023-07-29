@@ -148,10 +148,10 @@ luix:
 application:
   kafka:
     topic:
-      transactions: transactions
-      rules: rules
-      current-rules: current-rules
-      alerts: alerts
+      transactions: transaction
+      rules: rule
+      current-rules: current-rule
+      alerts: alert
       latency: latency
     listeners:
       transactions:

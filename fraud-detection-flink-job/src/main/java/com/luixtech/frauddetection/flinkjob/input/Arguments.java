@@ -18,15 +18,15 @@ public class Arguments {
     @Parameter(names = "--kafka.offset", description = "Kafka offset")
     public  String  kafkaOffset                = "latest";
     @Parameter(names = "--kafka.topic.transaction", description = "Transaction topic")
-    public  String  transactionTopic           = "transactions";
+    public  String  transactionTopic           = "transaction";
     @Parameter(names = "--kafka.topic.rule", description = "Rule topic")
-    public  String  ruleTopic                  = "rules";
+    public  String  ruleTopic                  = "rule";
     @Parameter(names = "--kafka.topic.current-rule", description = "Current rule topic")
-    public  String  currentRuleTopic           = "current-rules";
+    public  String  currentRuleTopic           = "current-rule";
     @Parameter(names = "--kafka.topic.latency", description = "Latency topic")
     public  String  latencyTopic               = "latency";
     @Parameter(names = "--kafka.topic.alert", description = "Alert topic")
-    public  String  alertTopic                 = "alerts";
+    public  String  alertTopic                 = "alert";
     @Parameter(names = "--source-parallelism", description = "Parallelism for transaction source")
     public  Integer sourceParallelism          = 2;
     @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshotted. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)
