@@ -4,6 +4,7 @@ import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
+import com.luixtech.frauddetection.flinkjob.input.Arguments;
 import com.luixtech.frauddetection.flinkjob.input.param.Parameters;
 import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
 import com.luixtech.frauddetection.flinkjob.output.CurrentRulesSink;
@@ -34,6 +35,7 @@ import static com.luixtech.utilities.lang.EnumValueHoldable.getEnumByValue;
 @AllArgsConstructor
 public class RulesEvaluator {
 
+    private final Arguments  arguments;
     private final Parameters parameters;
 
     public void run() throws Exception {
@@ -126,7 +128,7 @@ public class RulesEvaluator {
     }
 
     private DataStream<Transaction> createTransactionStream(StreamExecutionEnvironment env) {
-        DataStream<String> transactionsStringsStream = initTransactionsSource(parameters, env);
-        return stringsStreamToTransactions(parameters, transactionsStringsStream);
+        DataStream<String> transactionsStringsStream = initTransactionsSource(arguments, parameters, env);
+        return stringsStreamToTransactions(arguments, transactionsStringsStream);
     }
 }
