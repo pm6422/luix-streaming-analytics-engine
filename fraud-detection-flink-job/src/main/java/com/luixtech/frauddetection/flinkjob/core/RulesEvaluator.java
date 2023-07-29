@@ -22,6 +22,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.luixtech.frauddetection.flinkjob.input.Arguments.CHANNEL_KAFKA;
+import static com.luixtech.frauddetection.flinkjob.input.Arguments.CHANNEL_SOCKET;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.initRulesSource;
 import static com.luixtech.frauddetection.flinkjob.input.source.RulesSource.stringsStreamToRules;
 import static com.luixtech.frauddetection.flinkjob.input.source.TransactionsSource.initTransactionsSource;
@@ -99,10 +101,10 @@ public class RulesEvaluator {
 
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
         switch (arguments.messageChannel) {
-            case "socket":
+            case CHANNEL_SOCKET:
                 env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
                 break;
-            case "kafka":
+            case CHANNEL_KAFKA:
                 // Default - unlimited restart strategy.
                 //        env.setRestartStrategy(RestartStrategies.noRestart());
         }
