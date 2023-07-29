@@ -160,8 +160,8 @@ application:
         id: transaction-listener
   web-socket:
     topic:
-      transaction: /topic/transactions
-      alert: /topic/alerts
+      transaction: /topic/transaction
+      alert: /topic/alert
       latency: /topic/latency
   transaction:
     max-transaction-speed: 50
