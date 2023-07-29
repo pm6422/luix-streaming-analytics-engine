@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.getKafkaSource;
 
 @Slf4j
 public class TransactionsSource {

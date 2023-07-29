@@ -15,7 +15,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.input.SourceUtils.getKafkaSource;
+import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.getKafkaSource;
+
 
 @Slf4j
 public class RulesSource {

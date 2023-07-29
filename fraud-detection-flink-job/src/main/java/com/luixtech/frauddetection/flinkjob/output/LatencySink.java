@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
 import com.luixtech.frauddetection.flinkjob.input.Arguments;
-import com.luixtech.frauddetection.flinkjob.utils.KafkaPropertyUtils;
+import com.luixtech.frauddetection.flinkjob.utils.KafkaUtils;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
@@ -19,7 +19,7 @@ public class LatencySink {
 
         switch (arguments.messageChannel) {
             case "kafka":
-                Properties kafkaProps = KafkaPropertyUtils.initProducerProperties(arguments);
+                Properties kafkaProps = KafkaUtils.initProducerProperties(arguments);
                 KafkaSink<String> kafkaSink =
                         KafkaSink.<String>builder()
                                 .setKafkaProducerConfig(kafkaProps)
