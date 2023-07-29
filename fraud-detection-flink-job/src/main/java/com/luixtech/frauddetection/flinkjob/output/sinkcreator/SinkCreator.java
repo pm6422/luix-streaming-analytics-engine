@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.output.sinkcreator;
 
-import com.luixtech.frauddetection.flinkjob.input.Arguments;
+import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.utilities.serviceloader.ServiceLoader;
 import com.luixtech.utilities.serviceloader.annotation.Spi;
 import com.luixtech.utilities.serviceloader.annotation.SpiScope;

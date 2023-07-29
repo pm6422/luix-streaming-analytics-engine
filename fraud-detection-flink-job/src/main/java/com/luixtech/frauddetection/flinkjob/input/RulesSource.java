@@ -1,6 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
 import lombok.extern.slf4j.Slf4j;

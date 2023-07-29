@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.input;
+package com.luixtech.frauddetection.flinkjob.core;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;

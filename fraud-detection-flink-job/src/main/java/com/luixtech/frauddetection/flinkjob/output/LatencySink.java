@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
-import com.luixtech.frauddetection.flinkjob.input.Arguments;
+import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.output.sinkcreator.SinkCreator;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;

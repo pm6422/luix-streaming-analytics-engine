@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.flinkjob;
 import com.beust.jcommander.JCommander;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.frauddetection.flinkjob.core.RulesEvaluator;
-import com.luixtech.frauddetection.flinkjob.input.Arguments;
+import com.luixtech.frauddetection.flinkjob.core.Arguments;
 
 /**
  * Main class to launch the Flink job with CLI params example:
