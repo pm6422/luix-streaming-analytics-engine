@@ -1,7 +1,6 @@
 package com.luixtech.frauddetection.simulator.services;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer {
 
     private final        SimpMessagingTemplate simpTemplate;
-    private final        RuleRepository        ruleRepository;
     private final        ApplicationProperties applicationProperties;
 
     @KafkaListener(topics = "${application.kafka.topic.alert}", groupId = "alerts")
