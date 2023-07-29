@@ -12,35 +12,34 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @Slf4j
 public class TransactionGeneratorController {
 
-    private static final ExecutorService               EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    private static final ExecutorService               EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
     @Resource
     private              TransactionsGenerator         transactionsGenerator;
     @Resource
-    private              KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+    private              KafkaListenerEndpointRegistry listenerEndpointRegistry;
     @Resource
     private              ApplicationProperties         applicationProperties;
-
-    private boolean generatingTransactions   = false;
-    private boolean listenerContainerRunning = true;
+    private              boolean                       listenerContainerRunning = true;
+    private static final AtomicBoolean                 GENERATING               = new AtomicBoolean(false);
 
     @GetMapping("/api/transaction-generator/start")
     public void start() {
-        if (!generatingTransactions) {
+        if (GENERATING.compareAndSet(false, true)) {
             EXECUTOR_SERVICE.submit(transactionsGenerator);
-            generatingTransactions = true;
         }
     }
 
     @GetMapping("/api/transaction-generator/stop")
     public void stop() {
-        transactionsGenerator.cancel();
-        generatingTransactions = false;
-        log.info("{}", "stopTransactionsGeneration called");
+        if (GENERATING.compareAndSet(true, false)) {
+            transactionsGenerator.cancel();
+        }
     }
 
     @GetMapping("/api/transaction-generator/speed/{speed}")
@@ -48,19 +47,19 @@ public class TransactionGeneratorController {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {
             transactionsGenerator.cancel();
-            generatingTransactions = false;
+            GENERATING.set(false);
             return;
         } else {
             start();
         }
 
-        MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry
-                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction().getId());
+        MessageListenerContainer transactionConsumerListener = listenerEndpointRegistry
+                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction());
         if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
-            listenerContainer.stop();
+            transactionConsumerListener.stop();
             listenerContainerRunning = false;
         } else if (!listenerContainerRunning) {
-            listenerContainer.start();
+            transactionConsumerListener.start();
         }
 
         if (transactionsGenerator != null) {

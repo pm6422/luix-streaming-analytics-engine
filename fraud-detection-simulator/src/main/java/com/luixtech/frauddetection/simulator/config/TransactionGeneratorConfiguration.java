@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.config;
 
 import com.luixtech.frauddetection.simulator.generator.TransactionsGenerator;
-import com.luixtech.frauddetection.simulator.services.KafkaTransactionProducer;
+import com.luixtech.frauddetection.simulator.kafka.producer.KafkaTransactionProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

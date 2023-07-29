@@ -8,7 +8,7 @@ import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaTransactionProducer;
+import com.luixtech.frauddetection.simulator.kafka.producer.KafkaTransactionProducer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

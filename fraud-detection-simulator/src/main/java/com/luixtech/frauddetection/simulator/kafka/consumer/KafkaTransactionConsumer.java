@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.simulator.services;
+package com.luixtech.frauddetection.simulator.kafka.consumer;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
@@ -17,14 +17,14 @@ import java.util.Map;
 @Slf4j
 public class KafkaTransactionConsumer implements ConsumerSeekAware {
 
-    private final SimpMessagingTemplate simpTemplate;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ApplicationProperties applicationProperties;
 
-    @KafkaListener(id = "${application.kafka.listener.transaction.id}", topics = "${application.kafka.topic.transaction}", groupId = "transactions")
+    @KafkaListener(id = "${application.kafka.listener.transaction}", topics = "${application.kafka.topic.transaction}")
     public void consumeTransactions(@Payload String message) {
         log.debug("Received transaction {}", message);
         // Send to websocket
-        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransaction(), message);
+        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransaction(), message);
     }
 
     @Override

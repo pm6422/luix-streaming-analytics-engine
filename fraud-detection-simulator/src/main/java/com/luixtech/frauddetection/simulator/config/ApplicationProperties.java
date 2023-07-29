@@ -43,12 +43,7 @@ public class ApplicationProperties {
 
         @Data
         public static class Listener {
-            private Transaction transaction;
-
-            @Data
-            public static class Transaction {
-                private String id;
-            }
+            private String transaction;
         }
     }
 

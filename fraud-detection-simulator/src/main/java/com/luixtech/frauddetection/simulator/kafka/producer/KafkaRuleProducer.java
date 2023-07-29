@@ -1,22 +1,20 @@
-package com.luixtech.frauddetection.simulator.services;
+package com.luixtech.frauddetection.simulator.kafka.producer;
 
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
-@Service
 @Slf4j
+@Service
+@AllArgsConstructor
 public class KafkaRuleProducer {
 
-    @Resource
-    private KafkaTemplate<String, Object> kafkaTemplate;
-    @Resource
-    private ApplicationProperties         applicationProperties;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ApplicationProperties         applicationProperties;
 
     public void addRule(Rule rule) {
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRule(), rule);

@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.simulator.services;
+package com.luixtech.frauddetection.simulator.kafka.producer;
 
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;

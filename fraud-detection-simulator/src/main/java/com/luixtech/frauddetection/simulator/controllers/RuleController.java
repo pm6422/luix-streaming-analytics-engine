@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.simulator.controllers;
 import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaRuleProducer;
+import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

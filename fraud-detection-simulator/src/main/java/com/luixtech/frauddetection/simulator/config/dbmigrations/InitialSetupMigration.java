@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
-import com.luixtech.frauddetection.simulator.services.KafkaRuleProducer;
+import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
