@@ -2,3 +2,5 @@
 # The file must be encoded in UTF-8.
 com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertSinkKafkaCreator
 com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.AlertSinkSocketCreator
+com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.LatencySinkKafkaCreator
+com.luixtech.frauddetection.flinkjob.output.sinkcreator.impl.LatencySinkSocketCreator
