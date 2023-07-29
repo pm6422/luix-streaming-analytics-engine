@@ -20,7 +20,7 @@ public class KafkaAlertProducer implements Consumer<Alert> {
 
     @Override
     public void accept(Alert alert) {
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getAlerts(), alert);
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getAlert(), alert);
         log.warn("Pushed alert with content {}", alert);
     }
 }

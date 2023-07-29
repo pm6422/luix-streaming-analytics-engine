@@ -20,11 +20,11 @@ public class KafkaTransactionConsumer implements ConsumerSeekAware {
     private final SimpMessagingTemplate simpTemplate;
     private final ApplicationProperties applicationProperties;
 
-    @KafkaListener(id = "${application.kafka.listeners.transactions.id}", topics = "${application.kafka.topic.transactions}", groupId = "transactions")
+    @KafkaListener(id = "${application.kafka.listener.transaction.id}", topics = "${application.kafka.topic.transaction}", groupId = "transactions")
     public void consumeTransactions(@Payload String message) {
         log.debug("Received transaction {}", message);
         // Send to websocket
-        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransactions(), message);
+        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransaction(), message);
     }
 
     @Override

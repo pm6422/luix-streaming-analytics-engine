@@ -19,7 +19,7 @@ public class KafkaRuleProducer {
     private ApplicationProperties         applicationProperties;
 
     public void addRule(Rule rule) {
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), rule);
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRule(), rule);
         log.info("Pushed adding rule with content {}", rule);
     }
 
@@ -27,7 +27,7 @@ public class KafkaRuleProducer {
         Rule rule = new Rule();
         rule.setRuleId(ruleId);
         rule.setRuleState(RuleState.DELETE);
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRules(), rule);
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRule(), rule);
         log.info("Pushed deleting rule with ID {}", ruleId);
     }
 }

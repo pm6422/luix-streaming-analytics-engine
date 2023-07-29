@@ -55,7 +55,7 @@ public class TransactionGeneratorController {
         }
 
         MessageListenerContainer listenerContainer = kafkaListenerEndpointRegistry
-                .getListenerContainer(applicationProperties.getKafka().getListeners().getTransactions().getId());
+                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction().getId());
         if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
             listenerContainer.stop();
             listenerContainerRunning = false;

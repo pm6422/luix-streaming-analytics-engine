@@ -45,7 +45,7 @@ public class AlertsController {
         Alert alert = new Alert(rulePayload.getId(), rulePayload.toRule(), StringUtils.EMPTY, triggeringEvent, triggeringValue);
         String result = OBJECT_MAPPER.writeValueAsString(alert);
         // Push to websocket queue
-        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlerts(), result);
+        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), result);
         return alert;
     }
 }

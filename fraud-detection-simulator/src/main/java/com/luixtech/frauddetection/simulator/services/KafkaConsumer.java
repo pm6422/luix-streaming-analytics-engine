@@ -42,11 +42,11 @@ public class KafkaConsumer {
     private final        RuleRepository        ruleRepository;
     private final        ApplicationProperties applicationProperties;
 
-    @KafkaListener(topics = "${application.kafka.topic.alerts}", groupId = "alerts")
+    @KafkaListener(topics = "${application.kafka.topic.alert}", groupId = "alerts")
     public void templateAlerts(@Payload String message) {
         log.warn("Detected alert {}", message);
         // Send to websocket
-        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlerts(), message);
+        simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), message);
     }
 
     @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latency")
@@ -56,7 +56,7 @@ public class KafkaConsumer {
         simpTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
     }
 
-    @KafkaListener(topics = "${application.kafka.topic.current-rules}", groupId = "current-rules")
+    @KafkaListener(topics = "${application.kafka.topic.current-rule}", groupId = "current-rules")
     public void templateCurrentFlinkRules(@Payload String message) throws IOException {
         log.info("Found current rule {}", message);
         Rule rule = OBJECT_MAPPER.readValue(message, Rule.class);

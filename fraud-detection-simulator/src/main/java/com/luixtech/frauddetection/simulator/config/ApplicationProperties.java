@@ -19,21 +19,9 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 public class ApplicationProperties {
 
-    private final WebSocket   webSocket   = new WebSocket();
     private final Transaction transaction = new Transaction();
     private final Kafka       kafka       = new Kafka();
-
-    @Data
-    public static class WebSocket {
-        private Topic topic;
-
-        @Data
-        public static class Topic {
-            private String transactions;
-            private String alerts;
-            private String latency;
-        }
-    }
+    private final WebSocket   webSocket   = new WebSocket();
 
     @Data
     public static class Transaction {
@@ -42,26 +30,38 @@ public class ApplicationProperties {
 
     @Data
     public static class Kafka {
-        private Topic     topic;
-        private Listeners listeners;
+        private Topic    topic;
+        private Listener listener;
 
         @Data
         public static class Topic {
-            private String transactions;
-            private String alerts;
+            private String transaction;
+            private String alert;
             private String latency;
-            private String rules;
-            private String currentRules;
+            private String rule;
+            private String currentRule;
         }
 
         @Data
-        public static class Listeners {
-            private Transactions transactions;
+        public static class Listener {
+            private Transaction transaction;
 
             @Data
-            public static class Transactions {
+            public static class Transaction {
                 private String id;
             }
+        }
+    }
+
+    @Data
+    public static class WebSocket {
+        private Topic topic;
+
+        @Data
+        public static class Topic {
+            private String transaction;
+            private String alert;
+            private String latency;
         }
     }
 

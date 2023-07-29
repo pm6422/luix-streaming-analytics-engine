@@ -150,18 +150,18 @@ luix:
 application:
   kafka:
     topic:
-      transactions: transaction
-      rules: rule
-      current-rules: current-rule
-      alerts: alert
+      transaction: transaction
+      rule: rule
+      current-rule: current-rule
+      alert: alert
       latency: latency
-    listeners:
-      transactions:
-        id: transactions-listener
+    listener:
+      transaction:
+        id: transaction-listener
   web-socket:
     topic:
-      transactions: /topic/transactions
-      alerts: /topic/alerts
+      transaction: /topic/transactions
+      alert: /topic/alerts
       latency: /topic/latency
   transaction:
     max-transaction-speed: 50

@@ -24,7 +24,7 @@ public class KafkaTransactionProducer implements Consumer<Transaction> {
     @Override
     public void accept(Transaction transaction) {
         lastTransaction = transaction;
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getTransactions(), transaction);
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getTransaction(), transaction);
         log.debug("Pushed transaction with content {}", transaction);
     }
 }
