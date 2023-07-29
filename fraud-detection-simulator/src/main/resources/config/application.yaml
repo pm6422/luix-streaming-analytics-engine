@@ -154,13 +154,13 @@ luix:
 # ===================================================================
 application:
   kafka:
+    listener:
+      transaction: transaction
     topic:
       transaction: transaction
       rule: rule
       alert: alert
       latency: latency
-    listener:
-      transaction: transaction
   web-socket:
     topic:
       transaction: /topic/transaction
