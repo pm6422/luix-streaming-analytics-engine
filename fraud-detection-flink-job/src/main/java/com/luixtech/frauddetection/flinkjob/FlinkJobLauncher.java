@@ -12,10 +12,7 @@ import com.luixtech.frauddetection.flinkjob.core.Arguments;
 public class FlinkJobLauncher {
     public static void main(String[] args) throws Exception {
         Arguments arguments = new Arguments();
-        JCommander commander = JCommander
-                .newBuilder()
-                .addObject(arguments)
-                .build();
+        JCommander commander = JCommander.newBuilder().addObject(arguments).build();
         commander.usage();
         commander.parse(args);
         commander.getConsole().println("Starting Flink job with arguments: ");
