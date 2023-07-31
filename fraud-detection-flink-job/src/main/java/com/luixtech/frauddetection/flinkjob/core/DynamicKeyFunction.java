@@ -42,9 +42,11 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();
-            // it is important to understand that keys determine the actual physical grouping of events
-            // - all Transactions with the same values of specified parameters (e.g. payer #25 -> beneficiary #12)
-            // have to be aggregated in the same physical instance of the evaluating operator
+            // KeysExtractor.toKeys() uses reflection to extract the required values of groupingKeyNames fields from events
+            // and combines them as a single concatenated String key, e.g "{payerId=25;beneficiaryId=12}".
+            // Flink will calculate the hash of this key and assign the processing of this particular combination to a specific server
+            // in the cluster. This will allow tracking all transactions between payer #25 and beneficiary #12 and evaluating defined rules
+            // within the desired time window.
             out.collect(new Keyed<>(transaction, rule.getRuleId(), KeysExtractor.toKeys(transaction, rule.getGroupingKeyNames())));
             ruleCounter++;
         }
