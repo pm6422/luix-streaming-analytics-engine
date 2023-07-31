@@ -55,16 +55,15 @@ public class RulesEvaluator {
                 .uid(DynamicAlertFunction.class.getSimpleName())
                 .name("Dynamic Rule Evaluation Function");
 
-        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
-        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
-
         alertStream.print().name("Alert STDOUT Sink");
-        allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
-
         DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
         DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(arguments, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
+        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
+        allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
+
+        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
         DataStream<String> latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Latency Sink");
