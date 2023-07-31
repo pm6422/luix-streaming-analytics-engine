@@ -8,9 +8,9 @@ public class Arguments {
     public static final String  CHANNEL_KAFKA              = "kafka";
     public static final String  CHANNEL_SOCKET             = "socket";
     @Parameter(names = "--flink.dashboard.enabled", description = "Start Flink dashboard", arity = 1)
-    public              boolean flinkServerEnabled         = false;
+    public              boolean flinkServerEnabled         = true;
     @Parameter(names = "--message.channel", description = "Message channel: kafka/socket")
-    public              String  messageChannel             = "kafka";
+    public              String  messageChannel             = CHANNEL_KAFKA;
     @Parameter(names = "--kafka.host", description = "Kafka host")
     public              String  kafkaHost                  = "localhost";
     @Parameter(names = "--kafka.port", description = "Kafka port")

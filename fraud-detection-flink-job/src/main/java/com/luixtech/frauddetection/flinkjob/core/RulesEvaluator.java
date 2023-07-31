@@ -46,13 +46,13 @@ public class RulesEvaluator {
         DataStream<Alert> alertStream = transactionStream
                 .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
-                .uid("DynamicKeyFunction")
+                .uid(DynamicKeyFunction.class.getSimpleName())
                 .name("Dynamic Partitioning Function")
-                // cannot be optimized by lambda
+                // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getKey())
                 .connect(broadcastRuleStream)
                 .process(new DynamicAlertFunction())
-                .uid("DynamicAlertFunction")
+                .uid(DynamicAlertFunction.class.getSimpleName())
                 .name("Dynamic Rule Evaluation Function");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
