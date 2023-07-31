@@ -31,7 +31,7 @@ public class FlinkController {
 
     @GetMapping("/flink/clear-state")
     void clearState() {
-        RulePayload command = createControlCommand(ControlType.CLEAR_STATE_ALL);
+        RulePayload command = createControlCommand(ControlType.CLEAR_ALL_STATE);
         kafkaRuleProducer.addRule(command.toRule());
     }
 

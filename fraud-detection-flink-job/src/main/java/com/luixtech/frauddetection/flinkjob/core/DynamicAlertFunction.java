@@ -23,7 +23,6 @@ import org.apache.flink.util.Collector;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +41,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
     private transient    MapState<Long, Set<Transaction>>           windowState;
     private              Meter                                      alertMeter;
-    private final        MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor   =
+    private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
             new MapStateDescriptor<>(
                     "windowState",
                     BasicTypeInfo.LONG_TYPE_INFO,
@@ -51,7 +50,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void open(Configuration parameters) {
-        windowState = getRuntimeContext().getMapState(windowStateDescriptor);
+        windowState = getRuntimeContext().getMapState(WINDOW_STATE_DESCRIPTOR);
         alertMeter = new MeterView(60);
         getRuntimeContext().getMetricGroup().meter("alertsPerSecond", alertMeter);
     }
@@ -61,7 +60,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
-        ProcessingUtils.processRule(broadcastState, rule);
+        ProcessingUtils.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState, ctx);
@@ -85,19 +84,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
         switch (controlType) {
-            case CLEAR_STATE_ALL:
-                ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
+            case CLEAR_ALL_STATE:
+                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
                 break;
             case CLEAR_STATE_ALL_STOP:
                 rulesState.remove(CLEAR_STATE_COMMAND_KEY);
-                break;
-            case DELETE_RULES_ALL:
-                Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-                while (entriesIterator.hasNext()) {
-                    Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                    rulesState.remove(ruleEntry.getKey());
-                    log.info("Removed {}", ruleEntry.getValue());
-                }
                 break;
         }
     }

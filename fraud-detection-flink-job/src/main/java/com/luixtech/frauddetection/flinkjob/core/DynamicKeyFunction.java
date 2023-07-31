@@ -2,8 +2,6 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.common.rule.ControlType;
-import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.Data;
@@ -15,10 +13,7 @@ import org.apache.flink.metrics.Gauge;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * Implements dynamic data partitioning based on a set of broadcast rules.
@@ -38,21 +33,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
-        ProcessingUtils.processRule(broadcastState, rule);
-        if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule.getControlType(), broadcastState);
-        }
-    }
-
-    private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState) throws Exception {
-        if (Objects.requireNonNull(controlType) == ControlType.DELETE_RULES_ALL) {
-            Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-            while (entriesIterator.hasNext()) {
-                Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                rulesState.remove(ruleEntry.getKey());
-                log.info("Removed {}", ruleEntry.getValue());
-            }
-        }
+        ProcessingUtils.handleRule(broadcastState, rule);
     }
 
     @Override
@@ -75,5 +56,14 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     @Data
     private static class RuleCounterGauge implements Gauge<Integer> {
         private int value = 0;
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public Integer getValue() {
+            return value;
+        }
     }
 }
