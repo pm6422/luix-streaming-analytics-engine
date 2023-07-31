@@ -20,12 +20,15 @@ public class KafkaUtils {
     }
 
     public static Properties initProducerProperties(Arguments arguments) {
-        return initProperties(arguments);
+        Properties properties = initProperties(arguments);
+        // 2 minutes
+        properties.setProperty("transaction.timeout.ms", "120000");
+        return properties;
     }
 
     public static Properties initConsumerProperties(Arguments arguments) {
         Properties kafkaProps = initProperties(arguments);
-        kafkaProps.setProperty("auto.offset.reset", arguments.kafkaOffset);
+//        kafkaProps.setProperty("group.id", "fraud-detection-group");
         return kafkaProps;
     }
 

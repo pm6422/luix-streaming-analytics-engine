@@ -17,8 +17,6 @@ public class Arguments {
     public              Integer kafkaPort                  = 9092;
     @Parameter(names = "--socket.rule-port", description = "Socket port for rules import")
     public              Integer ruleSocketPort             = 9999;
-    @Parameter(names = "--kafka.offset", description = "Kafka offset")
-    public              String  kafkaOffset                = "latest";
     @Parameter(names = "--kafka.topic.transaction", description = "Transaction topic")
     public              String  transactionTopic           = "transaction";
     @Parameter(names = "--kafka.topic.rule", description = "Rule topic")
