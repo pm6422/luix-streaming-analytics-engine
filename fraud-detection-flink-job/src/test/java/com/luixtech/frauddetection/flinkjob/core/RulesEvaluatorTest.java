@@ -33,7 +33,7 @@ public class RulesEvaluatorTest {
     Transaction event1 = Transaction.fromString("1,2013-01-01 00:00:00,1001,1002,CSH,21.5,1");
 
     try (BroadcastStreamNonKeyedOperatorTestHarness<
-                Transaction, Rule, Keyed<Transaction, String, Integer>>
+                Transaction, Rule, Keyed<Transaction, Integer, String>>
         testHarness =
             BroadcastStreamNonKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicKeyFunction(), Descriptors.RULES_DESCRIPTOR)) {
@@ -56,7 +56,7 @@ public class RulesEvaluatorTest {
     Rule rule1 = ruleParser.fromString("1,(active),(paymentType),,(totalFare),(SUM),(>),(50),(20)");
 
     try (BroadcastStreamNonKeyedOperatorTestHarness<
-            Transaction, Rule, Keyed<Transaction, String, Integer>>
+            Transaction, Rule, Keyed<Transaction, Integer, String>>
         testHarness =
             BroadcastStreamNonKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicKeyFunction(), Descriptors.RULES_DESCRIPTOR)) {
@@ -83,11 +83,11 @@ public class RulesEvaluatorTest {
     Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:01,1001,1002,CRD,19,1");
     Transaction event3 = Transaction.fromString("3,2013-01-01 00:00:02,1001,1002,CRD,2,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CRD");
-    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, 1, "CRD");
+    Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CRD");
+    Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, 1, "CRD");
 
-    try (BroadcastStreamKeyedOperatorTestHarness<String, Keyed<Transaction, String, Integer>, Rule, Alert>
+    try (BroadcastStreamKeyedOperatorTestHarness<String, Keyed<Transaction, Integer, String>, Rule, Alert>
         testHarness =
             BroadcastStreamKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicAlertFunction(),
@@ -126,11 +126,11 @@ public class RulesEvaluatorTest {
 
     Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:00,1002,1003,CSH,2,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CSH");
 
     try (BroadcastStreamKeyedOperatorTestHarness<
-            String, Keyed<Transaction, String, Integer>, Rule, Alert>
+            String, Keyed<Transaction, Integer, String>, Rule, Alert>
         testHarness =
             BroadcastStreamKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicAlertFunction(),
@@ -169,13 +169,13 @@ public class RulesEvaluatorTest {
 
     Transaction event4 = Transaction.fromString("4,2013-01-01 00:06:00,1007,1008,CSH,3,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CSH");
-    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, 1, "CSH");
-    Keyed<Transaction, String, Integer> keyed4 = new Keyed<>(event4, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, 1, "CSH");
+    Keyed<Transaction, Integer, String> keyed4 = new Keyed<>(event4, 1, "CSH");
 
     try (BroadcastStreamKeyedOperatorTestHarness<
-            String, Keyed<Transaction, String, Integer>, Rule, Alert>
+            String, Keyed<Transaction, Integer, String>, Rule, Alert>
         testHarness =
             BroadcastStreamKeyedOperatorTestHarness.getInitializedTestHarness(
                 new DynamicAlertFunction(),
@@ -213,8 +213,7 @@ public class RulesEvaluatorTest {
     }
   }
 
-  private StreamRecord<Keyed<Transaction, String, Integer>> toStreamRecord(
-      Keyed<Transaction, String, Integer> keyed) {
+  private StreamRecord<Keyed<Transaction, Integer, String>> toStreamRecord(Keyed<Transaction, Integer, String> keyed) {
     return new StreamRecord<>(keyed, keyed.getWrapped().getEventTime());
   }
 

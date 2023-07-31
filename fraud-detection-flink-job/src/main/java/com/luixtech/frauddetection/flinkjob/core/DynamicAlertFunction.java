@@ -33,7 +33,7 @@ import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType
  * Implements main rule evaluation and alerting logic.
  */
 @Slf4j
-public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
+public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
 
     //    private static final String                                     COUNT                   = "COUNT_FLINK";
 //    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
@@ -91,7 +91,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     }
 
     @Override
-    public void processElement(Keyed<Transaction, String, Integer> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+    public void processElement(Keyed<Transaction, Integer, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
         long eventTime = transaction.getEventTime();
         // Store transaction to local map which is grouped by event time

@@ -18,7 +18,7 @@ import java.util.Map;
  * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
+public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, Integer, String>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -28,7 +28,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+    public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, Integer, String>> out) throws Exception {
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
@@ -36,7 +36,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processElement(Transaction transaction, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+    public void processElement(Transaction transaction, ReadOnlyContext ctx, Collector<Keyed<Transaction, Integer, String>> out) throws Exception {
         ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {

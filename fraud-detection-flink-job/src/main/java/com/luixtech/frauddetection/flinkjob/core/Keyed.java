@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Keyed<IN, KEY, ID> {
+public class Keyed<IN, ID, KEY> {
     /**
      * Transaction
      */
