@@ -42,7 +42,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();
-            out.collect(new Keyed<>(transaction, KeysExtractor.toKeys(transaction, rule.getGroupingKeyNames()), rule.getRuleId()));
+            out.collect(new Keyed<>(transaction, rule.getRuleId(), KeysExtractor.toKeys(transaction, rule.getGroupingKeyNames())));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);

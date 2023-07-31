@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
@@ -61,7 +43,7 @@ public class RulesEvaluatorTest {
 
       Queue<Object> expectedOutput = new ConcurrentLinkedQueue<>();
       expectedOutput.add(
-          new StreamRecord<>(new Keyed<>(event1, "{paymentType=CSH;payeeId=1001}", 1), 15L));
+          new StreamRecord<>(new Keyed<>(event1, 1, "{paymentType=CSH;payeeId=1001}"), 15L));
 
       TestHarnessUtil.assertOutputEquals(
           "Wrong dynamically keyed output", expectedOutput, testHarness.getOutput());
@@ -101,9 +83,9 @@ public class RulesEvaluatorTest {
     Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:01,1001,1002,CRD,19,1");
     Transaction event3 = Transaction.fromString("3,2013-01-01 00:00:02,1001,1002,CRD,2,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, "CSH", 1);
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, "CRD", 1);
-    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, "CRD", 1);
+    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CRD");
+    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, 1, "CRD");
 
     try (BroadcastStreamKeyedOperatorTestHarness<String, Keyed<Transaction, String, Integer>, Rule, Alert>
         testHarness =
@@ -144,8 +126,8 @@ public class RulesEvaluatorTest {
 
     Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:00,1002,1003,CSH,2,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, "CSH", 1);
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, "CSH", 1);
+    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CSH");
 
     try (BroadcastStreamKeyedOperatorTestHarness<
             String, Keyed<Transaction, String, Integer>, Rule, Alert>
@@ -187,10 +169,10 @@ public class RulesEvaluatorTest {
 
     Transaction event4 = Transaction.fromString("4,2013-01-01 00:06:00,1007,1008,CSH,3,1");
 
-    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, "CSH", 1);
-    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, "CSH", 1);
-    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, "CSH", 1);
-    Keyed<Transaction, String, Integer> keyed4 = new Keyed<>(event4, "CSH", 1);
+    Keyed<Transaction, String, Integer> keyed1 = new Keyed<>(event1, 1, "CSH");
+    Keyed<Transaction, String, Integer> keyed2 = new Keyed<>(event2, 1, "CSH");
+    Keyed<Transaction, String, Integer> keyed3 = new Keyed<>(event3, 1, "CSH");
+    Keyed<Transaction, String, Integer> keyed4 = new Keyed<>(event4, 1, "CSH");
 
     try (BroadcastStreamKeyedOperatorTestHarness<
             String, Keyed<Transaction, String, Integer>, Rule, Alert>

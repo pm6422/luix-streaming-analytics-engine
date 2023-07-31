@@ -13,11 +13,11 @@ public class Keyed<IN, KEY, ID> {
      */
     private IN  wrapped;
     /**
-     * Keys used to partition the transaction, e.g: {payeeId=9905;beneficiaryId=29926}
-     */
-    private KEY key;
-    /**
      * The id of the rule that matched the transaction
      */
     private ID  id;
+    /**
+     * Keys used to partition the transaction, e.g: {payeeId=9905;beneficiaryId=29926}
+     */
+    private KEY key;
 }
