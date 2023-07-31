@@ -1,11 +1,12 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;
@@ -70,16 +71,8 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         ruleCounterGauge.setValue(ruleCounter);
     }
 
+    @Data
     private static class RuleCounterGauge implements Gauge<Integer> {
         private int value = 0;
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        @Override
-        public Integer getValue() {
-            return value;
-        }
     }
 }

@@ -100,7 +100,8 @@ public class RulesEvaluator {
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
         switch (arguments.messageChannel) {
             case CHANNEL_SOCKET:
-                env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
+                env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10,
+                        org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
                 break;
             case CHANNEL_KAFKA:
                 // Default - unlimited restart strategy.
