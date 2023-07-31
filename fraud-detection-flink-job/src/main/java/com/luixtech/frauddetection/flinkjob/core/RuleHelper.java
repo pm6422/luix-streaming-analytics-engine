@@ -50,7 +50,7 @@ public class RuleHelper {
             case SUM:
                 return new BigDecimalAdder();
             case AVG:
-                return new AverageAccumulator();
+                return new BigDecimalAverageAccumulator();
             case MAX:
                 return new BigDecimalMaximum();
             case MIN:
