@@ -35,7 +35,7 @@ import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToSt
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
 
-    //    private static final String                                     COUNT                   = "COUNT_FLINK";
+//    private static final String                                     COUNT                   = "COUNT_FLINK";
 //    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
