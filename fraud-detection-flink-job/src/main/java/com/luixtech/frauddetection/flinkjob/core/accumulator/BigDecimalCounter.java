@@ -12,9 +12,8 @@ import java.math.BigDecimal;
 @PublicEvolving
 public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
 
-    private static final long serialVersionUID = 1L;
-
-    private BigDecimal localValue = BigDecimal.ZERO;
+    private static final long       serialVersionUID = 1L;
+    private              BigDecimal localValue       = BigDecimal.ZERO;
 
     public BigDecimalCounter() {
     }

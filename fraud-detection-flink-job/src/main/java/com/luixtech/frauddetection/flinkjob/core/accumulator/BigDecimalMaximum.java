@@ -14,11 +14,9 @@ import java.math.BigDecimal;
 @PublicEvolving
 public class BigDecimalMaximum implements SimpleAccumulator<BigDecimal> {
 
-    private static final long serialVersionUID = 1L;
-
-    private BigDecimal max = BigDecimal.valueOf(Double.MIN_VALUE);
-
-    private final BigDecimal limit = BigDecimal.valueOf(Double.MIN_VALUE);
+    private static final long       serialVersionUID = 1L;
+    private              BigDecimal max              = BigDecimal.valueOf(Double.MIN_VALUE);
+    private final        BigDecimal limit            = BigDecimal.valueOf(Double.MIN_VALUE);
 
     public BigDecimalMaximum() {
     }
