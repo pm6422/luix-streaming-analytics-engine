@@ -39,14 +39,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 //    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
-    private transient    MapState<Long, Set<Transaction>>           windowState;
     private              Meter                                      alertMeter;
+    private transient    MapState<Long, Set<Transaction>>           windowState;
     private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
-            new MapStateDescriptor<>(
-                    "windowState",
-                    BasicTypeInfo.LONG_TYPE_INFO,
-                    TypeInformation.of(new TypeHint<>() {
-                    }));
+            new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
+            }));
 
     @Override
     public void open(Configuration parameters) {
