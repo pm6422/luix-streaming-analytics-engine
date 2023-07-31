@@ -21,13 +21,13 @@ import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
 import org.apache.flink.util.Collector;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType.COUNT_WITH_RESET;
-import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
 
 /**
  * Implements main rule evaluation and alerting logic.
@@ -97,8 +97,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     public void processElement(Keyed<Transaction, String, Integer> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
         long eventTime = transaction.getEventTime();
-        // Add Transaction to state
-        addToStateValuesSet(windowState, eventTime, transaction);
+        // Store transaction to local map which is grouped by event time
+        storeTransaction(windowState, eventTime, transaction);
 
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
@@ -163,6 +163,16 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             aggregator.add(aggregatedValue);
         }
 //        }
+    }
+
+    private static <K, V> Set<V> storeTransaction(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+        Set<V> valuesSet = mapState.get(key);
+        if (valuesSet == null) {
+            valuesSet = new HashSet<>();
+        }
+        valuesSet.add(value);
+        mapState.put(key, valuesSet);
+        return valuesSet;
     }
 
     @Override
