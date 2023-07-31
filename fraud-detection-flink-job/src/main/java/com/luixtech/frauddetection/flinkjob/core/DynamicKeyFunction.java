@@ -42,6 +42,9 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();
+            // it is important to understand that keys determine the actual physical grouping of events
+            // - all Transactions with the same values of specified parameters (e.g. payer #25 -> beneficiary #12)
+            // have to be aggregated in the same physical instance of the evaluating operator
             out.collect(new Keyed<>(transaction, rule.getRuleId(), KeysExtractor.toKeys(transaction, rule.getGroupingKeyNames())));
             ruleCounter++;
         }
