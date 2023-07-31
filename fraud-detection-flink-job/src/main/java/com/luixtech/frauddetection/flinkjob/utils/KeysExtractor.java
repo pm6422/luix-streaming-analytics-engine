@@ -30,8 +30,7 @@ public class KeysExtractor {
         return sb.toString();
     }
 
-    private static void appendKeyValue(StringBuilder sb, Object object, String fieldName)
-            throws IllegalAccessException, NoSuchFieldException {
+    private static void appendKeyValue(StringBuilder sb, Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException {
         sb.append(fieldName);
         sb.append("=");
         sb.append(FieldsExtractor.getFieldAsString(object, fieldName));

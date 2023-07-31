@@ -37,13 +37,8 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processElement(Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
+    public void processElement(Transaction transaction, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         ReadOnlyBroadcastState<Integer, Rule> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        forkEventForEachGroupingKey(event, rulesState, out);
-    }
-
-    private void forkEventForEachGroupingKey(Transaction transaction, ReadOnlyBroadcastState<Integer, Rule> rulesState,
-                                             Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         int ruleCounter = 0;
         for (Map.Entry<Integer, Rule> entry : rulesState.immutableEntries()) {
             final Rule rule = entry.getValue();

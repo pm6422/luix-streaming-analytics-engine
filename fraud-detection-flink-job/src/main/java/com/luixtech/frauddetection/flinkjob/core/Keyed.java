@@ -26,7 +26,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Keyed<IN, KEY, ID> {
+    /**
+     * Transaction
+     */
     private IN  wrapped;
     private KEY key;
+    /**
+     * The id of the rule that matched the transaction
+     */
     private ID  id;
 }
