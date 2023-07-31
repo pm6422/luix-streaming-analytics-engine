@@ -43,8 +43,7 @@ public class RuleParser {
         rule.setGroupingKeyNames(getNames(iter.next()));
         rule.setUnique(getNames(iter.next()));
         rule.setAggregateFieldName(stripBrackets(iter.next()));
-        rule.setAggregatorFunctionType(
-                AggregatorFunctionType.valueOf(stripBrackets(iter.next()).toUpperCase()));
+        rule.setAggregatorFunctionType(AggregatorFunctionType.valueOf(stripBrackets(iter.next()).toUpperCase()));
         rule.setLimitOperatorType(LimitOperatorType.fromString(stripBrackets(iter.next())));
         rule.setLimit(new BigDecimal(stripBrackets(iter.next())));
         rule.setWindowMinutes(Integer.parseInt(stripBrackets(iter.next())));

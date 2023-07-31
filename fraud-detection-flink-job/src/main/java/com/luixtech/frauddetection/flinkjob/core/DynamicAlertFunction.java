@@ -60,7 +60,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
-        ProcessingUtils.handleRule(broadcastState, rule);
+        RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState, ctx);

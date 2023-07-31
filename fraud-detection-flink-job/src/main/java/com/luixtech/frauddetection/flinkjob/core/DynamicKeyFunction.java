@@ -33,7 +33,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
-        ProcessingUtils.handleRule(broadcastState, rule);
+        RuleHelper.handleRule(broadcastState, rule);
     }
 
     @Override
