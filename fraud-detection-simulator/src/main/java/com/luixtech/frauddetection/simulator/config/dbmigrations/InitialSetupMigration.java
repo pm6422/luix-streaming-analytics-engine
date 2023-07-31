@@ -32,8 +32,8 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         String payload2 =
                 "{\"ruleId\":\"2\","
-                        + "\"aggregateFieldName\":\"COUNT_FLINK\","
-                        + "\"aggregatorFunctionType\":\"SUM\","
+                        + "\"aggregateFieldName\":\"\","
+                        + "\"aggregatorFunctionType\":\"COUNT\","
                         + "\"groupingKeyNames\":[\"paymentType\"],"
                         + "\"limit\":\"300\","
                         + "\"limitOperatorType\":\"LESS\","
@@ -56,8 +56,8 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         String payload4 =
                 "{\"ruleId\":\"4\","
-                        + "\"aggregateFieldName\":\"COUNT_WITH_RESET_FLINK\","
-                        + "\"aggregatorFunctionType\":\"SUM\","
+                        + "\"aggregateFieldName\":\"\","
+                        + "\"aggregatorFunctionType\":\"COUNT_WITH_RESET\","
                         + "\"groupingKeyNames\":[\"paymentType\"],"
                         + "\"limit\":\"100\","
                         + "\"limitOperatorType\":\"GREATER_EQUAL\","

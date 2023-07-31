@@ -18,11 +18,11 @@ public class RuleHelper {
     public static void handleRule(BroadcastState<Integer, Rule> broadcastState, Rule rule) throws Exception {
         switch (rule.getRuleState()) {
             case ACTIVE:
-            case PAUSE:
                 // merge rule
                 broadcastState.put(rule.getRuleId(), rule);
                 break;
             case DELETE:
+            case PAUSE:
                 broadcastState.remove(rule.getRuleId());
                 break;
             case CONTROL:
