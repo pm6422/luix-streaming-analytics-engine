@@ -1,7 +1,9 @@
 package com.luixtech.frauddetection.common.rule;
 
 public enum ControlType {
-    CLEAR_STATE_ALL,
-    CLEAR_STATE_ALL_STOP,
-    DELETE_RULES_ALL
+    DELETE_ALL_RULES,
+    CLEAR_ALL_STATE,
+    // todo: check usage
+    CLEAR_STATE_ALL_STOP
+
 }

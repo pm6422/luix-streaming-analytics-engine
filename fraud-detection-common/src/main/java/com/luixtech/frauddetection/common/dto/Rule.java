@@ -29,15 +29,6 @@ public class Rule {
     private BigDecimal             limit;
     private Integer                windowMinutes;
 
-//    public Long getWindowMillis() {
-//        return Time.minutes(this.windowMinutes).toMilliseconds();
-//    }
-
-//    public long getWindowStartFor(Long timestamp) {
-//        Long ruleWindowMillis = getWindowMillis();
-//        return (timestamp - ruleWindowMillis);
-//    }
-
     /**
      * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
      *
@@ -63,6 +54,8 @@ public class Rule {
     }
 
     public enum AggregatorFunctionType {
+        COUNT,
+        COUNT_WITH_RESET,
         SUM,
         AVG,
         MIN,
@@ -77,7 +70,7 @@ public class Rule {
         GREATER(">"),
         LESS("<");
 
-        String operator;
+        final String operator;
 
         LimitOperatorType(String operator) {
             this.operator = operator;

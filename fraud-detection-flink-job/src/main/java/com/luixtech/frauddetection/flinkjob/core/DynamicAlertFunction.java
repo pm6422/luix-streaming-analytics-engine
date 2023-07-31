@@ -6,7 +6,6 @@ import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
-import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -22,37 +21,33 @@ import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction
 import org.apache.flink.util.Collector;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
+import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType.COUNT_WITH_RESET;
 
 /**
  * Implements main rule evaluation and alerting logic.
  */
 @Slf4j
-public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
+public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
 
-    private static final String                                     COUNT                   = "COUNT_FLINK";
-    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
+//    private static final String                                     COUNT                   = "COUNT_FLINK";
+//    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
-    private transient    MapState<Long, Set<Transaction>>           windowState;
     private              Meter                                      alertMeter;
-    private final        MapStateDescriptor<Long, Set<Transaction>> windowStateDescriptor   =
-            new MapStateDescriptor<>(
-                    "windowState",
-                    BasicTypeInfo.LONG_TYPE_INFO,
-                    TypeInformation.of(new TypeHint<>() {
-                    }));
+    private transient    MapState<Long, Set<Transaction>>           windowState;
+    private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
+            new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
+            }));
 
     @Override
     public void open(Configuration parameters) {
-        windowState = getRuntimeContext().getMapState(windowStateDescriptor);
+        windowState = getRuntimeContext().getMapState(WINDOW_STATE_DESCRIPTOR);
         alertMeter = new MeterView(60);
         getRuntimeContext().getMetricGroup().meter("alertsPerSecond", alertMeter);
     }
@@ -61,7 +56,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
+        // Merge the new rule with the existing one
+        RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState, ctx);
@@ -70,7 +66,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (rule.getRuleState() != RuleState.ACTIVE) {
+        if (RuleState.ACTIVE != rule.getRuleState()) {
             return;
         }
         if (widestWindowRule == null) {
@@ -85,29 +81,21 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
         switch (controlType) {
-            case CLEAR_STATE_ALL:
-                ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
+            case CLEAR_ALL_STATE:
+                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
                 break;
             case CLEAR_STATE_ALL_STOP:
                 rulesState.remove(CLEAR_STATE_COMMAND_KEY);
-                break;
-            case DELETE_RULES_ALL:
-                Iterator<Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-                while (entriesIterator.hasNext()) {
-                    Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                    rulesState.remove(ruleEntry.getKey());
-                    log.info("Removed {}", ruleEntry.getValue());
-                }
                 break;
         }
     }
 
     @Override
-    public void processElement(Keyed<Transaction, String, Integer> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+    public void processElement(Keyed<Transaction, Integer, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
         long eventTime = transaction.getEventTime();
-        // Add Transaction to state
-        addToStateValuesSet(windowState, eventTime, transaction);
+        // Store transaction to local map which is grouped by event time
+        storeTransaction(windowState, eventTime, transaction);
 
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
@@ -147,7 +135,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                             + ruleMatched);
 
             if (ruleMatched) {
-                if (COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
+                if (COUNT_WITH_RESET.equals(rule.getAggregatorFunctionType())) {
                     evictAllStateElements();
                 }
                 alertMeter.markEvent();
@@ -162,16 +150,26 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void aggregateValuesInState(Long stateEventTime, SimpleAccumulator<BigDecimal> aggregator, Rule rule) throws Exception {
         Set<Transaction> inWindow = windowState.get(stateEventTime);
-        if (COUNT.equals(rule.getAggregateFieldName()) || COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
-            for (Transaction event : inWindow) {
-                aggregator.add(BigDecimal.ONE);
-            }
-        } else {
-            for (Transaction event : inWindow) {
-                BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), event);
-                aggregator.add(aggregatedValue);
-            }
+//        if (COUNT.equals(rule.getAggregateFieldName()) || COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
+//            for (Transaction transaction : inWindow) {
+//                aggregator.add(BigDecimal.ONE);
+//            }
+//        } else {
+        for (Transaction transaction : inWindow) {
+            BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), transaction);
+            aggregator.add(aggregatedValue);
         }
+//        }
+    }
+
+    private static <K, V> Set<V> storeTransaction(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+        Set<V> valuesSet = mapState.get(key);
+        if (valuesSet == null) {
+            valuesSet = new HashSet<>();
+        }
+        valuesSet.add(value);
+        mapState.put(key, valuesSet);
+        return valuesSet;
     }
 
     @Override

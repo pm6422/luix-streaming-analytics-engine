@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.luixtech.frauddetection.flinkjob.core.accumulator;
 
 import org.apache.flink.annotation.Public;
@@ -29,13 +11,11 @@ import java.math.BigDecimal;
  * {@code double} and the result is {@code double}.
  */
 @Public
-public class AverageAccumulator implements SimpleAccumulator<BigDecimal> {
+public class BigDecimalAverageAccumulator implements SimpleAccumulator<BigDecimal> {
 
-    private static final long serialVersionUID = 1L;
-
-    private long count;
-
-    private BigDecimal sum;
+    private static final long       serialVersionUID = 1L;
+    private              long       count;
+    private              BigDecimal sum;
 
     @Override
     public void add(BigDecimal value) {
@@ -59,8 +39,8 @@ public class AverageAccumulator implements SimpleAccumulator<BigDecimal> {
 
     @Override
     public void merge(Accumulator<BigDecimal, BigDecimal> other) {
-        if (other instanceof AverageAccumulator) {
-            AverageAccumulator avg = (AverageAccumulator) other;
+        if (other instanceof BigDecimalAverageAccumulator) {
+            BigDecimalAverageAccumulator avg = (BigDecimalAverageAccumulator) other;
             this.count += avg.count;
             this.sum = sum.add(avg.sum);
         } else {
@@ -69,8 +49,8 @@ public class AverageAccumulator implements SimpleAccumulator<BigDecimal> {
     }
 
     @Override
-    public AverageAccumulator clone() {
-        AverageAccumulator average = new AverageAccumulator();
+    public BigDecimalAverageAccumulator clone() {
+        BigDecimalAverageAccumulator average = new BigDecimalAverageAccumulator();
         average.count = this.count;
         average.sum = this.sum;
         return average;

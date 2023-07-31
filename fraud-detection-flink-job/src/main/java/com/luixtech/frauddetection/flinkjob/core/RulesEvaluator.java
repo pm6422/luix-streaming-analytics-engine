@@ -46,25 +46,24 @@ public class RulesEvaluator {
         DataStream<Alert> alertStream = transactionStream
                 .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
-                .uid("DynamicKeyFunction")
+                .uid(DynamicKeyFunction.class.getSimpleName())
                 .name("Dynamic Partitioning Function")
-                // cannot be optimized by lambda
+                // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getKey())
                 .connect(broadcastRuleStream)
                 .process(new DynamicAlertFunction())
-                .uid("DynamicAlertFunction")
+                .uid(DynamicAlertFunction.class.getSimpleName())
                 .name("Dynamic Rule Evaluation Function");
 
-        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
-        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
-
         alertStream.print().name("Alert STDOUT Sink");
-        allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
-
         DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
         DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(arguments, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
+        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
+        allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
+
+        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
         DataStream<String> latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Latency Sink");
@@ -101,7 +100,8 @@ public class RulesEvaluator {
     private void configureRestartStrategy(StreamExecutionEnvironment env) {
         switch (arguments.messageChannel) {
             case CHANNEL_SOCKET:
-                env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10, org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
+                env.setRestartStrategy(RestartStrategies.fixedDelayRestart(10,
+                        org.apache.flink.api.common.time.Time.of(10, TimeUnit.SECONDS)));
                 break;
             case CHANNEL_KAFKA:
                 // Default - unlimited restart strategy.
