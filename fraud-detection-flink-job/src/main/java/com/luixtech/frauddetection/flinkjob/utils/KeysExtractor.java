@@ -14,7 +14,7 @@ public class KeysExtractor {
      * @param object   target for values extraction
      * @param keyNames list of field names
      */
-    public static String getKey(Object object, List<String> keyNames) throws NoSuchFieldException, IllegalAccessException {
+    public static String toKeys(Object object, List<String> keyNames) throws NoSuchFieldException, IllegalAccessException {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         if (keyNames.size() > 0) {
