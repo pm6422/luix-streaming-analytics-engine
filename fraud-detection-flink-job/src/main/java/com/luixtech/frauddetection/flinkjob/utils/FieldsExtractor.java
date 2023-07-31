@@ -1,5 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 
@@ -16,6 +18,9 @@ public class FieldsExtractor {
     }
 
     public static BigDecimal getBigDecimalByName(String fieldName, Object object) throws NoSuchFieldException, IllegalAccessException {
+        if(StringUtils.isEmpty(fieldName)){
+            return BigDecimal.ZERO;
+        }
         Field field = object.getClass().getField(fieldName);
         return new BigDecimal(field.get(object).toString());
     }

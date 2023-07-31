@@ -1,11 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.rule.ControlType;
-import com.luixtech.frauddetection.flinkjob.core.accumulator.AverageAccumulator;
-import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalAdder;
-import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMaximum;
-import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMinimum;
 import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -48,6 +45,8 @@ public class RuleHelper {
     /* Picks and returns a new accumulator, based on the Rule's aggregator function type. */
     public static SimpleAccumulator<BigDecimal> getAggregator(Rule rule) {
         switch (rule.getAggregatorFunctionType()) {
+            case COUNT:
+                return new BigDecimalCounter();
             case SUM:
                 return new BigDecimalAdder();
             case AVG:

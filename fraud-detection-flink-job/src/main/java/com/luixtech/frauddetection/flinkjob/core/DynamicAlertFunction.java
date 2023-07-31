@@ -153,16 +153,16 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void aggregateValuesInState(Long stateEventTime, SimpleAccumulator<BigDecimal> aggregator, Rule rule) throws Exception {
         Set<Transaction> inWindow = windowState.get(stateEventTime);
-        if (COUNT.equals(rule.getAggregateFieldName()) || COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
-            for (Transaction event : inWindow) {
-                aggregator.add(BigDecimal.ONE);
-            }
-        } else {
-            for (Transaction event : inWindow) {
-                BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), event);
+//        if (COUNT.equals(rule.getAggregateFieldName()) || COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
+//            for (Transaction transaction : inWindow) {
+//                aggregator.add(BigDecimal.ONE);
+//            }
+//        } else {
+            for (Transaction transaction : inWindow) {
+                BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), transaction);
                 aggregator.add(aggregatedValue);
             }
-        }
+//        }
     }
 
     @Override
