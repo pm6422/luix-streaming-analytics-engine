@@ -54,6 +54,7 @@ public class Rule {
     }
 
     public enum AggregatorFunctionType {
+        COUNT,
         SUM,
         AVG,
         MIN,

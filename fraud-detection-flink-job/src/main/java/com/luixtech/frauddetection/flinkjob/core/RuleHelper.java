@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.AverageAccumulator;
-import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalCounter;
+import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalAdder;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMaximum;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.BigDecimalMinimum;
 import com.luixtech.frauddetection.common.dto.Rule;
@@ -49,7 +49,7 @@ public class RuleHelper {
     public static SimpleAccumulator<BigDecimal> getAggregator(Rule rule) {
         switch (rule.getAggregatorFunctionType()) {
             case SUM:
-                return new BigDecimalCounter();
+                return new BigDecimalAdder();
             case AVG:
                 return new AverageAccumulator();
             case MAX:
