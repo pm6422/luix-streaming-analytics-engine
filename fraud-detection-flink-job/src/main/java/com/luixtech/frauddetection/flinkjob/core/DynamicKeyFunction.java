@@ -37,7 +37,8 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Keyed<Transaction, String, Integer>> out) throws Exception {
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
+        // Merge the new rule with the existing one
+        ProcessingUtils.processRule(broadcastState, rule);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState);
         }

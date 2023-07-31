@@ -9,10 +9,11 @@ import java.util.Set;
 
 public class ProcessingUtils {
 
-    public static void handleRuleBroadcast(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
+    public static void processRule(BroadcastState<Integer, Rule> broadcastState, Rule rule) throws Exception {
         switch (rule.getRuleState()) {
             case ACTIVE:
             case PAUSE:
+                // merge rule
                 broadcastState.put(rule.getRuleId(), rule);
                 break;
             case DELETE:

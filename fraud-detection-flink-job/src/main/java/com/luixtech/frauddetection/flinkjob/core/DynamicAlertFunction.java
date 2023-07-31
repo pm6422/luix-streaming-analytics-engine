@@ -23,7 +23,6 @@ import org.apache.flink.util.Collector;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -61,7 +60,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
         log.debug("Received {}", rule);
         BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
-        ProcessingUtils.handleRuleBroadcast(rule, broadcastState);
+        // Merge the new rule with the existing one
+        ProcessingUtils.processRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
             handleControlCommand(rule.getControlType(), broadcastState, ctx);
