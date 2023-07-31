@@ -6,7 +6,6 @@ import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.rule.ControlType;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
-import com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -27,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType.COUNT_WITH_RESET;
 import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToStateValuesSet;
 
 /**
@@ -35,8 +35,8 @@ import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToSt
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
 
-    private static final String                                     COUNT                   = "COUNT_FLINK";
-    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
+    //    private static final String                                     COUNT                   = "COUNT_FLINK";
+//    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
     private transient    MapState<Long, Set<Transaction>>           windowState;
@@ -138,7 +138,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                             + ruleMatched);
 
             if (ruleMatched) {
-                if (COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
+                if (COUNT_WITH_RESET.equals(rule.getAggregatorFunctionType())) {
                     evictAllStateElements();
                 }
                 alertMeter.markEvent();
@@ -158,10 +158,10 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 //                aggregator.add(BigDecimal.ONE);
 //            }
 //        } else {
-            for (Transaction transaction : inWindow) {
-                BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), transaction);
-                aggregator.add(aggregatedValue);
-            }
+        for (Transaction transaction : inWindow) {
+            BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), transaction);
+            aggregator.add(aggregatedValue);
+        }
 //        }
     }
 
