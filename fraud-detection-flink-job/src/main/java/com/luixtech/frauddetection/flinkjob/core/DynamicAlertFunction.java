@@ -35,7 +35,7 @@ import static com.luixtech.frauddetection.flinkjob.utils.ProcessingUtils.addToSt
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, Integer>, Rule, Alert> {
 
-//    private static final String                                     COUNT                   = "COUNT_FLINK";
+    //    private static final String                                     COUNT                   = "COUNT_FLINK";
 //    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
@@ -69,7 +69,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (rule.getRuleState() != RuleState.ACTIVE) {
+        if (RuleState.ACTIVE != rule.getRuleState()) {
             return;
         }
         if (widestWindowRule == null) {
