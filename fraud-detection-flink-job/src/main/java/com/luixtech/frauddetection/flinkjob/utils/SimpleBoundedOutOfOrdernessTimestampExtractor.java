@@ -6,8 +6,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 import java.util.concurrent.TimeUnit;
 
-public class SimpleBoundedOutOfOrdernessTimestampExtractor<T extends Transaction>
-        extends BoundedOutOfOrdernessTimestampExtractor<T> {
+public class SimpleBoundedOutOfOrdernessTimestampExtractor<T extends Transaction> extends BoundedOutOfOrdernessTimestampExtractor<T> {
 
     public SimpleBoundedOutOfOrdernessTimestampExtractor(int outOfOrdernessMillis) {
         super(Time.of(outOfOrdernessMillis, TimeUnit.MILLISECONDS));
