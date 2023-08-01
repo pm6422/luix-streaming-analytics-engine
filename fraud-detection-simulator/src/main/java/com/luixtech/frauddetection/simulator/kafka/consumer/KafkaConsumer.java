@@ -16,14 +16,14 @@ public class KafkaConsumer {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ApplicationProperties applicationProperties;
 
-    @KafkaListener(topics = "${application.kafka.topic.alert}")
+    @KafkaListener(topics = "${application.kafka.topic.alert}", groupId = "alertConsumeGrp")
     public void templateAlerts(@Payload String message) {
         log.warn("Detected alert {}", message);
         // Send to websocket
         simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), message);
     }
 
-    @KafkaListener(topics = "${application.kafka.topic.latency}")
+    @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latencyConsumeGrp")
     public void templateLatency(@Payload String message) {
         log.warn("Found latency {}ms", message);
         // Send to websocket

@@ -23,7 +23,7 @@ public class KafkaTransactionConsumer implements ConsumerSeekAware {
     private final ApplicationProperties         applicationProperties;
     private final KafkaListenerEndpointRegistry listenerEndpointRegistry;
 
-    @KafkaListener(id = "${application.kafka.listener.transaction}", topics = "${application.kafka.topic.transaction}")
+    @KafkaListener(id = "${application.kafka.listener.transaction}", topics = "${application.kafka.topic.transaction}", groupId = "transactionConsumeGrp")
     public void consumeTransactions(@Payload String message) {
         log.info("Received transaction {}", message);
         // Send to websocket
