@@ -19,10 +19,10 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
     private final        Throttler             throttler;
     private volatile     boolean               running            = true;
     private final        Integer               maxRecordsPerSecond;
-    private final        Consumer<Transaction> transactionConsumer;
+    private final        Consumer<Transaction> transactionProducer;
 
-    public AbstractTransactionsGenerator(Consumer<Transaction> transactionConsumer, int maxRecordsPerSecond) {
-        this.transactionConsumer = transactionConsumer;
+    public AbstractTransactionsGenerator(Consumer<Transaction> transactionProducer, int maxRecordsPerSecond) {
+        this.transactionProducer = transactionProducer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond, 1);
     }
@@ -54,6 +54,10 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         return randomTransaction(new SplittableRandom());
     }
 
+    public void generateAndPublishOne() {
+        transactionProducer.accept(generateOne());
+    }
+
     private static Transaction.PaymentType paymentType(long id) {
         int name = (int) (id % 2);
         switch (name) {
@@ -74,7 +78,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
 
         while (running) {
             Transaction transaction = randomTransaction(rnd);
-            transactionConsumer.accept(transaction);
+            transactionProducer.accept(transaction);
             try {
                 throttler.throttle();
             } catch (InterruptedException e) {

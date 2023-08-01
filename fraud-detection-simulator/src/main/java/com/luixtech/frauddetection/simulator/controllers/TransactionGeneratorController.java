@@ -4,15 +4,16 @@ import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.simulator.kafka.consumer.KafkaTransactionConsumer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 @RestController
 @Slf4j
@@ -29,7 +30,11 @@ public class TransactionGeneratorController {
     private static final AtomicBoolean            GENERATING               = new AtomicBoolean(false);
 
     @GetMapping("/api/transaction-generator/start")
-    public void start() {
+    public void start(@RequestParam(value = "quantity", required = false) Integer quantity) {
+        if (quantity != null) {
+            IntStream.range(0, quantity).forEach(i -> transactionsGenerator.generateAndPublishOne());
+            return;
+        }
         if (GENERATING.compareAndSet(false, true)) {
             EXECUTOR_SERVICE.submit(transactionsGenerator);
         }
@@ -50,7 +55,7 @@ public class TransactionGeneratorController {
             GENERATING.set(false);
             return;
         } else {
-            start();
+            start(null);
         }
 
         if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {

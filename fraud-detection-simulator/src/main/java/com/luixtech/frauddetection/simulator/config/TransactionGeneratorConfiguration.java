@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TransactionGeneratorConfiguration {
     @Bean
-    public TransactionsGenerator transactionsGenerator(KafkaTransactionProducer transactionsPusher) {
-        return new TransactionsGenerator(transactionsPusher, 1);
+    public TransactionsGenerator transactionsGenerator(KafkaTransactionProducer transactionProducer) {
+        return new TransactionsGenerator(transactionProducer, 1);
     }
 }

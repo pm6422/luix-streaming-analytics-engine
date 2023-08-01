@@ -15,8 +15,8 @@ public class TransactionsGenerator extends AbstractTransactionsGenerator {
     private final BigDecimal beneficiaryLimit                  = new BigDecimal(10000000);
     private final BigDecimal payeeBeneficiaryLimit             = new BigDecimal(20000000);
 
-    public TransactionsGenerator(Consumer<Transaction> transactionConsumer, int maxRecordsPerSecond) {
-        super(transactionConsumer, maxRecordsPerSecond);
+    public TransactionsGenerator(Consumer<Transaction> transactionProducer, int maxRecordsPerSecond) {
+        super(transactionProducer, maxRecordsPerSecond);
     }
 
     @Override
