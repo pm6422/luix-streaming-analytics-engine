@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class KafkaUtils {
 
-    public static KafkaSource<String> createKafkaSource(Arguments arguments, String topic) {
-        Properties kafkaProps = initConsumerProperties(arguments);
+    public static KafkaSource<String> createKafkaSource(Arguments arguments, String topic, String group) {
+        Properties kafkaProps = initConsumerProperties(arguments, group);
         return KafkaSource.<String>builder()
                 .setProperties(kafkaProps)
                 .setTopics(topic)
@@ -26,9 +26,9 @@ public class KafkaUtils {
         return properties;
     }
 
-    public static Properties initConsumerProperties(Arguments arguments) {
+    public static Properties initConsumerProperties(Arguments arguments, String group) {
         Properties kafkaProps = initProperties(arguments);
-//        kafkaProps.setProperty("group.id", "fraud-detection-group");
+        kafkaProps.setProperty("group.id", group);
         return kafkaProps;
     }
 

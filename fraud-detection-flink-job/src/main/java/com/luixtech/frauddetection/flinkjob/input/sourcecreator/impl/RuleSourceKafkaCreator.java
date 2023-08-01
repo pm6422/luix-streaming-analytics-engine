@@ -14,7 +14,7 @@ import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaS
 public class RuleSourceKafkaCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
-        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.ruleTopic);
+        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.ruleTopic, "ruleGrp");
 
         // NOTE: Idiomatically, watermarks should be assigned here, but this done later
         // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
