@@ -125,14 +125,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             boolean ruleMatched = rule.apply(aggregateResult);
 
             ctx.output(Descriptors.DEMO_SINK_TAG,
-                    "Rule "
-                            + rule.getRuleId()
-                            + " | "
-                            + value.getKey()
-                            + " : "
-                            + aggregateResult.toString()
-                            + " -> "
-                            + ruleMatched);
+                    "Rule: " + rule.getRuleId() + " | " + value.getKey() + " : " + aggregateResult.toString() + " -> " + ruleMatched);
 
             if (ruleMatched) {
                 if (COUNT_WITH_RESET.equals(rule.getAggregatorFunctionType())) {
