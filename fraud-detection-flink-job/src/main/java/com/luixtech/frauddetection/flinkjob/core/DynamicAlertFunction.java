@@ -35,7 +35,7 @@ import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
 
-//    private static final String                                     COUNT                   = "COUNT_FLINK";
+    //    private static final String                                     COUNT                   = "COUNT_FLINK";
 //    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
@@ -116,7 +116,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
             for (Long stateEventTime : windowState.keys()) {
                 if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
-                    aggregateValuesInState(stateEventTime, aggregator, rule);
+                    Set<Transaction> inWindow = windowState.get(stateEventTime);
+                    for (Transaction t : inWindow) {
+                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), t);
+                        aggregator.add(aggregatedValue);
+                    }
                 }
             }
 
@@ -139,20 +143,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private boolean isStateValueInWindow(Long stateEventTime, Long windowStartForEvent, long currentEventTime) {
         return stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime;
-    }
-
-    private void aggregateValuesInState(Long stateEventTime, SimpleAccumulator<BigDecimal> aggregator, Rule rule) throws Exception {
-        Set<Transaction> inWindow = windowState.get(stateEventTime);
-//        if (COUNT.equals(rule.getAggregateFieldName()) || COUNT_WITH_RESET.equals(rule.getAggregateFieldName())) {
-//            for (Transaction transaction : inWindow) {
-//                aggregator.add(BigDecimal.ONE);
-//            }
-//        } else {
-        for (Transaction transaction : inWindow) {
-            BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), transaction);
-            aggregator.add(aggregatedValue);
-        }
-//        }
     }
 
     private static <K, V> Set<V> storeTransaction(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
