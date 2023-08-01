@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
-public class RulesSource {
+public class RuleSource {
 
     public static DataStreamSource<String> initRulesSource(Arguments arguments, StreamExecutionEnvironment env) {
         DataStreamSource<String> dataStreamSource = SourceCreator

@@ -7,7 +7,7 @@ import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 
-public class AlertsSink {
+public class AlertSink {
 
     public static DataStreamSink<String> addAlertsSink(Arguments arguments, DataStream<String> stream) {
         DataStreamSink<String> dataStreamSink = SinkCreator

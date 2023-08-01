@@ -4,7 +4,7 @@ import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
-import com.luixtech.frauddetection.flinkjob.output.AlertsSink;
+import com.luixtech.frauddetection.flinkjob.output.AlertSink;
 import com.luixtech.frauddetection.flinkjob.output.LatencySink;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_KAFKA;
 import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_SOCKET;
-import static com.luixtech.frauddetection.flinkjob.input.RulesSource.initRulesSource;
-import static com.luixtech.frauddetection.flinkjob.input.RulesSource.stringsStreamToRules;
-import static com.luixtech.frauddetection.flinkjob.input.TransactionsSource.initTransactionsSource;
-import static com.luixtech.frauddetection.flinkjob.input.TransactionsSource.stringsStreamToTransactions;
+import static com.luixtech.frauddetection.flinkjob.input.RuleSource.initRulesSource;
+import static com.luixtech.frauddetection.flinkjob.input.RuleSource.stringsStreamToRules;
+import static com.luixtech.frauddetection.flinkjob.input.TransactionSource.initTransactionsSource;
+import static com.luixtech.frauddetection.flinkjob.input.TransactionSource.stringsStreamToTransactions;
 
 @Slf4j
 @AllArgsConstructor
@@ -56,8 +56,8 @@ public class RulesEvaluator {
                 .name("Dynamic Rule Evaluation Function");
 
         alertStream.print().name("Alert STDOUT Sink");
-        DataStream<String> alertsJson = AlertsSink.alertsStreamToJson(alertStream);
-        DataStreamSink<String> alertsSink = AlertsSink.addAlertsSink(arguments, alertsJson);
+        DataStream<String> alertsJson = AlertSink.alertsStreamToJson(alertStream);
+        DataStreamSink<String> alertsSink = AlertSink.addAlertsSink(arguments, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
