@@ -66,9 +66,9 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         RulePayload rulePayload4 = new RulePayload(payload4);
 
-        ruleRepository.save(rulePayload1);
-        ruleRepository.save(rulePayload2);
-        ruleRepository.save(rulePayload3);
+//        ruleRepository.save(rulePayload1);
+//        ruleRepository.save(rulePayload2);
+//        ruleRepository.save(rulePayload3);
         ruleRepository.save(rulePayload4);
 
         List<RulePayload> rulePayloads = ruleRepository.findAll();
