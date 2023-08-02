@@ -72,14 +72,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
-    private void handleControlCommand(ControlType controlType, Context ctx) throws Exception {
-        switch (controlType) {
-            case CLEAR_ALL_STATE:
-                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
-                break;
-        }
-    }
-
     /**
      * Called for each element after received rule
      *
@@ -192,6 +184,14 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void handleControlCommand(ControlType controlType, Context ctx) throws Exception {
+        switch (controlType) {
+            case CLEAR_ALL_STATE:
+                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
+                break;
         }
     }
 }
