@@ -20,10 +20,6 @@ import java.util.Locale;
 @AllArgsConstructor
 public class Transaction implements TimestampAssignable<Long> {
     public  long        transactionId;
-    public  long        payeeId;
-    public  long        beneficiaryId;
-    public  BigDecimal  paymentAmount;
-    public  PaymentType paymentType;
     /**
      * Generation timestamp of the transaction event
      */
@@ -32,6 +28,10 @@ public class Transaction implements TimestampAssignable<Long> {
      * Timestamp of ingestion into the flink input source
      */
     private Long        ingestionTimestamp;
+    public  long        payeeId;
+    public  long        beneficiaryId;
+    public  BigDecimal  paymentAmount;
+    public  PaymentType paymentType;
 
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US).withZone(ZoneOffset.UTC);
 
