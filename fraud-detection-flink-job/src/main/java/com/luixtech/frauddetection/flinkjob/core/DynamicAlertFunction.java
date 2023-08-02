@@ -69,7 +69,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             broadcastState.put(WIDEST_RULE_KEY, rule);
             return;
         }
-        if (TimeUnit.MINUTES.toMillis(widestWindowRule.getWindowMinutes()) < TimeUnit.MINUTES.toMillis(rule.getWindowMinutes())) {
+        if ( rule.getWindowMinutes() > widestWindowRule.getWindowMinutes()) {
             broadcastState.put(WIDEST_RULE_KEY, rule);
         }
     }
