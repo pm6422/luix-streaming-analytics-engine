@@ -23,7 +23,6 @@ import org.apache.flink.util.Collector;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +68,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             broadcastState.put(WIDEST_RULE_KEY, rule);
             return;
         }
-        if ( rule.getWindowMinutes() > widestWindowRule.getWindowMinutes()) {
+        if (rule.getWindowMinutes() > widestWindowRule.getWindowMinutes()) {
             broadcastState.put(WIDEST_RULE_KEY, rule);
         }
     }
@@ -166,10 +165,12 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
         Rule widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
-
-        Optional<Long> cleanupEventTimeWindow = Optional.ofNullable(widestWindowRule).map(rule -> TimeUnit.MINUTES.toMillis(rule.getWindowMinutes()));
-        Optional<Long> cleanupEventTimeThreshold = cleanupEventTimeWindow.map(window -> timestamp - window);
-        cleanupEventTimeThreshold.ifPresent(this::evictAgedElementsFromWindow);
+        if (widestWindowRule == null) {
+            return;
+        }
+        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getWindowMinutes());
+        long cleanupEventTimeThreshold = timestamp - cleanupEventTimeWindow;
+        evictAgedElementsFromWindow(cleanupEventTimeThreshold);
     }
 
     private void evictAgedElementsFromWindow(Long threshold) {
