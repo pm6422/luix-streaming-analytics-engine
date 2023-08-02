@@ -57,8 +57,8 @@ public class RulesEvaluator {
 
         alertStream.print().name("Alert STDOUT Sink");
         DataStream<String> alertsJson = AlertSink.alertsStreamToJson(alertStream);
-        DataStreamSink<String> alertsSink = AlertSink.addAlertsSink(arguments, alertsJson);
-        alertsSink.setParallelism(1).name("Alerts JSON Sink");
+        DataStreamSink<String> alertSink = AlertSink.addAlertsSink(arguments, alertsJson);
+        alertSink.setParallelism(1).name("Alerts JSON Sink");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
@@ -66,7 +66,7 @@ public class RulesEvaluator {
         DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
         DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
-        latencySink.name("Latency Sink");
+        latencySink.name("Handling Latency Sink");
 
         env.execute("Fraud Detection Engine");
     }
