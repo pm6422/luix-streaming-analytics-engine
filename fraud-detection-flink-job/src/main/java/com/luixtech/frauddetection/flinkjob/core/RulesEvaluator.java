@@ -60,7 +60,7 @@ public class RulesEvaluator {
         DataStreamSink<String> alertsSink = AlertSink.addAlertsSink(arguments, alertsJson);
         alertsSink.setParallelism(1).name("Alerts JSON Sink");
 
-        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.DEMO_SINK_TAG);
+        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
         DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);

@@ -135,8 +135,9 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             // Evaluate the rule and trigger an alert if violated
             boolean ruleMatched = rule.apply(aggregateResult);
 
-            ctx.output(Descriptors.DEMO_SINK_TAG,
-                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
+            // Print rule evaluation result
+            ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
+                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
 
             if (ruleMatched) {
                 if (rule.isResetAfterMatch()) {
