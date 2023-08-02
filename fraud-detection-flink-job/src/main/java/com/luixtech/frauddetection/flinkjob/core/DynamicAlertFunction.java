@@ -90,12 +90,22 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
+    /**
+     * Called for each element after received rule
+     * @param value The stream element.
+     * @param ctx A {@link ReadOnlyContext} that allows querying the timestamp of the element,
+     *     querying the current processing/event time and iterating the broadcast state with
+     *     <b>read-only</b> access. The context is only valid during the invocation of this method,
+     *     do not store it.
+     * @param out The collector to emit resulting elements to
+     * @throws Exception
+     */
     @Override
     public void processElement(Keyed<Transaction, Integer, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
         long eventTime = transaction.getEventTime();
         // Store transaction to local map which is grouped by event time
-        storeTransaction(windowState, eventTime, transaction);
+        groupTransactionByTime(windowState, eventTime, transaction);
 
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
@@ -145,7 +155,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         return stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime;
     }
 
-    private static <K, V> Set<V> storeTransaction(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+    private static <K, V> Set<V> groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
         Set<V> valuesSet = mapState.get(key);
         if (valuesSet == null) {
             valuesSet = new HashSet<>();
