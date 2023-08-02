@@ -10,6 +10,6 @@ public class Descriptors {
     public static final MapStateDescriptor<Integer, Rule> RULES_DESCRIPTOR           = new MapStateDescriptor<>("rules", BasicTypeInfo.INT_TYPE_INFO, TypeInformation.of(Rule.class));
     public static final OutputTag<String>                 RULE_EVALUATION_RESULT_TAG = new OutputTag<String>("rule-evaluation-result-sink") {
     };
-    public static final OutputTag<Long>                   LATENCY_SINK_TAG           = new OutputTag<Long>("latency-sink") {
+    public static final OutputTag<Long>                   HANDLING_LATENCY_SINK_TAG  = new OutputTag<Long>("handling-latency-sink") {
     };
 }

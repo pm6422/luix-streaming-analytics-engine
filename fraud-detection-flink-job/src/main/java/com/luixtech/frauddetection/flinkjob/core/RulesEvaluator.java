@@ -63,8 +63,8 @@ public class RulesEvaluator {
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
-        DataStream<Long> latency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.LATENCY_SINK_TAG);
-        DataStream<String> latencies = latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
+        DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
+        DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Latency Sink");
 

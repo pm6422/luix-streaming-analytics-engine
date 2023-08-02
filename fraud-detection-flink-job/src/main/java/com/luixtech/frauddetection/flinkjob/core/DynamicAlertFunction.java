@@ -104,7 +104,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         groupTransactionByTime(windowState, eventTime, transaction);
 
         // Calculate handling latency time
-        ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
+        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
         // Get rule by ID
         Rule rule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
