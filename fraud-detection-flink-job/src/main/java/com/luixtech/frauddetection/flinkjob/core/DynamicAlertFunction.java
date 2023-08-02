@@ -103,7 +103,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         // Store transaction to local map which is grouped by event time
         groupTransactionByTime(windowState, eventTime, transaction);
 
-        // Calculate latency handling time
+        // Calculate handling latency time
         ctx.output(Descriptors.LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
         // Get rule by ID
@@ -136,7 +136,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             boolean ruleMatched = rule.apply(aggregateResult);
 
             ctx.output(Descriptors.DEMO_SINK_TAG,
-                    "Rule: " + rule.getRuleId() + " | " + value.getKey() + " : " + aggregateResult.toString() + " -> " + ruleMatched);
+                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
 
             if (ruleMatched) {
                 if (rule.isResetAfterMatch()) {
