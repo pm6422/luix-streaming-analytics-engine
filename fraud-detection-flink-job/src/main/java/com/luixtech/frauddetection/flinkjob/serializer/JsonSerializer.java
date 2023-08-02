@@ -23,7 +23,6 @@ public class JsonSerializer<T> extends RichFlatMapFunction<T, String> {
 
     @Override
     public void flatMap(T value, Collector<String> out) {
-        System.out.println(value);
         try {
             String serialized = parser.toString(value);
             out.collect(serialized);
