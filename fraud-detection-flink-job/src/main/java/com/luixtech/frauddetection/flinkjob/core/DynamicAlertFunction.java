@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
 
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
-    private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
     private              Meter                                      alertMeter;
     private transient    MapState<Long, Set<Transaction>>           windowState;
     private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
@@ -77,9 +76,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         switch (controlType) {
             case CLEAR_ALL_STATE:
                 ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
-                break;
-            case CLEAR_STATE_ALL_STOP:
-                rulesState.remove(CLEAR_STATE_COMMAND_KEY);
                 break;
         }
     }
