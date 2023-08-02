@@ -35,8 +35,6 @@ import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
 
-//    private static final String                                     COUNT                   = "COUNT_FLINK";
-//    private static final String                                     COUNT_WITH_RESET        = "COUNT_WITH_RESET_FLINK";
     private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
     private static final int                                        CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
     private              Meter                                      alertMeter;
@@ -73,7 +71,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             broadcastState.put(WIDEST_RULE_KEY, rule);
             return;
         }
-
         if (TimeUnit.MINUTES.toMillis(widestWindowRule.getWindowMinutes()) < TimeUnit.MINUTES.toMillis(rule.getWindowMinutes())) {
             broadcastState.put(WIDEST_RULE_KEY, rule);
         }
