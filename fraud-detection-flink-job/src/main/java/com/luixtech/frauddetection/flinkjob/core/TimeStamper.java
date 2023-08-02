@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.core.function;
+package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.TimestampAssignable;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
