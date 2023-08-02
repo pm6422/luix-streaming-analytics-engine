@@ -46,7 +46,6 @@ public class RuleHelper {
     public static SimpleAccumulator<BigDecimal> getAggregator(Rule rule) {
         switch (rule.getAggregatorFunctionType()) {
             case COUNT:
-            case COUNT_WITH_RESET:
                 return new BigDecimalCounter();
             case SUM:
                 return new BigDecimalAdder();

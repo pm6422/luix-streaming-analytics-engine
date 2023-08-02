@@ -28,6 +28,7 @@ public class Rule {
     private LimitOperatorType      limitOperatorType;
     private BigDecimal             limit;
     private Integer                windowMinutes;
+    private boolean                resetAfterMatch;
 
     /**
      * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
@@ -55,7 +56,6 @@ public class Rule {
 
     public enum AggregatorFunctionType {
         COUNT,
-        COUNT_WITH_RESET,
         SUM,
         AVG,
         MIN,

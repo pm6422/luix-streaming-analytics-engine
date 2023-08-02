@@ -57,7 +57,8 @@ public class InitialSetupMigration implements ApplicationRunner {
         String payload4 =
                 "{\"ruleId\":\"4\","
                         + "\"aggregateFieldName\":\"\","
-                        + "\"aggregatorFunctionType\":\"COUNT_WITH_RESET\","
+                        + "\"aggregatorFunctionType\":\"COUNT\","
+                        + "\"resetAfterMatch\":true,"
                         + "\"groupingKeyNames\":[\"paymentType\"],"
                         + "\"limit\":\"100\","
                         + "\"limitOperatorType\":\"GREATER_EQUAL\","

@@ -27,8 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType.COUNT_WITH_RESET;
-
 /**
  * Implements main rule evaluation and alerting logic.
  */
@@ -89,12 +87,13 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     /**
      * Called for each element after received rule
+     *
      * @param value The stream element.
-     * @param ctx A {@link ReadOnlyContext} that allows querying the timestamp of the element,
-     *     querying the current processing/event time and iterating the broadcast state with
-     *     <b>read-only</b> access. The context is only valid during the invocation of this method,
-     *     do not store it.
-     * @param out The collector to emit resulting elements to
+     * @param ctx   A {@link ReadOnlyContext} that allows querying the timestamp of the element,
+     *              querying the current processing/event time and iterating the broadcast state with
+     *              <b>read-only</b> access. The context is only valid during the invocation of this method,
+     *              do not store it.
+     * @param out   The collector to emit resulting elements to
      * @throws Exception
      */
     @Override
@@ -140,7 +139,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                     "Rule: " + rule.getRuleId() + " | " + value.getKey() + " : " + aggregateResult.toString() + " -> " + ruleMatched);
 
             if (ruleMatched) {
-                if (COUNT_WITH_RESET.equals(rule.getAggregatorFunctionType())) {
+                if (rule.isResetAfterMatch()) {
                     evictAllStateElements();
                 }
                 alertMeter.markEvent();
