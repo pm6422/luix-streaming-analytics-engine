@@ -54,7 +54,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule.getControlType(), broadcastState, ctx);
+            handleControlCommand(rule.getControlType(), ctx);
         }
     }
 
@@ -72,7 +72,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
-    private void handleControlCommand(ControlType controlType, BroadcastState<Integer, Rule> rulesState, Context ctx) throws Exception {
+    private void handleControlCommand(ControlType controlType, Context ctx) throws Exception {
         switch (controlType) {
             case CLEAR_ALL_STATE:
                 ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
