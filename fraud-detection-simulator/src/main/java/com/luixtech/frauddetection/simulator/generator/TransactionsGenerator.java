@@ -20,8 +20,8 @@ public class TransactionsGenerator extends AbstractTransactionsGenerator {
     }
 
     @Override
-    protected Transaction randomTransaction(SplittableRandom rnd) {
-        Transaction transaction = super.randomTransaction(rnd);
+    protected Transaction randomTransaction(SplittableRandom rnd, Long eventTime) {
+        Transaction transaction = super.randomTransaction(rnd, eventTime);
         long now = System.currentTimeMillis();
         if (now - lastBeneficiaryIdTriggered > 8000 + rnd.nextInt(5000)) {
             transaction.setPaymentAmount(beneficiaryLimit.add(new BigDecimal(rnd.nextInt(1000000))));

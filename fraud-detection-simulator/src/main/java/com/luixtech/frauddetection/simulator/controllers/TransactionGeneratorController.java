@@ -32,7 +32,8 @@ public class TransactionGeneratorController {
     @GetMapping("/api/transaction-generator/start")
     public void start(@RequestParam(value = "quantity", required = false) Integer quantity) {
         if (quantity != null) {
-            IntStream.range(0, quantity).forEach(i -> transactionsGenerator.generateAndPublishOne());
+            long now = System.currentTimeMillis();
+            IntStream.range(0, quantity).forEach(i -> transactionsGenerator.generateAndPublishOne(now));
             return;
         }
         if (GENERATING.compareAndSet(false, true)) {

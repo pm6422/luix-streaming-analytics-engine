@@ -31,7 +31,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         throttler.adjustMaxRecordsPerSecond(maxRecordsPerSecond);
     }
 
-    protected Transaction randomTransaction(SplittableRandom rnd) {
+    protected Transaction randomTransaction(SplittableRandom rnd, Long eventTime) {
         long transactionId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
@@ -46,16 +46,16 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
                 .beneficiaryId(beneficiaryId)
                 .paymentAmount(paymentAmount)
                 .paymentType(paymentType(transactionId))
-                .eventTime(System.currentTimeMillis())
+                .eventTime(eventTime != null ? eventTime : System.currentTimeMillis())
                 .build();
     }
 
-    public Transaction generateOne() {
-        return randomTransaction(new SplittableRandom());
+    public Transaction generateOne(long now) {
+        return randomTransaction(new SplittableRandom(), now);
     }
 
-    public void generateAndPublishOne() {
-        transactionProducer.accept(generateOne());
+    public void generateAndPublishOne(long now) {
+        transactionProducer.accept(generateOne(now));
     }
 
     private static Transaction.PaymentType paymentType(long id) {
@@ -77,7 +77,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         final SplittableRandom rnd = new SplittableRandom();
 
         while (running) {
-            Transaction transaction = randomTransaction(rnd);
+            Transaction transaction = randomTransaction(rnd, null);
             transactionProducer.accept(transaction);
             try {
                 throttler.throttle();
