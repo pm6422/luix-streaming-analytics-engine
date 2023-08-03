@@ -21,11 +21,11 @@ import java.util.Locale;
 public class Transaction implements TimestampAssignable<Long> {
     public  long        transactionId;
     /**
-     * Generation timestamp of the transaction event
+     * Generation timestamp of the transaction event, unit: milliseconds
      */
     public  long        eventTime;
     /**
-     * Timestamp of ingestion into the flink input source
+     * Timestamp of ingestion into the flink input source, unit: milliseconds
      */
     private Long        ingestionTimestamp;
     public  long        payeeId;

@@ -101,10 +101,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
 
         if (rule.getRuleState() == RuleState.ACTIVE) {
-            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
-
             long cleanupTime = (eventTime / 1000) * 1000;
+            // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);
+
+            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
             // Calculate the aggregate value
             SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
