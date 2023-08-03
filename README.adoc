@@ -6,7 +6,7 @@ Fraud Detection engine is to consume a stream of financial transactions and eval
 
 
 [[architecture]]
-== Architecture
+== Module Architecture
 Fraud detection demo system consists of three main components:
 
 - fraud-detection-common: Common library for the Fraud Detection application
