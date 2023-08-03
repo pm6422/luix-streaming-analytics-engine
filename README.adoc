@@ -119,7 +119,7 @@ git update-index --chmod=+x mvnw
 
 [[references]]
 == References
-https://github.com/afedulov/fraud-detection-demo/tree/with-1.15[Code repository]
+https://github.com/afedulov/fraud-detection-demo/tree/with-1.15[Fraud detection demo code repository]
 
 https://mp.weixin.qq.com/s?__biz=MzIxMTE0ODU5NQ==&mid=2650244230&idx=1&sn=0e84cb5448542566a852232b7ebf21ae&chksm=8f5aeedab82d67ccc5c70acc0bdcbdd564eda2671a32e710a84f0154ea39d9377bdfb66840ed&cur_album_id=1561681981896179713&scene=189#wechat_redirect[基于 Flink 的动态欺诈检测系统（上）]
 
