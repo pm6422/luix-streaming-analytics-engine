@@ -53,6 +53,20 @@ Then navigate to http://localhost:5656[http://localhost:5656] in your browser.
 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 ```
 
+[[UsingDocker]]
+== Using Docker to simplify development (optional)
+To start zookeeper and Kafka in a docker container, run:
+
+```
+docker-compose -f docker/all.yml up -d
+```
+
+To stop it and remove the container, run:
+
+```
+docker-compose -f docker/all.yml down
+```
+
 [[VMOptions]]
 == VM Options
 Add below Key/Value pair to env variable of rancher.
