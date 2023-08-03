@@ -17,7 +17,7 @@ public class FieldsExtractor {
         return (double) field.get(object);
     }
 
-    public static BigDecimal getBigDecimalByName(String fieldName, Object object) throws NoSuchFieldException, IllegalAccessException {
+    public static BigDecimal getBigDecimalByName(Object object, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         if(StringUtils.isEmpty(fieldName)){
             return BigDecimal.ZERO;
         }

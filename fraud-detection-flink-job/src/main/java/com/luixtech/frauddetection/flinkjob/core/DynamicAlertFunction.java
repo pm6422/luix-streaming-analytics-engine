@@ -112,7 +112,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
                 if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
                     Set<Transaction> inWindow = windowState.get(stateEventTime);
                     for (Transaction t : inWindow) {
-                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), t);
+                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
                         aggregator.add(aggregatedValue);
                     }
                 }
