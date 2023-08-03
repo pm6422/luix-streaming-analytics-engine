@@ -120,13 +120,13 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
             BigDecimal aggregateResult = aggregator.getLocalValue();
             // Evaluate the rule and trigger an alert if violated
-            boolean ruleMatched = rule.apply(aggregateResult);
+            boolean ruleViolated = rule.apply(aggregateResult);
 
             // Print rule evaluation result
             ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
+                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleViolated);
 
-            if (ruleMatched) {
+            if (ruleViolated) {
                 if (rule.isResetAfterMatch()) {
                     evictAllStateElements();
                 }
