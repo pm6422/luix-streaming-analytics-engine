@@ -1,4 +1,4 @@
-= Fraud Detection Demo with Apache Flink
+= Fraud Detection with Apache Flink
 
 [[overview]]
 == Overview
