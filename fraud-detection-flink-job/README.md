@@ -1,12 +1,6 @@
-# Fraud Detection with Apache Flink
-
-## Local Run
-Flink Dashboard
-http://localhost:8081/#/overview
-
+# Fraud Detection with Apache Flink Job
 
 ## Introduction (local execution with netcat):
-
 1. Start `netcat`:
 ```
 nc -lk 9999
@@ -16,7 +10,6 @@ nc -lk 9999
 rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName field), (aggregation function), (limit operator), (limit), (window size in minutes)
 
 ##### Examples:
-
 1,(active),(paymentType),,(paymentAmount),(SUM),(>),(50),(20)
 1,(delete),(paymentType),,(paymentAmount),(SUM),(>),(50),(20)
 2,(active),(payeeId),,(paymentAmount),(SUM),(>),(10),(20)
@@ -31,9 +24,8 @@ rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName fi
 {"ruleState": "CONTROL", "controlType":"EXPORT_RULES_CURRENT"}
 {"ruleState": "CONTROL", "controlType":"CLEAR_STATE_ALL"}
 
-
 ##### Examles of CLI params:
---local true --data-source kafka --rulePayloads-source kafka --alerts-sink kafka --rulePayloads-export-sink kafka --latency-sink kafka --kafka-port 9092
+--flink.dashboard.enabled=true --message.channel=socket
 
 ##### Special functions:
 1,(active),(paymentType),,(COUNT_FLINK),(SUM),(>),(50),(20)
