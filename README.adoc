@@ -5,8 +5,8 @@
 Fraud Detection engine is to consume a stream of financial transactions and evaluate them against a set of rules. Any transaction that violates a rule is flagged as a potential fraud. The engine is implemented using Apache Flink and is deployed as a standalone application. The engine is integrated with a web application that allows users to configure rules and view transactions that are flagged as potential fraud.
 
 
-[[architecture]]
-== Module Architecture
+[[modules]]
+== Modules
 Fraud detection demo system consists of three main components:
 
 - fraud-detection-common: Common library for the Fraud Detection application
