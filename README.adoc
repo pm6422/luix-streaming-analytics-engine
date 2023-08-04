@@ -9,7 +9,7 @@ Fraud Detection engine is to consume a stream of financial transactions and eval
 Fraud detection demo system consists of three main components:
 
 - fraud-detection-common: Common library for the Fraud Detection application
-- fraud-detection-flink-job: Fraud Detection application (Apache Flink)
+- fraud-detection-flink-job: Fraud Detection application with Apache Flink
 - fraud-detection-simulator: Fraud Detection simulator web application, which is used to generate transactions and send them to the flink job
 
 [[requirements]]
