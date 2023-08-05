@@ -22,7 +22,7 @@ NOTE: Java compatability: JDK 11 only
 
 [[dependencies]]
 == Dependencies
-- flink 1.15.4
+- Apache Flink 1.15.4
 - Spring Boot 2.7.1
 
 [[build]]
