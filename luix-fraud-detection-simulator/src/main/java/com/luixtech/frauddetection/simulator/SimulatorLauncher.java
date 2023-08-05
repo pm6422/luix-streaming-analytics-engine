@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator;
 
-import com.luixtech.framework.EnableLuixFramework;
+import com.luixtech.framework.EnableLuixWebFramework;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,7 +9,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ApplicationProperties.class})
-@EnableLuixFramework
+@EnableLuixWebFramework
 @EnableKafka
 public class SimulatorLauncher {
     /**
