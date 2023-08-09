@@ -11,16 +11,14 @@
         <module>luix-fraud-detection-simulator</module>
     </modules>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>1.0.0-SNAPSHOT</revision>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>1.0.0-SNAPSHOT</revision>
     </properties>
-    <dependencies>
-
-    </dependencies>
+    <dependencies></dependencies>
     <build>
         <plugins>
             <plugin>
