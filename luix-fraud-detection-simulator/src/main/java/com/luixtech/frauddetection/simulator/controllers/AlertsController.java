@@ -2,13 +2,13 @@ package com.luixtech.frauddetection.simulator.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.framework.exception.DataNotFoundException;
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaTransactionProducer;
+import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

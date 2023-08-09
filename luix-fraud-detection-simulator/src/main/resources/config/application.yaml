@@ -109,6 +109,8 @@ springdoc: # https://springdoc.org/#migrating-from-springfox
   api-docs:
     enabled: true
   show-actuator: true
+  swagger-ui:
+    tags-sorter: alpha
 # ===================================================================
 # Luix framework specific properties
 # ===================================================================
@@ -129,7 +131,9 @@ luix:
     api-include-pattern: /api/**
     open-api-include-pattern: /open-api/**
     management-include-pattern: /management/**
-    title: Fraud Detection Simulator
+    api-title: Fraud Detection Simulator API
+    open-api-title: Fraud Detection Simulator Open API
+    management-title: Fraud Detection Simulator Management API
     version: ${app.version}
     terms-of-service-url:
     contact-name: Louis
