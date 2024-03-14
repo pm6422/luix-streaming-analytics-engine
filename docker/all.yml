@@ -9,9 +9,11 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    # If you want to expose these ports outside your dev PC, remove the "127.0.0.1:" prefix
+    depends_on:
+      - zookeeper
     ports:
-      - 127.0.0.1:9092:9092
+      - 9092:9092
+      - 9997:9997
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -19,15 +21,30 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_MESSAGE_MAX_BYTES: 10485760
+      JMX_PORT: 9997
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9997
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 30s
+      timeout: 10s
+      retries: 10
   redpanda:
     image: docker.redpanda.com/redpandadata/console:latest
     container_name: redpanda
-    # If you want to expose these ports outside your dev PC, remove the "127.0.0.1:" prefix
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     ports:
-      - 127.0.0.1:8080:8080
+      - "8080:8080"
+    depends_on:
+      - zookeeper
+      - kafka
     environment:
-      KAFKA_BROKERS: kafka:9092
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka:29092"]
 
 #  flink-job-manager:
 #    image: flink:1.15-java8
