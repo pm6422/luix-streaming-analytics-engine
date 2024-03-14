@@ -11,7 +11,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 @EnableConfigurationProperties({ApplicationProperties.class})
 @EnableLuixSpringBootFramework
 @EnableKafka
-public class SimulatorLauncher {
+public class SimulatorApplication {
     /**
      * Entrance method which used to run the application. Spring profiles can be configured with a program arguments
      * --spring.profiles.active=your-active-profile
@@ -19,6 +19,6 @@ public class SimulatorLauncher {
      * @param args program arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(SimulatorLauncher.class, args);
+        SpringApplication.run(SimulatorApplication.class, args);
     }
 }
