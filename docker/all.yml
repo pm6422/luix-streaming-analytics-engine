@@ -9,8 +9,6 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    depends_on:
-      - zookeeper
     ports:
       - 9092:9092
       - 9997:9997
@@ -30,6 +28,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+    depends_on:
+      - zookeeper
   redpanda:
     image: docker.redpanda.com/redpandadata/console:latest
     container_name: redpanda
@@ -37,14 +37,14 @@ services:
     command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     ports:
       - "8080:8080"
-    depends_on:
-      - zookeeper
-      - kafka
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
       CONSOLE_CONFIG_FILE: |
         kafka:
           brokers: ["kafka:29092"]
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 #  flink-job-manager:
 #    image: flink:1.15-java8
