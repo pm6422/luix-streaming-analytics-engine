@@ -9,7 +9,7 @@ import com.luixtech.frauddetection.flinkjob.core.Arguments;
  * Main class to launch the Flink job with CLI params example:
  * --flink.dashboard.enabled=true --message.channel=socket
  */
-public class FlinkJobLauncher {
+public class FlinkJobApplication {
     public static void main(String[] args) throws Exception {
         Arguments arguments = new Arguments();
         JCommander commander = JCommander.newBuilder().addObject(arguments).build();
