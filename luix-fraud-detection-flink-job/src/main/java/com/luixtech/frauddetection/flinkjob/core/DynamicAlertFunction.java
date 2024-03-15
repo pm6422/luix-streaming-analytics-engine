@@ -54,7 +54,9 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule.getRuleControl(), ctx);
+            if (RuleControl.CLEAR_ALL_STATE  == rule.getRuleControl()) {
+                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
+            }
         }
     }
 
@@ -81,7 +83,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      *              <b>read-only</b> access. The context is only valid during the invocation of this method,
      *              do not store it.
      * @param out   The collector to emit resulting elements to
-     * @throws Exception
+     * @throws Exception exception
      */
     @Override
     public void processElement(Keyed<Transaction, Integer, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
@@ -141,14 +143,13 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         return stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime;
     }
 
-    private static <K, V> Set<V> groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+    private static <K, V> void groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
         Set<V> valuesSet = mapState.get(key);
         if (valuesSet == null) {
             valuesSet = new HashSet<>();
         }
         valuesSet.add(value);
         mapState.put(key, valuesSet);
-        return valuesSet;
     }
 
     @Override
@@ -185,14 +186,6 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-        }
-    }
-
-    private void handleControlCommand(RuleControl ruleControl, Context ctx) throws Exception {
-        switch (ruleControl) {
-            case CLEAR_ALL_STATE:
-                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
-                break;
         }
     }
 }

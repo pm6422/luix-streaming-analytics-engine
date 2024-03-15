@@ -25,19 +25,13 @@ public class RuleHelper {
                 broadcastState.remove(rule.getRuleId());
                 break;
             case CONTROL:
-                handleControlCommand(rule.getRuleControl(), broadcastState);
-                break;
-        }
-    }
-
-    private static void handleControlCommand(RuleControl ruleControl, BroadcastState<Integer, Rule> broadcastState) throws Exception {
-        switch (ruleControl) {
-            case DELETE_ALL_RULES:
-                Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
-                while (entriesIterator.hasNext()) {
-                    Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                    broadcastState.remove(ruleEntry.getKey());
-                    log.info("Removed rule {}", ruleEntry.getValue());
+                if (RuleControl.DELETE_ALL_RULES == rule.getRuleControl()) {
+                    Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
+                    while (entriesIterator.hasNext()) {
+                        Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                        broadcastState.remove(ruleEntry.getKey());
+                        log.info("Removed {}", ruleEntry.getValue());
+                    }
                 }
                 break;
         }
