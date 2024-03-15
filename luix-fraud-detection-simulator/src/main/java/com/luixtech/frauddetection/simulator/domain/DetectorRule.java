@@ -25,9 +25,9 @@ public class DetectorRule {
     private String                      id;
     private List<String>                groupingKeyNames;
     private List<String>                unique;
-    private String                      aggregateFieldName;
-    private Rule.AggregatorFunctionType aggregatorFunctionType;
-    private Rule.LimitOperatorType      limitOperatorType;
+    private String                  aggregateFieldName;
+    private Rule.AggregatorFunction aggregatorFunction;
+    private Rule.LimitOperator      limitOperator;
     private BigDecimal                  limit;
     private Integer                     windowMinutes;
     private boolean                     resetAfterMatch;
