@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         DetectorRule detectorRule2 = new DetectorRule();
         detectorRule2.setId("2");
         detectorRule2.setAggregatorFunctionType(Rule.AggregatorFunctionType.COUNT);
-        detectorRule2.setGroupingKeyNames(Arrays.asList("paymentType"));
+        detectorRule2.setGroupingKeyNames(List.of("paymentType"));
         detectorRule2.setLimit(new BigDecimal("300"));
         detectorRule2.setLimitOperatorType(Rule.LimitOperatorType.LESS);
         detectorRule2.setWindowMinutes(1440);
@@ -41,7 +42,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRule3.setId("3");
         detectorRule3.setAggregateFieldName("paymentAmount");
         detectorRule3.setAggregatorFunctionType(Rule.AggregatorFunctionType.SUM);
-        detectorRule3.setGroupingKeyNames(Arrays.asList("beneficiaryId"));
+        detectorRule3.setGroupingKeyNames(List.of("beneficiaryId"));
         detectorRule3.setLimit(new BigDecimal("10000000"));
         detectorRule3.setLimitOperatorType(Rule.LimitOperatorType.GREATER_EQUAL);
         detectorRule3.setWindowMinutes(1440);
@@ -50,7 +51,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         DetectorRule detectorRule4 = new DetectorRule();
         detectorRule4.setId("4");
         detectorRule4.setAggregatorFunctionType(Rule.AggregatorFunctionType.COUNT);
-        detectorRule4.setGroupingKeyNames(Arrays.asList("paymentType"));
+        detectorRule4.setGroupingKeyNames(List.of("paymentType"));
         detectorRule4.setLimit(new BigDecimal("100"));
         detectorRule4.setLimitOperatorType(Rule.LimitOperatorType.GREATER_EQUAL);
         detectorRule4.setWindowMinutes(1440);
