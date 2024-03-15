@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.RuleCommand;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
 import com.luixtech.frauddetection.flinkjob.output.AlertSink;
@@ -37,9 +37,9 @@ public class RulesEvaluator {
     public void run() throws Exception {
         // Create stream execution environment
         StreamExecutionEnvironment env = createExecutionEnv();
-        DataStream<Rule> ruleStream = createRuleStream(env);
+        DataStream<RuleCommand> ruleStream = createRuleStream(env);
         // Rule must be broadcast to all flink servers on the same cluster
-        BroadcastStream<Rule> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        BroadcastStream<RuleCommand> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
         DataStream<Transaction> transactionStream = createTransactionStream(env);
 
         // Processing pipeline setup
@@ -109,7 +109,7 @@ public class RulesEvaluator {
         }
     }
 
-    private DataStream<Rule> createRuleStream(StreamExecutionEnvironment env) {
+    private DataStream<RuleCommand> createRuleStream(StreamExecutionEnvironment env) {
         DataStream<String> rulesStringStream = initRulesSource(arguments, env);
         return stringsStreamToRules(arguments, rulesStringStream);
     }

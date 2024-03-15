@@ -1,10 +1,7 @@
 package com.luixtech.frauddetection.common.dto;
 
-import com.luixtech.frauddetection.common.rule.RuleControl;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,14 +9,11 @@ import java.util.List;
 /**
  * Rules representation.
  */
-@EqualsAndHashCode
-@ToString
 @Data
 @NoArgsConstructor
 public class Rule {
-    private RuleControl            ruleControl;
-    private Integer                ruleId;
-    private List<String>           groupingKeyNames; // aggregation
+    private String                 id;
+    private List<String>           groupingKeyNames;
     private List<String>           unique;
     private String                 aggregateFieldName;
     private AggregatorFunctionType aggregatorFunctionType;
@@ -83,5 +77,4 @@ public class Rule {
             return null;
         }
     }
-
 }

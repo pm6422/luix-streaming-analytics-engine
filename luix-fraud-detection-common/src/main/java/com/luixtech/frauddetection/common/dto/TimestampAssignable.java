@@ -1,5 +1,7 @@
 package com.luixtech.frauddetection.common.dto;
 
-public interface TimestampAssignable<T> {
-    void assignIngestionTimestamp(T timestamp);
+public interface TimestampAssignable {
+    void setIngestionTimestamp(Long timestamp);
+
+    Long getIngestionTimestamp();
 }

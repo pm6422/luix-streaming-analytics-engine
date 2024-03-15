@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.domain.RulePayload;
-import com.luixtech.frauddetection.simulator.repository.RuleRepository;
+import com.luixtech.frauddetection.simulator.domain.DetectorRule;
+import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaTransactionProducer;
 import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.AllArgsConstructor;
@@ -26,14 +26,14 @@ import java.math.BigDecimal;
 public class AlertsController {
 
     private static final ObjectMapper             OBJECT_MAPPER = new ObjectMapper();
-    private final        RuleRepository           ruleRepository;
+    private final        DetectorRuleRepository   detectorRuleRepository;
     private final        KafkaTransactionProducer transactionsPusher;
 //    private final        SimpMessagingTemplate    simpSender;
     private final        ApplicationProperties    applicationProperties;
 
     @GetMapping("/alerts/mock")
-    public Alert mockAlert(@RequestParam(value = "ruleId") Integer ruleId) throws JsonProcessingException {
-        RulePayload rulePayload = ruleRepository.findById(ruleId).orElseThrow(() -> new DataNotFoundException(ruleId.toString()));
+    public Alert mockAlert(@RequestParam(value = "ruleId") String ruleId) throws JsonProcessingException {
+        DetectorRule detectorRule = detectorRuleRepository.findById(ruleId).orElseThrow(() -> new DataNotFoundException(ruleId.toString()));
         Transaction triggeringEvent = transactionsPusher.getLastTransaction();
         if (triggeringEvent == null) {
             log.warn("No transactions found, please start generating transactions first");
@@ -41,7 +41,7 @@ public class AlertsController {
         }
         BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
 
-        Alert alert = new Alert(rulePayload.getId(), rulePayload.toRule(), StringUtils.EMPTY, triggeringEvent, triggeringValue);
+        Alert alert = new Alert(detectorRule.getId(), detectorRule.toRuleCommand().getRule(), StringUtils.EMPTY, triggeringEvent, triggeringValue);
         String result = OBJECT_MAPPER.writeValueAsString(alert);
         // Push to websocket queue
 //        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), result);

@@ -18,7 +18,7 @@ import java.util.Locale;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction implements TimestampAssignable<Long> {
+public class Transaction implements TimestampAssignable {
     public  long        transactionId;
     /**
      * Generation timestamp of the transaction event, unit: milliseconds
@@ -81,7 +81,12 @@ public class Transaction implements TimestampAssignable<Long> {
     }
 
     @Override
-    public void assignIngestionTimestamp(Long timestamp) {
+    public void setIngestionTimestamp(Long timestamp) {
         this.ingestionTimestamp = timestamp;
+    }
+
+    @Override
+    public Long getIngestionTimestamp() {
+        return this.ingestionTimestamp;
     }
 }

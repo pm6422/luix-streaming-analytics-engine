@@ -1,17 +1,15 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
-import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
+import com.luixtech.frauddetection.flinkjob.core.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
-import com.luixtech.frauddetection.flinkjob.serializer.RuleDeserializer;
+import com.luixtech.frauddetection.flinkjob.serializer.JsonDeserializer;
+import com.luixtech.frauddetection.flinkjob.utils.SimpleBoundedOutOfOrdernessTimestampExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
-import org.apache.flink.streaming.api.windowing.time.Time;
-
-import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -25,18 +23,14 @@ public class RuleSource {
         return dataStreamSource;
     }
 
-    public static DataStream<Rule> stringsStreamToRules(Arguments arguments, DataStream<String> ruleStrings) {
+    public static DataStream<RuleCommand> stringsStreamToRules(Arguments arguments, DataStream<String> ruleStrings) {
         return ruleStrings
-                .flatMap(new RuleDeserializer())
+                .flatMap(new JsonDeserializer<>(RuleCommand.class))
 //                .name(getRuleSourceType(parameters).getName())
                 .setParallelism(1)
-                .assignTimestampsAndWatermarks(
-                        new BoundedOutOfOrdernessTimestampExtractor<>(Time.of(0, TimeUnit.MILLISECONDS)) {
-                            @Override
-                            public long extractTimestamp(Rule element) {
-                                // Prevents connected data+update stream watermark stalling.
-                                return Long.MAX_VALUE;
-                            }
-                        });
+                .returns(RuleCommand.class)
+                .flatMap(new TimeStamper<>())
+                .returns(RuleCommand.class)
+                .assignTimestampsAndWatermarks(new SimpleBoundedOutOfOrdernessTimestampExtractor<>(arguments.outOfOrderdness));
     }
 }

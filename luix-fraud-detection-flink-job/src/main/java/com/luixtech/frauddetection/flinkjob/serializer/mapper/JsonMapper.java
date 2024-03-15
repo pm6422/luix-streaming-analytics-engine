@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.serializer;
+package com.luixtech.frauddetection.flinkjob.serializer.mapper;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 

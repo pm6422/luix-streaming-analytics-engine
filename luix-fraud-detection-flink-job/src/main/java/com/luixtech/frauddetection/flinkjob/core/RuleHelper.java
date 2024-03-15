@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.rule.RuleControl;
+import com.luixtech.frauddetection.common.dto.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -14,19 +14,19 @@ import java.util.Map;
 /* Collection of helper methods for Rules. */
 @Slf4j
 public class RuleHelper {
-    public static void handleRule(BroadcastState<Integer, Rule> broadcastState, Rule rule) throws Exception {
-        switch (rule.getRuleControl()) {
-            case ENABLE:
+    public static void handleRule(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
+        switch (ruleCommand.getControl()) {
+            case ADD:
                 // merge rule
-                broadcastState.put(rule.getRuleId(), rule);
+                broadcastState.put(ruleCommand.getRule().getId(), ruleCommand);
                 break;
             case DELETE:
-                broadcastState.remove(rule.getRuleId());
+                broadcastState.remove(ruleCommand.getRule().getId());
                 break;
             case DELETE_ALL:
-                Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
+                Iterator<Map.Entry<String, RuleCommand>> entriesIterator = broadcastState.iterator();
                 while (entriesIterator.hasNext()) {
-                    Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                    Map.Entry<String, RuleCommand> ruleEntry = entriesIterator.next();
                     broadcastState.remove(ruleEntry.getKey());
                     log.info("Removed {}", ruleEntry.getValue());
                 }

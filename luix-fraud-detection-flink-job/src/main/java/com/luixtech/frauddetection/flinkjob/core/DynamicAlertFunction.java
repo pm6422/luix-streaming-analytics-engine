@@ -1,9 +1,9 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.command.Control;
 import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.dto.RuleCommand;
 import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit;
  * Implements main rule evaluation and alerting logic.
  */
 @Slf4j
-public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, Integer, String>, Rule, Alert> {
+public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, String>, RuleCommand, Alert> {
 
-    private static final int                                        WIDEST_RULE_KEY         = Integer.MIN_VALUE;
+    private static final String                                     WIDEST_RULE_KEY         = "" + Integer.MIN_VALUE;
     private              Meter                                      alertMeter;
     private transient    MapState<Long, Set<Transaction>>           windowState;
     private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
@@ -46,25 +46,25 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     }
 
     @Override
-    public void processBroadcastElement(Rule rule, Context ctx, Collector<Alert> out) throws Exception {
-        log.debug("Received {}", rule);
-        BroadcastState<Integer, Rule> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
+    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Alert> out) throws Exception {
+        log.debug("Received {}", ruleCommand);
+        BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
-        RuleHelper.handleRule(broadcastState, rule);
-        updateWidestWindowRule(rule, broadcastState);
+        RuleHelper.handleRule(broadcastState, ruleCommand);
+        updateWidestWindowRule(ruleCommand, broadcastState);
     }
 
-    private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
-        Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (RuleControl.ENABLE != rule.getRuleControl()) {
+    private void updateWidestWindowRule(RuleCommand ruleCommand, BroadcastState<String, RuleCommand> broadcastState) throws Exception {
+        RuleCommand widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
+        if (Control.ADD != ruleCommand.getControl()) {
             return;
         }
         if (widestWindowRule == null) {
-            broadcastState.put(WIDEST_RULE_KEY, rule);
+            broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
             return;
         }
-        if (rule.getWindowMinutes() > widestWindowRule.getWindowMinutes()) {
-            broadcastState.put(WIDEST_RULE_KEY, rule);
+        if (ruleCommand.getRule().getWindowMinutes() > widestWindowRule.getRule().getWindowMinutes()) {
+            broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
         }
     }
 
@@ -80,7 +80,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      * @throws Exception exception
      */
     @Override
-    public void processElement(Keyed<Transaction, Integer, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+    public void processElement(Keyed<Transaction, String, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
         long eventTime = transaction.getEventTime();
         // Store transaction to local map which is grouped by event time
@@ -90,26 +90,26 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
 
         // Get rule by ID
-        Rule rule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
-        if (rule == null) {
+        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
+        if (ruleCommand == null) {
             log.error("Rule with ID [{}] does not exist", value.getId());
             return;
         }
 
-        if (RuleControl.ENABLE == rule.getRuleControl()) {
+        if (Control.ADD == ruleCommand.getControl()) {
             long cleanupTime = (eventTime / 1000) * 1000;
             // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);
 
-            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(ruleCommand.getRule().getWindowMinutes());
 
             // Calculate the aggregate value
-            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
+            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(ruleCommand.getRule());
             for (Long stateEventTime : windowState.keys()) {
                 if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
                     Set<Transaction> inWindow = windowState.get(stateEventTime);
                     for (Transaction t : inWindow) {
-                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
+                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, ruleCommand.getRule().getAggregateFieldName());
                         aggregator.add(aggregatedValue);
                     }
                 }
@@ -117,18 +117,18 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
             BigDecimal aggregateResult = aggregator.getLocalValue();
             // Evaluate the rule and trigger an alert if violated
-            boolean ruleViolated = rule.apply(aggregateResult);
+            boolean ruleViolated = ruleCommand.getRule().apply(aggregateResult);
 
             // Print rule evaluation result
             ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                    "Rule: " + rule.getRuleId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleViolated);
+                    "Rule: " + ruleCommand.getRule().getId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleViolated);
 
             if (ruleViolated) {
-                if (rule.isResetAfterMatch()) {
+                if (ruleCommand.getRule().isResetAfterMatch()) {
                     evictAllStateElements();
                 }
                 alertMeter.markEvent();
-                out.collect(new Alert<>(rule.getRuleId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
+                out.collect(new Alert<>(ruleCommand.getRule().getId(), ruleCommand.getRule(), value.getKey(), value.getWrapped(), aggregateResult));
             }
         }
     }
@@ -148,11 +148,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
-        Rule widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
+        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
         if (widestWindowRule == null) {
             return;
         }
-        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getWindowMinutes());
+        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getRule().getWindowMinutes());
         long cleanupEventTimeThreshold = timestamp - cleanupEventTimeWindow;
         evictAgedElementsFromWindow(cleanupEventTimeThreshold);
     }

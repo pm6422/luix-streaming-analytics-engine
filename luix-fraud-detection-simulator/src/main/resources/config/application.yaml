@@ -74,16 +74,13 @@ spring:
     active: dev
   banner:
     location: classpath:config/banner-company.txt
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
-  datasource:
-    url: jdbc:h2:mem:simulator
-  h2:
-    console:
-      enabled: true
-  jpa:
-    open-in-view: false
+  data:
+    mongodb:
+      auto-index-creation: true
+    web:
+      pageable:
+        one-indexed-parameters: true # whether to expose and assume 1-based page number indexes
+        max-page-size: 2000
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

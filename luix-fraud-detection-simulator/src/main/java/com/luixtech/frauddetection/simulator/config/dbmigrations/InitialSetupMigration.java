@@ -1,78 +1,71 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
-import com.luixtech.frauddetection.simulator.domain.RulePayload;
-import com.luixtech.frauddetection.simulator.repository.RuleRepository;
+import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.simulator.domain.DetectorRule;
+import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 @AllArgsConstructor
 public class InitialSetupMigration implements ApplicationRunner {
 
-    private final RuleRepository    ruleRepository;
-    private final KafkaRuleProducer kafkaRuleProducer;
+    private final DetectorRuleRepository detectorRuleRepository;
+    private final KafkaRuleProducer      kafkaRuleProducer;
 
     public void run(ApplicationArguments args) {
-        String payload1 =
-                "{\"ruleId\":\"1\","
-                        + "\"aggregateFieldName\":\"paymentAmount\","
-                        + "\"aggregatorFunctionType\":\"SUM\","
-                        + "\"groupingKeyNames\":[\"payeeId\", \"beneficiaryId\"],"
-                        + "\"limit\":\"20000000\","
-                        + "\"limitOperatorType\":\"GREATER\","
-                        + "\"ruleControl\":\"ENABLE\","
-                        + "\"windowMinutes\":\"43200\"}";
+        DetectorRule detectorRule1 = new DetectorRule();
+        detectorRule1.setId("1");
+        detectorRule1.setAggregateFieldName("paymentAmount");
+        detectorRule1.setAggregatorFunctionType(Rule.AggregatorFunctionType.SUM);
+        detectorRule1.setGroupingKeyNames(Arrays.asList("payeeId", "beneficiaryId"));
+        detectorRule1.setLimit(new BigDecimal("20000000"));
+        detectorRule1.setLimitOperatorType(Rule.LimitOperatorType.GREATER);
+        detectorRule1.setWindowMinutes(43200);
+        detectorRule1.setEnabled(true);
 
-        RulePayload rulePayload1 = new RulePayload(payload1);
+        DetectorRule detectorRule2 = new DetectorRule();
+        detectorRule2.setId("2");
+        detectorRule2.setAggregatorFunctionType(Rule.AggregatorFunctionType.COUNT);
+        detectorRule2.setGroupingKeyNames(Arrays.asList("paymentType"));
+        detectorRule2.setLimit(new BigDecimal("300"));
+        detectorRule2.setLimitOperatorType(Rule.LimitOperatorType.LESS);
+        detectorRule2.setWindowMinutes(1440);
+        detectorRule2.setEnabled(false);
 
-        String payload2 =
-                "{\"ruleId\":\"2\","
-                        + "\"aggregateFieldName\":\"\","
-                        + "\"aggregatorFunctionType\":\"COUNT\","
-                        + "\"groupingKeyNames\":[\"paymentType\"],"
-                        + "\"limit\":\"300\","
-                        + "\"limitOperatorType\":\"LESS\","
-                        + "\"ruleControl\":\"DELETE\","
-                        + "\"windowMinutes\":\"1440\"}";
+        DetectorRule detectorRule3 = new DetectorRule();
+        detectorRule3.setId("3");
+        detectorRule3.setAggregateFieldName("paymentAmount");
+        detectorRule3.setAggregatorFunctionType(Rule.AggregatorFunctionType.SUM);
+        detectorRule3.setGroupingKeyNames(Arrays.asList("beneficiaryId"));
+        detectorRule3.setLimit(new BigDecimal("10000000"));
+        detectorRule3.setLimitOperatorType(Rule.LimitOperatorType.GREATER_EQUAL);
+        detectorRule3.setWindowMinutes(1440);
+        detectorRule3.setEnabled(true);
 
-        RulePayload rulePayload2 = new RulePayload(payload2);
+        DetectorRule detectorRule4 = new DetectorRule();
+        detectorRule4.setId("4");
+        detectorRule4.setAggregatorFunctionType(Rule.AggregatorFunctionType.COUNT);
+        detectorRule4.setGroupingKeyNames(Arrays.asList("paymentType"));
+        detectorRule4.setLimit(new BigDecimal("100"));
+        detectorRule4.setLimitOperatorType(Rule.LimitOperatorType.GREATER_EQUAL);
+        detectorRule4.setWindowMinutes(1440);
+        detectorRule4.setResetAfterMatch(true);
+        detectorRule4.setEnabled(true);
 
-        String payload3 =
-                "{\"ruleId\":\"3\","
-                        + "\"aggregateFieldName\":\"paymentAmount\","
-                        + "\"aggregatorFunctionType\":\"SUM\","
-                        + "\"groupingKeyNames\":[\"beneficiaryId\"],"
-                        + "\"limit\":\"10000000\","
-                        + "\"limitOperatorType\":\"GREATER_EQUAL\","
-                        + "\"ruleControl\":\"ENABLE\","
-                        + "\"windowMinutes\":\"1440\"}";
+        detectorRuleRepository.save(detectorRule1);
+        detectorRuleRepository.save(detectorRule2);
+        detectorRuleRepository.save(detectorRule3);
+        detectorRuleRepository.save(detectorRule4);
 
-        RulePayload rulePayload3 = new RulePayload(payload3);
-
-        String payload4 =
-                "{\"ruleId\":\"4\","
-                        + "\"aggregateFieldName\":\"\","
-                        + "\"aggregatorFunctionType\":\"COUNT\","
-                        + "\"resetAfterMatch\":true,"
-                        + "\"groupingKeyNames\":[\"paymentType\"],"
-                        + "\"limit\":\"100\","
-                        + "\"limitOperatorType\":\"GREATER_EQUAL\","
-                        + "\"ruleControl\":\"ENABLE\","
-                        + "\"windowMinutes\":\"1440\"}";
-
-        RulePayload rulePayload4 = new RulePayload(payload4);
-
-        ruleRepository.save(rulePayload1);
-        ruleRepository.save(rulePayload2);
-        ruleRepository.save(rulePayload3);
-        ruleRepository.save(rulePayload4);
-
-        List<RulePayload> rulePayloads = ruleRepository.findAll();
-        rulePayloads.stream().map(RulePayload::toRule).forEach(kafkaRuleProducer::addRule);
+        List<DetectorRule> detectorRules = detectorRuleRepository.findAll();
+        detectorRules.stream().map(DetectorRule::toRuleCommand).forEach(kafkaRuleProducer::addRule);
     }
 }

@@ -1,10 +1,10 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
-import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.rule.RuleControl;
-import com.luixtech.frauddetection.simulator.domain.RulePayload;
-import com.luixtech.frauddetection.simulator.repository.RuleRepository;
+import com.luixtech.frauddetection.common.command.Control;
+import com.luixtech.frauddetection.common.dto.RuleCommand;
+import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
+import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,21 +17,21 @@ import java.util.List;
 @AllArgsConstructor
 public class FlinkController {
 
-    private final RuleRepository    ruleRepository;
-    private final KafkaRuleProducer kafkaRuleProducer;
+    private final DetectorRuleRepository detectorRuleRepository;
+    private final KafkaRuleProducer      kafkaRuleProducer;
 
     @GetMapping("/flink/add-all-rules")
-    void syncRules() {
-        List<RulePayload> rulePayloads = ruleRepository.findAll();
-        for (RulePayload rulePayload : rulePayloads) {
-            kafkaRuleProducer.addRule(rulePayload.toRule());
+    public void addAllRules() {
+        List<DetectorRule> detectorRules = detectorRuleRepository.findAll();
+        for (DetectorRule detectorRule : detectorRules) {
+            kafkaRuleProducer.addRule(detectorRule.toRuleCommand());
         }
     }
 
     @GetMapping("/flink/delete-all-rules")
-    void clearState() {
-        Rule rule = new Rule();
-        rule.setRuleControl(RuleControl.DELETE_ALL);
-        kafkaRuleProducer.addRule(rule);
+    public void deleteAllRules() {
+        RuleCommand ruleCommand = new RuleCommand();
+        ruleCommand.setControl(Control.DELETE_ALL);
+        kafkaRuleProducer.addRule(ruleCommand);
     }
 }

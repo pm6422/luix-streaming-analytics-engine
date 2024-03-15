@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Alert<E, V> {
-    private Integer ruleId;
-    private Rule    violatedRule;
-    private String  key;
-    private E       triggeringEvent;
-    private V       triggeringValue;
+    private String ruleId;
+    private Rule   violatedRule;
+    private String key;
+    private E      triggeringEvent;
+    private V      triggeringValue;
 }

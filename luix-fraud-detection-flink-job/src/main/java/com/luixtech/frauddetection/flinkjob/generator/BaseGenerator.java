@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.common.thread.Throttler;
+import com.luixtech.utilities.thread.Throttler;
 import lombok.Getter;
 import org.apache.flink.api.common.state.ListState;
 import org.apache.flink.api.common.state.ListStateDescriptor;
