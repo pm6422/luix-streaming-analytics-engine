@@ -28,7 +28,7 @@ public class Transaction implements IngestionTimeAssignable {
     /**
      * Timestamp of ingestion into the flink input source, unit: milliseconds
      */
-    private Long        ingestionTimestamp;
+    private Long        ingestionTime;
     public  long        payeeId;
     public  long        beneficiaryId;
     public  BigDecimal  paymentAmount;
@@ -73,7 +73,7 @@ public class Transaction implements IngestionTimeAssignable {
             transaction.beneficiaryId = Long.parseLong(iter.next());
             transaction.paymentType = PaymentType.fromString(iter.next());
             transaction.paymentAmount = new BigDecimal(iter.next());
-            transaction.ingestionTimestamp = Long.parseLong(iter.next());
+            transaction.ingestionTime = Long.parseLong(iter.next());
         } catch (NumberFormatException nfe) {
             throw new RuntimeException("Invalid record: " + line, nfe);
         }
@@ -83,11 +83,11 @@ public class Transaction implements IngestionTimeAssignable {
 
     @Override
     public void setIngestionTime(Long timestamp) {
-        this.ingestionTimestamp = timestamp;
+        this.ingestionTime = timestamp;
     }
 
     @Override
     public Long getIngestionTime() {
-        return this.ingestionTimestamp;
+        return this.ingestionTime;
     }
 }

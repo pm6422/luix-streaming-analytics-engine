@@ -7,19 +7,19 @@ import lombok.Data;
 @Data
 public class RuleCommand implements IngestionTimeAssignable {
     private Command command;
-    private Rule    rule;
+    private Rule rule;
     /**
      * Timestamp of ingestion into the flink input source, unit: milliseconds
      */
-    private Long    ingestionTimestamp;
+    private Long ingestionTime;
 
     @Override
     public void setIngestionTime(Long timestamp) {
-        this.ingestionTimestamp = timestamp;
+        this.ingestionTime = timestamp;
     }
 
     @Override
     public Long getIngestionTime() {
-        return this.ingestionTimestamp;
+        return this.ingestionTime;
     }
 }

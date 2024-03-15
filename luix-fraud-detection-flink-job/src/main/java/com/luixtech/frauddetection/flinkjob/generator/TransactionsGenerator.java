@@ -34,7 +34,7 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
                 .paymentAmount(paymentAmount)
                 .paymentType(paymentType(transactionId))
                 .eventTime(System.currentTimeMillis())
-                .ingestionTimestamp(System.currentTimeMillis())
+                .ingestionTime(System.currentTimeMillis())
                 .build();
     }
 
