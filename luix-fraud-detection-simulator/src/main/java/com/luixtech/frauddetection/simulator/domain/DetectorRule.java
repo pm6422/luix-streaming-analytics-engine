@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.domain;
 
-import com.luixtech.frauddetection.common.command.Control;
+import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.pojo.Rule;
 import com.luixtech.frauddetection.common.pojo.RuleCommand;
 import lombok.AllArgsConstructor;
@@ -36,9 +36,9 @@ public class DetectorRule {
     public RuleCommand toRuleCommand() {
         RuleCommand ruleCommand = new RuleCommand();
         if (Boolean.TRUE.equals(this.enabled)) {
-            ruleCommand.setControl(Control.ADD);
+            ruleCommand.setCommand(Command.ADD);
         } else {
-            ruleCommand.setControl(Control.DELETE);
+            ruleCommand.setCommand(Command.DELETE);
         }
         Rule rule = new Rule();
         BeanUtils.copyProperties(this, rule);

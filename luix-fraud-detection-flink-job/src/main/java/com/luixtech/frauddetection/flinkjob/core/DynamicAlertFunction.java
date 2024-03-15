@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.command.Control;
+import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.pojo.Alert;
 import com.luixtech.frauddetection.common.pojo.RuleCommand;
 import com.luixtech.frauddetection.common.pojo.Transaction;
@@ -56,7 +56,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
     private void updateWidestWindowRule(RuleCommand ruleCommand, BroadcastState<String, RuleCommand> broadcastState) throws Exception {
         RuleCommand widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (Control.ADD != ruleCommand.getControl()) {
+        if (Command.ADD != ruleCommand.getCommand()) {
             return;
         }
         if (widestWindowRule == null) {
@@ -96,7 +96,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             return;
         }
 
-        if (Control.ADD == ruleCommand.getControl()) {
+        if (Command.ADD == ruleCommand.getCommand()) {
             long cleanupTime = (eventTime / 1000) * 1000;
             // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);

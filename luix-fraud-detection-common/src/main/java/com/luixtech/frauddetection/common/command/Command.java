@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.common.command;
 
-public enum Control {
+public enum Command {
     ADD,
     DELETE,
     DELETE_ALL

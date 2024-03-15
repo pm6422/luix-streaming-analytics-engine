@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 public class RuleHelper {
     public static void handleRule(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
-        switch (ruleCommand.getControl()) {
+        switch (ruleCommand.getCommand()) {
             case ADD:
                 // merge rule
                 broadcastState.put(ruleCommand.getRule().getId(), ruleCommand);

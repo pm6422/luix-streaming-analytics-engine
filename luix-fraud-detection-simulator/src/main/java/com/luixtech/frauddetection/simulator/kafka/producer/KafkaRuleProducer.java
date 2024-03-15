@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
 import com.luixtech.frauddetection.common.pojo.Rule;
-import com.luixtech.frauddetection.common.command.Control;
+import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.pojo.RuleCommand;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class KafkaRuleProducer {
 
     public void deleteRule(String ruleId) {
         RuleCommand ruleCommand = new RuleCommand();
-        ruleCommand.setControl(Control.DELETE);
+        ruleCommand.setCommand(Command.DELETE);
         Rule rule = new Rule();
         rule.setId(ruleId);
         ruleCommand.setRule(rule);
