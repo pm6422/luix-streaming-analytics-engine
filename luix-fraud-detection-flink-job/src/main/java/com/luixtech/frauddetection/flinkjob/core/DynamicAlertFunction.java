@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
-import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
         if (rule.getRuleState() == RuleState.CONTROL) {
-            handleControlCommand(rule.getControlType(), ctx);
+            handleControlCommand(rule.getRuleControl(), ctx);
         }
     }
 
@@ -188,8 +188,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
     }
 
-    private void handleControlCommand(ControlType controlType, Context ctx) throws Exception {
-        switch (controlType) {
+    private void handleControlCommand(RuleControl ruleControl, Context ctx) throws Exception {
+        switch (ruleControl) {
             case CLEAR_ALL_STATE:
                 ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
                 break;

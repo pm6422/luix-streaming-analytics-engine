@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -26,13 +26,13 @@ public class RuleHelper {
                 broadcastState.remove(rule.getRuleId());
                 break;
             case CONTROL:
-                handleControlCommand(broadcastState, rule.getControlType());
+                handleControlCommand(broadcastState, rule.getRuleControl());
                 break;
         }
     }
 
-    private static void handleControlCommand(BroadcastState<Integer, Rule> rulesState, ControlType controlType) throws Exception {
-        if (Objects.requireNonNull(controlType) == ControlType.DELETE_ALL_RULES) {
+    private static void handleControlCommand(BroadcastState<Integer, Rule> rulesState, RuleControl ruleControl) throws Exception {
+        if (Objects.requireNonNull(ruleControl) == RuleControl.DELETE_ALL_RULES) {
             Iterator<Map.Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
             while (entriesIterator.hasNext()) {
                 Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();

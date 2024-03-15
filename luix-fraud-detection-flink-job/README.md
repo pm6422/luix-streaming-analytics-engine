@@ -20,9 +20,9 @@ rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName fi
 
 ##### Examples of Control Commands:
 
-{"ruleState": "CONTROL", "controlType":"DELETE_RULES_ALL"}
-{"ruleState": "CONTROL", "controlType":"EXPORT_RULES_CURRENT"}
-{"ruleState": "CONTROL", "controlType":"CLEAR_STATE_ALL"}
+{"ruleState": "CONTROL", "ruleControl":"DELETE_RULES_ALL"}
+{"ruleState": "CONTROL", "ruleControl":"EXPORT_RULES_CURRENT"}
+{"ruleState": "CONTROL", "ruleControl":"CLEAR_STATE_ALL"}
 
 ##### Examles of CLI params:
 --flink.dashboard.enabled=true --message.channel=socket

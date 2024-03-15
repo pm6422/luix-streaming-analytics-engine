@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.common.dto;
 
-import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Rule {
     private Integer                ruleId;
     private RuleState              ruleState;
-    private ControlType            controlType;
+    private RuleControl            ruleControl;
     private List<String>           groupingKeyNames; // aggregation
     private List<String>           unique;
     private String                 aggregateFieldName;

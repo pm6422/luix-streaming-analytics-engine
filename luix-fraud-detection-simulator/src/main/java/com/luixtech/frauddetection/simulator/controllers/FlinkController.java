@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.rule.ControlType;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
@@ -31,14 +31,14 @@ public class FlinkController {
 
     @GetMapping("/flink/clear-state")
     void clearState() {
-        RulePayload command = createControlCommand(ControlType.CLEAR_ALL_STATE);
+        RulePayload command = createControlCommand(RuleControl.CLEAR_ALL_STATE);
         kafkaRuleProducer.addRule(command.toRule());
     }
 
-    private RulePayload createControlCommand(ControlType clearStateAll) {
+    private RulePayload createControlCommand(RuleControl clearStateAll) {
         Rule rule = new Rule();
         rule.setRuleState(RuleState.CONTROL);
-        rule.setControlType(clearStateAll);
+        rule.setRuleControl(clearStateAll);
         return RulePayload.fromRule(rule);
     }
 }
