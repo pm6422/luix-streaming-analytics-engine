@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.luixtech</groupId>
             <artifactId>luix-utilities</artifactId>
-            <version>1.2.1.7</version>
+            <version>1.2.3.9</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
