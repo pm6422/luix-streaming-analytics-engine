@@ -10,7 +10,6 @@ import org.apache.flink.api.common.state.BroadcastState;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 /* Collection of helper methods for Rules. */
 @Slf4j
@@ -26,19 +25,21 @@ public class RuleHelper {
                 broadcastState.remove(rule.getRuleId());
                 break;
             case CONTROL:
-                handleControlCommand(broadcastState, rule.getRuleControl());
+                handleControlCommand(rule.getRuleControl(), broadcastState);
                 break;
         }
     }
 
-    private static void handleControlCommand(BroadcastState<Integer, Rule> rulesState, RuleControl ruleControl) throws Exception {
-        if (Objects.requireNonNull(ruleControl) == RuleControl.DELETE_ALL_RULES) {
-            Iterator<Map.Entry<Integer, Rule>> entriesIterator = rulesState.iterator();
-            while (entriesIterator.hasNext()) {
-                Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                rulesState.remove(ruleEntry.getKey());
-                log.info("Removed {}", ruleEntry.getValue());
-            }
+    private static void handleControlCommand(RuleControl ruleControl, BroadcastState<Integer, Rule> broadcastState) throws Exception {
+        switch (ruleControl) {
+            case DELETE_ALL_RULES:
+                Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
+                while (entriesIterator.hasNext()) {
+                    Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                    broadcastState.remove(ruleEntry.getKey());
+                    log.info("Removed rule {}", ruleEntry.getValue());
+                }
+                break;
         }
     }
 
