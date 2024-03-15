@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,20 +12,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumer {
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
+//    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ApplicationProperties applicationProperties;
 
     @KafkaListener(topics = "${application.kafka.topic.alert}", groupId = "alertConsumeGrp")
     public void templateAlerts(@Payload String message) {
         log.warn("Detected alert {}", message);
         // Send to websocket
-        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), message);
+//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), message);
     }
 
     @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latencyConsumeGrp")
     public void templateLatency(@Payload String message) {
         log.warn("Found latency {}ms", message);
         // Send to websocket
-        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
+//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getLatency(), message);
     }
 }

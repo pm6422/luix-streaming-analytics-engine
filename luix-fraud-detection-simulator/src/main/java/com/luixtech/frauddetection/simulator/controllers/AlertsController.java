@@ -12,7 +12,6 @@ import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +28,7 @@ public class AlertsController {
     private static final ObjectMapper             OBJECT_MAPPER = new ObjectMapper();
     private final        RuleRepository           ruleRepository;
     private final        KafkaTransactionProducer transactionsPusher;
-    private final        SimpMessagingTemplate    simpSender;
+//    private final        SimpMessagingTemplate    simpSender;
     private final        ApplicationProperties    applicationProperties;
 
     @GetMapping("/alerts/mock")
@@ -45,7 +44,7 @@ public class AlertsController {
         Alert alert = new Alert(rulePayload.getId(), rulePayload.toRule(), StringUtils.EMPTY, triggeringEvent, triggeringValue);
         String result = OBJECT_MAPPER.writeValueAsString(alert);
         // Push to websocket queue
-        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), result);
+//        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), result);
         return alert;
     }
 }
