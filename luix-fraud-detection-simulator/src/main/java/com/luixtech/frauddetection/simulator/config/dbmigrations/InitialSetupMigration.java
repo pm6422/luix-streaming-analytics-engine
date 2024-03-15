@@ -3,7 +3,6 @@ package com.luixtech.frauddetection.simulator.config.dbmigrations;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
-import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 @AllArgsConstructor
 public class InitialSetupMigration implements ApplicationRunner {
 
     private final DetectorRuleRepository detectorRuleRepository;
-    private final KafkaRuleProducer      kafkaRuleProducer;
 
     public void run(ApplicationArguments args) {
         DetectorRule detectorRule1 = new DetectorRule();
@@ -64,8 +61,5 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRuleRepository.save(detectorRule2);
         detectorRuleRepository.save(detectorRule3);
         detectorRuleRepository.save(detectorRule4);
-
-        List<DetectorRule> detectorRules = detectorRuleRepository.findAll();
-        detectorRules.stream().map(DetectorRule::toRuleCommand).forEach(kafkaRuleProducer::addRule);
     }
 }
