@@ -56,31 +56,6 @@ public class Transaction implements IngestionTimeAssignable {
         }
     }
 
-    public static Transaction fromString(String line) {
-        List<String> tokens = Arrays.asList(line.split(","));
-        int numArgs = 7;
-        if (tokens.size() != numArgs) {
-            throw new RuntimeException("Invalid transaction: " + line + ". Required number of arguments: " + numArgs + " found " + tokens.size());
-        }
-
-        Transaction transaction = new Transaction();
-
-        try {
-            Iterator<String> iter = tokens.iterator();
-            transaction.transactionId = Long.parseLong(iter.next());
-            transaction.eventTime = ZonedDateTime.parse(iter.next(), timeFormatter).toInstant().toEpochMilli();
-            transaction.payeeId = Long.parseLong(iter.next());
-            transaction.beneficiaryId = Long.parseLong(iter.next());
-            transaction.paymentType = PaymentType.fromString(iter.next());
-            transaction.paymentAmount = new BigDecimal(iter.next());
-            transaction.ingestionTime = Long.parseLong(iter.next());
-        } catch (NumberFormatException nfe) {
-            throw new RuntimeException("Invalid record: " + line, nfe);
-        }
-
-        return transaction;
-    }
-
     @Override
     public void setIngestionTime(Long timestamp) {
         this.ingestionTime = timestamp;
