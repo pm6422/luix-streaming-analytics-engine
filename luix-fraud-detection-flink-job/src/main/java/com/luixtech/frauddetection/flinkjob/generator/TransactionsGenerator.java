@@ -28,7 +28,7 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
         return Transaction.builder()
-                .transactionId(transactionId)
+                .id(String.valueOf(transactionId))
                 .payeeId(payeeId)
                 .beneficiaryId(beneficiaryId)
                 .paymentAmount(paymentAmount)

@@ -16,7 +16,7 @@ import java.util.Locale;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction implements IngestionTimeAssignable {
-    public  long        transactionId;
+    public  String      id;
     /**
      * Generation timestamp of the transaction event, unit: milliseconds
      */

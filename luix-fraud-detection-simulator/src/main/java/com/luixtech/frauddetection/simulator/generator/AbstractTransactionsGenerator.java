@@ -41,7 +41,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
         return Transaction.builder()
-                .transactionId(transactionId)
+                .id(String.valueOf(transactionId))
                 .payeeId(payeeId)
                 .beneficiaryId(beneficiaryId)
                 .paymentAmount(paymentAmount)
