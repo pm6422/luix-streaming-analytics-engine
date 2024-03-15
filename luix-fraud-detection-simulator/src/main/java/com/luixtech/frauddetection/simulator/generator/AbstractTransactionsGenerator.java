@@ -46,7 +46,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
                 .beneficiaryId(beneficiaryId)
                 .paymentAmount(paymentAmount)
                 .paymentType(paymentType(transactionId))
-                .eventTime(eventTime != null ? eventTime : System.currentTimeMillis())
+                .generationTime(eventTime != null ? eventTime : System.currentTimeMillis())
                 .build();
     }
 

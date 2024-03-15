@@ -8,11 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 @Data
@@ -24,7 +20,7 @@ public class Transaction implements IngestionTimeAssignable {
     /**
      * Generation timestamp of the transaction event, unit: milliseconds
      */
-    public  long        eventTime;
+    public  long        generationTime;
     /**
      * Timestamp of ingestion into the flink input source, unit: milliseconds
      */

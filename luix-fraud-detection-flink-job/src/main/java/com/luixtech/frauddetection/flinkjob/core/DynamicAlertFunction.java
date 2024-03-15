@@ -82,7 +82,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     @Override
     public void processElement(Keyed<Transaction, String, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
-        long eventTime = transaction.getEventTime();
+        long eventTime = transaction.getGenerationTime();
         // Store transaction to local map which is grouped by event time
         groupTransactionByTime(windowState, eventTime, transaction);
 
