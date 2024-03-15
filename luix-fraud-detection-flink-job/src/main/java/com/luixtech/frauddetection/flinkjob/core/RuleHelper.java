@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.dto.RuleCommand;
+import com.luixtech.frauddetection.common.pojo.Rule;
+import com.luixtech.frauddetection.common.pojo.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;

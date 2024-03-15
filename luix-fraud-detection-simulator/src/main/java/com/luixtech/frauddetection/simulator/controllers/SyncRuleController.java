@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.common.command.Control;
-import com.luixtech.frauddetection.common.dto.RuleCommand;
+import com.luixtech.frauddetection.common.pojo.RuleCommand;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;

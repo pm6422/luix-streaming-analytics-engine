@@ -1,14 +1,11 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
-import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.Alert;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.output.sinkcreator.SinkCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
-
-import java.math.BigDecimal;
 
 public class AlertSink {
 

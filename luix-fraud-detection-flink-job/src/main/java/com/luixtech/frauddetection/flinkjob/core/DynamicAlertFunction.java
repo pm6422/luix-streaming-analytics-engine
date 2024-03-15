@@ -1,9 +1,9 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.command.Control;
-import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.common.dto.RuleCommand;
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.Alert;
+import com.luixtech.frauddetection.common.pojo.RuleCommand;
+import com.luixtech.frauddetection.common.pojo.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -87,7 +87,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         groupTransactionByTime(windowState, eventTime, transaction);
 
         // Calculate handling latency time
-        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTimestamp());
+        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTime());
 
         // Get rule by ID
         RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());

@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl;
 
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.Transaction;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;

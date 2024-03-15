@@ -2,8 +2,8 @@ package com.luixtech.frauddetection.simulator.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luixtech.frauddetection.common.dto.Alert;
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.Alert;
+import com.luixtech.frauddetection.common.pojo.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;

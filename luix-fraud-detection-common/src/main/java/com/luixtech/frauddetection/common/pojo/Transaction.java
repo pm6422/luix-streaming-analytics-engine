@@ -1,5 +1,6 @@
-package com.luixtech.frauddetection.common.dto;
+package com.luixtech.frauddetection.common.pojo;
 
+import com.luixtech.frauddetection.common.pojo.base.IngestionTimeAssignable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.util.Locale;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Transaction implements TimestampAssignable {
+public class Transaction implements IngestionTimeAssignable {
     public  long        transactionId;
     /**
      * Generation timestamp of the transaction event, unit: milliseconds
@@ -81,12 +82,12 @@ public class Transaction implements TimestampAssignable {
     }
 
     @Override
-    public void setIngestionTimestamp(Long timestamp) {
+    public void setIngestionTime(Long timestamp) {
         this.ingestionTimestamp = timestamp;
     }
 
     @Override
-    public Long getIngestionTimestamp() {
+    public Long getIngestionTime() {
         return this.ingestionTimestamp;
     }
 }

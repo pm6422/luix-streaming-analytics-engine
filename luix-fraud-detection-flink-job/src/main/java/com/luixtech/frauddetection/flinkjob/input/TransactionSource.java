@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.core.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;

@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
-import com.luixtech.frauddetection.common.dto.Rule;
+import com.luixtech.frauddetection.common.pojo.Rule;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.dto.RuleCommand;
-import com.luixtech.frauddetection.common.dto.Transaction;
+import com.luixtech.frauddetection.common.pojo.RuleCommand;
+import com.luixtech.frauddetection.common.pojo.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

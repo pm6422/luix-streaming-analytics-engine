@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.common.dto;
+package com.luixtech.frauddetection.common.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
