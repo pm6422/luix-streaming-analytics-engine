@@ -20,11 +20,11 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import static org.junit.Assert.assertEquals;
 
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType;
 import com.luixtech.frauddetection.common.dto.Rule.LimitOperatorType;
-import com.luixtech.frauddetection.common.rule.RuleState;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -40,13 +40,13 @@ public class RuleParserTest {
 
   @Test
   public void testRuleParsedPlain() throws Exception {
-    String ruleString1 = "1,(active),(taxiId&driverId),,(totalFare),(sum),(>),(5),(20)";
+    String ruleString1 = "1,(enable),(taxiId&driverId),,(totalFare),(sum),(>),(5),(20)";
 
     RuleParser ruleParser = new RuleParser();
     Rule rule1 = ruleParser.fromString(ruleString1);
 
     assertEquals("ID incorrect", 1, (int) rule1.getRuleId());
-    Assert.assertEquals("Rule state incorrect", RuleState.ACTIVE, rule1.getRuleState());
+    Assert.assertEquals("Rule control incorrect", RuleControl.ENABLE, rule1.getRuleControl());
     assertEquals("Key names incorrect", lst("taxiId", "driverId"), rule1.getGroupingKeyNames());
     assertEquals("Unique names incorrect", lst(), rule1.getUnique());
     assertEquals("Cumulative key incorrect", "totalFare", rule1.getAggregateFieldName());
@@ -65,7 +65,7 @@ public class RuleParserTest {
     String ruleString1 =
         "{\n"
             + "  \"ruleId\": 1,\n"
-            + "  \"ruleState\": \"ACTIVE\",\n"
+            + "  \"ruleControl\": \"ENABLE\",\n"
             + "  \"groupingKeyNames\": [\"taxiId\", \"driverId\"],\n"
             + "  \"unique\": [],\n"
             + "  \"aggregateFieldName\": \"totalFare\",\n"
@@ -79,7 +79,7 @@ public class RuleParserTest {
     Rule rule1 = ruleParser.fromString(ruleString1);
 
     assertEquals("ID incorrect", 1, (int) rule1.getRuleId());
-    Assert.assertEquals("Rule state incorrect", RuleState.ACTIVE, rule1.getRuleState());
+    Assert.assertEquals("Rule state incorrect", RuleControl.ENABLE, rule1.getRuleControl());
     assertEquals("Key names incorrect", lst("taxiId", "driverId"), rule1.getGroupingKeyNames());
     assertEquals("Unique names incorrect", lst(), rule1.getUnique());
     assertEquals("Cumulative key incorrect", "totalFare", rule1.getAggregateFieldName());

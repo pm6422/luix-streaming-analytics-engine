@@ -25,7 +25,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"groupingKeyNames\":[\"payeeId\", \"beneficiaryId\"],"
                         + "\"limit\":\"20000000\","
                         + "\"limitOperatorType\":\"GREATER\","
-                        + "\"ruleState\":\"ACTIVE\","
+                        + "\"ruleControl\":\"ENABLE\","
                         + "\"windowMinutes\":\"43200\"}";
 
         RulePayload rulePayload1 = new RulePayload(payload1);
@@ -37,7 +37,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"groupingKeyNames\":[\"paymentType\"],"
                         + "\"limit\":\"300\","
                         + "\"limitOperatorType\":\"LESS\","
-                        + "\"ruleState\":\"PAUSE\","
+                        + "\"ruleControl\":\"DELETE\","
                         + "\"windowMinutes\":\"1440\"}";
 
         RulePayload rulePayload2 = new RulePayload(payload2);
@@ -49,7 +49,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"groupingKeyNames\":[\"beneficiaryId\"],"
                         + "\"limit\":\"10000000\","
                         + "\"limitOperatorType\":\"GREATER_EQUAL\","
-                        + "\"ruleState\":\"ACTIVE\","
+                        + "\"ruleControl\":\"ENABLE\","
                         + "\"windowMinutes\":\"1440\"}";
 
         RulePayload rulePayload3 = new RulePayload(payload3);
@@ -62,7 +62,7 @@ public class InitialSetupMigration implements ApplicationRunner {
                         + "\"groupingKeyNames\":[\"paymentType\"],"
                         + "\"limit\":\"100\","
                         + "\"limitOperatorType\":\"GREATER_EQUAL\","
-                        + "\"ruleState\":\"ACTIVE\","
+                        + "\"ruleControl\":\"ENABLE\","
                         + "\"windowMinutes\":\"1440\"}";
 
         RulePayload rulePayload4 = new RulePayload(payload4);

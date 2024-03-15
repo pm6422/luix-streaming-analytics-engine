@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
 import com.luixtech.frauddetection.common.dto.Rule;
-import com.luixtech.frauddetection.common.rule.RuleState;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class KafkaRuleProducer {
     public void deleteRule(int ruleId) {
         Rule rule = new Rule();
         rule.setRuleId(ruleId);
-        rule.setRuleState(RuleState.DELETE);
+        rule.setRuleControl(RuleControl.DELETE);
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRule(), rule);
         log.info("Pushed deleting rule with ID {}", ruleId);
     }

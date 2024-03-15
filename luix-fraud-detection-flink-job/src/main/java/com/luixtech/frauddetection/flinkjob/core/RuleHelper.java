@@ -15,23 +15,20 @@ import java.util.Map;
 @Slf4j
 public class RuleHelper {
     public static void handleRule(BroadcastState<Integer, Rule> broadcastState, Rule rule) throws Exception {
-        switch (rule.getRuleState()) {
-            case ACTIVE:
+        switch (rule.getRuleControl()) {
+            case ENABLE:
                 // merge rule
                 broadcastState.put(rule.getRuleId(), rule);
                 break;
             case DELETE:
-            case PAUSE:
                 broadcastState.remove(rule.getRuleId());
                 break;
-            case CONTROL:
-                if (RuleControl.DELETE_ALL_RULES == rule.getRuleControl()) {
-                    Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
-                    while (entriesIterator.hasNext()) {
-                        Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
-                        broadcastState.remove(ruleEntry.getKey());
-                        log.info("Removed {}", ruleEntry.getValue());
-                    }
+            case DELETE_ALL:
+                Iterator<Map.Entry<Integer, Rule>> entriesIterator = broadcastState.iterator();
+                while (entriesIterator.hasNext()) {
+                    Map.Entry<Integer, Rule> ruleEntry = entriesIterator.next();
+                    broadcastState.remove(ruleEntry.getKey());
+                    log.info("Removed {}", ruleEntry.getValue());
                 }
                 break;
         }

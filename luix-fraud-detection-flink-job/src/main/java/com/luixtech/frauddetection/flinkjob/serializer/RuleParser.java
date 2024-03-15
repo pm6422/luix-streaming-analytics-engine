@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.flinkjob.serializer;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Rule.AggregatorFunctionType;
 import com.luixtech.frauddetection.common.dto.Rule.LimitOperatorType;
-import com.luixtech.frauddetection.common.rule.RuleState;
+import com.luixtech.frauddetection.common.rule.RuleControl;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class RuleParser {
         Rule rule = new Rule();
 
         rule.setRuleId(Integer.parseInt(stripBrackets(iter.next())));
-        rule.setRuleState(RuleState.valueOf(stripBrackets(iter.next()).toUpperCase()));
+        rule.setRuleControl(RuleControl.valueOf(stripBrackets(iter.next()).toUpperCase()));
         rule.setGroupingKeyNames(getNames(iter.next()));
         rule.setUnique(getNames(iter.next()));
         rule.setAggregateFieldName(stripBrackets(iter.next()));

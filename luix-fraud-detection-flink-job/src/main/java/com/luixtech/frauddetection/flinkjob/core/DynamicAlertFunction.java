@@ -4,7 +4,6 @@ import com.luixtech.frauddetection.common.dto.Alert;
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.dto.Transaction;
 import com.luixtech.frauddetection.common.rule.RuleControl;
-import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -53,16 +52,11 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         // Merge the new rule with the existing one
         RuleHelper.handleRule(broadcastState, rule);
         updateWidestWindowRule(rule, broadcastState);
-        if (rule.getRuleState() == RuleState.CONTROL) {
-            if (RuleControl.CLEAR_ALL_STATE  == rule.getRuleControl()) {
-                ctx.applyToKeyedState(WINDOW_STATE_DESCRIPTOR, (key, state) -> state.clear());
-            }
-        }
     }
 
     private void updateWidestWindowRule(Rule rule, BroadcastState<Integer, Rule> broadcastState) throws Exception {
         Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
-        if (RuleState.ACTIVE != rule.getRuleState()) {
+        if (RuleControl.ENABLE != rule.getRuleControl()) {
             return;
         }
         if (widestWindowRule == null) {
@@ -102,7 +96,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             return;
         }
 
-        if (rule.getRuleState() == RuleState.ACTIVE) {
+        if (RuleControl.ENABLE == rule.getRuleControl()) {
             long cleanupTime = (eventTime / 1000) * 1000;
             // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);

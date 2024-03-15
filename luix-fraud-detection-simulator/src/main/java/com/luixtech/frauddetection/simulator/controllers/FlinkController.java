@@ -2,7 +2,6 @@ package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.common.dto.Rule;
 import com.luixtech.frauddetection.common.rule.RuleControl;
-import com.luixtech.frauddetection.common.rule.RuleState;
 import com.luixtech.frauddetection.simulator.domain.RulePayload;
 import com.luixtech.frauddetection.simulator.repository.RuleRepository;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
@@ -21,7 +20,7 @@ public class FlinkController {
     private final RuleRepository    ruleRepository;
     private final KafkaRuleProducer kafkaRuleProducer;
 
-    @GetMapping("/flink/sync-rules")
+    @GetMapping("/flink/add-all-rules")
     void syncRules() {
         List<RulePayload> rulePayloads = ruleRepository.findAll();
         for (RulePayload rulePayload : rulePayloads) {
@@ -29,16 +28,10 @@ public class FlinkController {
         }
     }
 
-    @GetMapping("/flink/clear-state")
+    @GetMapping("/flink/delete-all-rules")
     void clearState() {
-        RulePayload command = createControlCommand(RuleControl.CLEAR_ALL_STATE);
-        kafkaRuleProducer.addRule(command.toRule());
-    }
-
-    private RulePayload createControlCommand(RuleControl clearStateAll) {
         Rule rule = new Rule();
-        rule.setRuleState(RuleState.CONTROL);
-        rule.setRuleControl(clearStateAll);
-        return RulePayload.fromRule(rule);
+        rule.setRuleControl(RuleControl.DELETE_ALL);
+        kafkaRuleProducer.addRule(rule);
     }
 }
