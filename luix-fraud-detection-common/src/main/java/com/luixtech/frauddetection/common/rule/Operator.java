@@ -16,9 +16,9 @@ public enum Operator {
         this.operator = operator;
     }
 
-    public static Operator fromString(String text) {
+    public static Operator fromValue(String value) {
         return Arrays.stream(Operator.values())
-                .filter(e -> e.operator.equals(text))
+                .filter(e -> e.operator.equals(value))
                 .findFirst()
                 .orElse(null);
     }
