@@ -42,7 +42,7 @@ public class Rule {
             case GREATER_EQUAL:
                 return comparisonValue.compareTo(limit) >= 0;
             default:
-                throw new RuntimeException("Unknown limit operator type: " + operator);
+                throw new RuntimeException("Unknown operator type: " + operator);
         }
     }
 }
