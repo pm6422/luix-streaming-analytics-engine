@@ -15,9 +15,9 @@ public enum Operator {
     }
 
     public static Operator fromString(String text) {
-        for (Operator b : Operator.values()) {
-            if (b.operator.equals(text)) {
-                return b;
+        for (Operator v : Operator.values()) {
+            if (v.operator.equals(text)) {
+                return v;
             }
         }
         return null;
