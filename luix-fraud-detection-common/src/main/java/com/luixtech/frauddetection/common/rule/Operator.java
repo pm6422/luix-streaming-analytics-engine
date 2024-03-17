@@ -1,5 +1,7 @@
 package com.luixtech.frauddetection.common.rule;
 
+import java.util.Arrays;
+
 public enum Operator {
     EQUAL("="),
     NOT_EQUAL("!="),
@@ -15,11 +17,9 @@ public enum Operator {
     }
 
     public static Operator fromString(String text) {
-        for (Operator v : Operator.values()) {
-            if (v.operator.equals(text)) {
-                return v;
-            }
-        }
-        return null;
+        return Arrays.stream(Operator.values())
+                .filter(e -> e.operator.equals(text))
+                .findFirst()
+                .orElse(null);
     }
 }
