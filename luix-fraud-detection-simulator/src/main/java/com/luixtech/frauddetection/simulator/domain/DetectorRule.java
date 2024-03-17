@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.simulator.domain;
 
 import com.luixtech.frauddetection.common.command.Command;
-import com.luixtech.frauddetection.common.pojo.Rule;
-import com.luixtech.frauddetection.common.pojo.RuleCommand;
+import com.luixtech.frauddetection.common.rule.Rule;
+import com.luixtech.frauddetection.common.rule.RuleCommand;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

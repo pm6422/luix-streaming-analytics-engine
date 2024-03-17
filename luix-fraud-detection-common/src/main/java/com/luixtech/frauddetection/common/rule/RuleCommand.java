@@ -1,7 +1,7 @@
-package com.luixtech.frauddetection.common.pojo;
+package com.luixtech.frauddetection.common.rule;
 
 import com.luixtech.frauddetection.common.command.Command;
-import com.luixtech.frauddetection.common.pojo.base.IngestionTimeAssignable;
+import com.luixtech.frauddetection.common.IngestionTimeAssignable;
 import lombok.Data;
 
 @Data

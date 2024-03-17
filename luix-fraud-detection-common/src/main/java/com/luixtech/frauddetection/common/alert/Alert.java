@@ -1,5 +1,6 @@
-package com.luixtech.frauddetection.common.pojo;
+package com.luixtech.frauddetection.common.alert;
 
+import com.luixtech.frauddetection.common.rule.Rule;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

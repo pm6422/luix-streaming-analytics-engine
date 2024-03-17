@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.common.pojo.base;
+package com.luixtech.frauddetection.common;
 
 public interface IngestionTimeAssignable {
     void setIngestionTime(Long timestamp);

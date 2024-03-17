@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.pojo.Alert;
+import com.luixtech.frauddetection.common.alert.Alert;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.pojo.Rule;
+import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.command.Command;
-import com.luixtech.frauddetection.common.pojo.RuleCommand;
+import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

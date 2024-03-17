@@ -1,6 +1,6 @@
-package com.luixtech.frauddetection.common.pojo;
+package com.luixtech.frauddetection.common.transaction;
 
-import com.luixtech.frauddetection.common.pojo.base.IngestionTimeAssignable;
+import com.luixtech.frauddetection.common.IngestionTimeAssignable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

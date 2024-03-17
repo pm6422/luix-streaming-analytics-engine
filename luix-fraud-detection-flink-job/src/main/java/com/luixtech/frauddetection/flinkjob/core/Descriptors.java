@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.pojo.RuleCommand;
+import com.luixtech.frauddetection.common.rule.RuleCommand;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;

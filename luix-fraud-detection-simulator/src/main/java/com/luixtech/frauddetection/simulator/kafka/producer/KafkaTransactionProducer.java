@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.pojo.Transaction;
+import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.generator;
 
-import com.luixtech.frauddetection.common.pojo.Transaction;
+import com.luixtech.frauddetection.common.transaction.Transaction;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;

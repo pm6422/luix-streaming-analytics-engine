@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.pojo.base.IngestionTimeAssignable;
+import com.luixtech.frauddetection.common.IngestionTimeAssignable;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.util.Collector;
 

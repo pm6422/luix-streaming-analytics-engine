@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
-import com.luixtech.frauddetection.common.pojo.base.IngestionTimeAssignable;
+import com.luixtech.frauddetection.common.IngestionTimeAssignable;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 

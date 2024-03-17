@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.output;
 
-import com.luixtech.frauddetection.common.pojo.Alert;
+import com.luixtech.frauddetection.common.alert.Alert;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.output.sinkcreator.SinkCreator;
 import com.luixtech.frauddetection.flinkjob.serializer.JsonSerializer;

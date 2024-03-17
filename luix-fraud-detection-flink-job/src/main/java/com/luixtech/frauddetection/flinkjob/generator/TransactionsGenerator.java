@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.common.pojo.Transaction;
-import com.luixtech.frauddetection.common.pojo.Transaction.PaymentType;
+import com.luixtech.frauddetection.common.transaction.Transaction;
+import com.luixtech.frauddetection.common.transaction.Transaction.PaymentType;
 
 import java.math.BigDecimal;
 import java.util.SplittableRandom;
