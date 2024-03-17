@@ -1,8 +1,7 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
-import com.luixtech.frauddetection.common.rule.AggregatorFunction;
+import com.luixtech.frauddetection.common.rule.Aggregator;
 import com.luixtech.frauddetection.common.rule.Operator;
-import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         DetectorRule detectorRule1 = new DetectorRule();
         detectorRule1.setId("1");
         detectorRule1.setAggregateFieldName("paymentAmount");
-        detectorRule1.setAggregatorFunction(AggregatorFunction.SUM);
+        detectorRule1.setAggregator(Aggregator.SUM);
         detectorRule1.setGroupingKeyNames(Arrays.asList("payeeId", "beneficiaryId"));
         detectorRule1.setLimit(new BigDecimal("20000000"));
         detectorRule1.setOperator(Operator.GREATER);
@@ -33,7 +32,7 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         DetectorRule detectorRule2 = new DetectorRule();
         detectorRule2.setId("2");
-        detectorRule2.setAggregatorFunction(AggregatorFunction.COUNT);
+        detectorRule2.setAggregator(Aggregator.COUNT);
         detectorRule2.setGroupingKeyNames(List.of("paymentType"));
         detectorRule2.setLimit(new BigDecimal("300"));
         detectorRule2.setOperator(Operator.LESS);
@@ -43,7 +42,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         DetectorRule detectorRule3 = new DetectorRule();
         detectorRule3.setId("3");
         detectorRule3.setAggregateFieldName("paymentAmount");
-        detectorRule3.setAggregatorFunction(AggregatorFunction.SUM);
+        detectorRule3.setAggregator(Aggregator.SUM);
         detectorRule3.setGroupingKeyNames(List.of("beneficiaryId"));
         detectorRule3.setLimit(new BigDecimal("10000000"));
         detectorRule3.setOperator(Operator.GREATER_EQUAL);
@@ -52,7 +51,7 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         DetectorRule detectorRule4 = new DetectorRule();
         detectorRule4.setId("4");
-        detectorRule4.setAggregatorFunction(AggregatorFunction.COUNT);
+        detectorRule4.setAggregator(Aggregator.COUNT);
         detectorRule4.setGroupingKeyNames(List.of("paymentType"));
         detectorRule4.setLimit(new BigDecimal("100"));
         detectorRule4.setOperator(Operator.GREATER_EQUAL);

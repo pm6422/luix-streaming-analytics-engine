@@ -12,15 +12,15 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Rule {
-    private String             id;
-    private List<String>       groupingKeyNames;
-    private List<String>       unique;
-    private String             aggregateFieldName;
-    private AggregatorFunction aggregatorFunction;
-    private Operator           operator;
-    private BigDecimal         limit;
-    private Integer            windowMinutes;
-    private boolean            resetAfterMatch;
+    private String       id;
+    private List<String> groupingKeyNames;
+    private List<String> unique;
+    private String       aggregateFieldName;
+    private Aggregator   aggregator;
+    private Operator     operator;
+    private BigDecimal   limit;
+    private Integer      windowMinutes;
+    private boolean      resetAfterMatch;
 
     /**
      * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.

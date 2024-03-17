@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.common.rule;
 
-public enum AggregatorFunction {
+public enum Aggregator {
     COUNT,
     SUM,
     AVG,

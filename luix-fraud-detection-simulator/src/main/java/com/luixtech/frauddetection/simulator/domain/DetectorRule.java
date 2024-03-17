@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.domain;
 
 import com.luixtech.frauddetection.common.command.Command;
-import com.luixtech.frauddetection.common.rule.AggregatorFunction;
+import com.luixtech.frauddetection.common.rule.Aggregator;
 import com.luixtech.frauddetection.common.rule.Operator;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
@@ -27,9 +27,9 @@ public class DetectorRule {
     private String             id;
     private List<String>       groupingKeyNames;
     private List<String>       unique;
-    private String             aggregateFieldName;
-    private AggregatorFunction aggregatorFunction;
-    private Operator           operator;
+    private String     aggregateFieldName;
+    private Aggregator aggregator;
+    private Operator   operator;
     private BigDecimal         limit;
     private Integer            windowMinutes;
     private boolean            resetAfterMatch;

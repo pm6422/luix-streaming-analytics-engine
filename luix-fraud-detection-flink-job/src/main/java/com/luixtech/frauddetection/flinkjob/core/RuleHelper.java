@@ -36,7 +36,7 @@ public class RuleHelper {
 
     /* Picks and returns a new accumulator, based on the Rule's aggregator function type. */
     public static SimpleAccumulator<BigDecimal> getAggregator(Rule rule) {
-        switch (rule.getAggregatorFunction()) {
+        switch (rule.getAggregator()) {
             case COUNT:
                 return new BigDecimalCounter();
             case SUM:
@@ -49,7 +49,7 @@ public class RuleHelper {
                 return new BigDecimalMinimum();
             default:
                 throw new RuntimeException(
-                        "Unsupported aggregation function type: " + rule.getAggregatorFunction());
+                        "Unsupported aggregation function type: " + rule.getAggregator());
         }
     }
 }
