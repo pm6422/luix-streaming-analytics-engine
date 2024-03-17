@@ -17,7 +17,7 @@ public class Rule {
     private List<String>       unique;
     private String             aggregateFieldName;
     private AggregatorFunction aggregatorFunction;
-    private LimitOperator      limitOperator;
+    private Operator           operator;
     private BigDecimal         limit;
     private Integer            windowMinutes;
     private boolean            resetAfterMatch;
@@ -28,7 +28,7 @@ public class Rule {
      * @param comparisonValue value to be compared with the limit
      */
     public boolean apply(BigDecimal comparisonValue) {
-        switch (limitOperator) {
+        switch (operator) {
             case EQUAL:
                 return comparisonValue.compareTo(limit) == 0;
             case NOT_EQUAL:
@@ -42,39 +42,7 @@ public class Rule {
             case GREATER_EQUAL:
                 return comparisonValue.compareTo(limit) >= 0;
             default:
-                throw new RuntimeException("Unknown limit operator type: " + limitOperator);
-        }
-    }
-
-    public enum AggregatorFunction {
-        COUNT,
-        SUM,
-        AVG,
-        MIN,
-        MAX
-    }
-
-    public enum LimitOperator {
-        EQUAL("="),
-        NOT_EQUAL("!="),
-        GREATER_EQUAL(">="),
-        LESS_EQUAL("<="),
-        GREATER(">"),
-        LESS("<");
-
-        final String operator;
-
-        LimitOperator(String operator) {
-            this.operator = operator;
-        }
-
-        public static LimitOperator fromString(String text) {
-            for (LimitOperator b : LimitOperator.values()) {
-                if (b.operator.equals(text)) {
-                    return b;
-                }
-            }
-            return null;
+                throw new RuntimeException("Unknown limit operator type: " + operator);
         }
     }
 }

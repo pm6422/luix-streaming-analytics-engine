@@ -1,6 +1,8 @@
 package com.luixtech.frauddetection.simulator.domain;
 
 import com.luixtech.frauddetection.common.command.Command;
+import com.luixtech.frauddetection.common.rule.AggregatorFunction;
+import com.luixtech.frauddetection.common.rule.Operator;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import lombok.AllArgsConstructor;
@@ -22,16 +24,16 @@ import java.util.List;
 @AllArgsConstructor
 public class DetectorRule {
     @Id
-    private String                      id;
-    private List<String>                groupingKeyNames;
-    private List<String>                unique;
-    private String                  aggregateFieldName;
-    private Rule.AggregatorFunction aggregatorFunction;
-    private Rule.LimitOperator      limitOperator;
-    private BigDecimal                  limit;
-    private Integer                     windowMinutes;
-    private boolean                     resetAfterMatch;
-    private Boolean                     enabled;
+    private String             id;
+    private List<String>       groupingKeyNames;
+    private List<String>       unique;
+    private String             aggregateFieldName;
+    private AggregatorFunction aggregatorFunction;
+    private Operator           operator;
+    private BigDecimal         limit;
+    private Integer            windowMinutes;
+    private boolean            resetAfterMatch;
+    private Boolean            enabled;
 
     public RuleCommand toRuleCommand() {
         RuleCommand ruleCommand = new RuleCommand();
