@@ -48,7 +48,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, Ru
             // in the cluster. That is to say, elements with the same key are assigned to the same partition.
             // This will allow tracking all input records between payer #25 and beneficiary #12 and evaluating defined rules
             // within the desired time window.
-            out.collect(new Keyed<>(input, ruleCommand.getRule().getId(), KeysExtractor.toKeys(input.getRecord(), ruleCommand.getRule().getGroupingKeys())));
+            out.collect(new Keyed<>(input, KeysExtractor.toKeys(input.getRecord(), ruleCommand.getRule().getGroupingKeys()), ruleCommand.getRule().getId()));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);

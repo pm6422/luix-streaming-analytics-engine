@@ -43,7 +43,7 @@
 //            testHarness.processElement1(new StreamRecord<>(event1, 15L));
 //
 //            Queue<Object> expectedOutput = new ConcurrentLinkedQueue<>();
-//            expectedOutput.add(new StreamRecord<>(new Keyed<>(event1, 1, "{paymentType=CSH;payeeId=1001}"), 15L));
+//            expectedOutput.add(new StreamRecord<>(new Keyed<>(event1, "{paymentType=CSH;payeeId=1001}", 1), 15L));
 //
 //            TestHarnessUtil.assertOutputEquals(
 //                    "Wrong dynamically keyed output", expectedOutput, testHarness.getOutput());
@@ -82,9 +82,9 @@
 //        Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:01,1001,1002,CRD,19,1");
 //        Transaction event3 = Transaction.fromString("3,2013-01-01 00:00:02,1001,1002,CRD,2,1");
 //
-//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
-//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CRD");
-//        Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, 1, "CRD");
+//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, "CSH", 1);
+//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, "CRD", 1);
+//        Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, "CRD", 1);
 //
 //        try (BroadcastStreamKeyedOperatorTestHarness<String, Keyed<Transaction, Integer, String>, Rule, Alert>
 //                     testHarness =
@@ -125,8 +125,8 @@
 //
 //        Transaction event2 = Transaction.fromString("2,2013-01-01 00:00:00,1002,1003,CSH,2,1");
 //
-//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
-//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CSH");
+//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, "CSH", 1);
+//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, "CSH", 1);
 //
 //        try (BroadcastStreamKeyedOperatorTestHarness<
 //                String, Keyed<Transaction, Integer, String>, Rule, Alert>
@@ -168,10 +168,10 @@
 //
 //        Transaction event4 = Transaction.fromString("4,2013-01-01 00:06:00,1007,1008,CSH,3,1");
 //
-//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, 1, "CSH");
-//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, 1, "CSH");
-//        Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, 1, "CSH");
-//        Keyed<Transaction, Integer, String> keyed4 = new Keyed<>(event4, 1, "CSH");
+//        Keyed<Transaction, Integer, String> keyed1 = new Keyed<>(event1, "CSH", 1);
+//        Keyed<Transaction, Integer, String> keyed2 = new Keyed<>(event2, "CSH", 1);
+//        Keyed<Transaction, Integer, String> keyed3 = new Keyed<>(event3, "CSH", 1);
+//        Keyed<Transaction, Integer, String> keyed4 = new Keyed<>(event4, "CSH", 1);
 //
 //        try (BroadcastStreamKeyedOperatorTestHarness<
 //                String, Keyed<Transaction, Integer, String>, Rule, Alert>

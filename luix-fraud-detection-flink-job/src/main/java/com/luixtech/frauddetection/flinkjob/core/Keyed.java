@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Keyed<IN, ID, KEY> {
+public class Keyed<IN, KEY, ID> {
     /**
      * Input record
      */
     private IN  inputRecord;
     /**
-     * The id of the rule that matched the input record
-     */
-    private ID  ruleId;
-    /**
      * Keys used to partition the input record, e.g: {tenant=tesla;model=X9}
      */
     private KEY groupKeys;
+    /**
+     * The id of the rule that matched the input record
+     */
+    private ID  ruleId;
 }
