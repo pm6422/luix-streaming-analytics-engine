@@ -9,6 +9,4 @@ public abstract class BaseRule {
     protected String       id;
     protected List<String> groupingKeys;
     protected Operator     operator;
-
-    protected abstract RuleType getRuleType();
 }
