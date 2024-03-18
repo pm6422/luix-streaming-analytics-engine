@@ -28,6 +28,7 @@ public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
 
     @Override
     public void add(BigDecimal value) {
+        // ignore the passing argument
         localValue = localValue.add(BigDecimal.ONE);
     }
 
