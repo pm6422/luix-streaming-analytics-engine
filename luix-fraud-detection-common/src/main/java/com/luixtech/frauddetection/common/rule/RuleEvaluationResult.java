@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class RuleEvaluationResult {
-    private boolean ruleMatched;
+    private boolean matched;
 
     private BigDecimal aggregateResult;
 }

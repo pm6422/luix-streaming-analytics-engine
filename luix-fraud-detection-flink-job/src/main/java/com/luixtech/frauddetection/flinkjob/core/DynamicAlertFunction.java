@@ -113,9 +113,9 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Matched: " + result.isRuleMatched());
+                "Rule: " + rule.getId() + " , Keys: " + value.getKey() + " , Matched: " + result.isMatched());
 
-        if (result.isRuleMatched()) {
+        if (result.isMatched()) {
             if (ruleCommand.getRule().isResetAfterMatch()) {
                 evictAllStateElements();
             }

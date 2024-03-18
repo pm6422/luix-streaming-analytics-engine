@@ -69,7 +69,7 @@ public class RuleHelper {
     public static RuleEvaluationResult evaluate(Rule rule, Transaction matchingRecord,
                                                 MapState<Long, Set<Transaction>> windowState) throws Exception {
         RuleEvaluationResult result = new RuleEvaluationResult();
-        result.setRuleMatched(false);
+        result.setMatched(false);
         result.setAggregateResult(BigDecimal.ZERO);
 
         if (RuleType.AGGREGATING == rule.determineType()) {
@@ -89,32 +89,32 @@ public class RuleHelper {
             BigDecimal comparisonValue = aggregator.getLocalValue();
             switch (rule.getOperator()) {
                 case EQUAL:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) == 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) == 0);
                     break;
                 case NOT_EQUAL:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) != 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) != 0);
                     break;
                 case GREATER:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) > 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) > 0);
                     break;
                 case LESS:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) < 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) < 0);
                     break;
                 case GREATER_EQUAL:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) >= 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) >= 0);
                     break;
                 case LESS_EQUAL:
-                    result.setRuleMatched(comparisonValue.compareTo(rule.getLimit()) <= 0);
+                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) <= 0);
                     break;
                 default:
                     throw new RuntimeException("Unknown operator: " + rule.getOperator());
             }
         } else {
             if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
-                result.setRuleMatched(rule.getExpectedValue()
+                result.setMatched(rule.getExpectedValue()
                         .equals(FieldsExtractor.getFieldValAsString(matchingRecord, rule.getFieldName())));
             } else {
-                result.setRuleMatched(FieldsExtractor.isFieldValSame(matchingRecord, rule.getFieldName(), rule.getExpectedFieldName()));
+                result.setMatched(FieldsExtractor.isFieldValSame(matchingRecord, rule.getFieldName(), rule.getExpectedFieldName()));
             }
         }
         return result;
