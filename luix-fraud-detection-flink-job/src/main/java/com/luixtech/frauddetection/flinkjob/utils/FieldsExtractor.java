@@ -12,13 +12,19 @@ public class FieldsExtractor {
         return field.get(object).toString();
     }
 
+    public static boolean isFieldValSame(Object object, String fieldName, String expectedFieldName) throws IllegalAccessException, NoSuchFieldException {
+        Field field = object.getClass().getField(fieldName);
+        Field exppectedField = object.getClass().getField(expectedFieldName);
+        return field.get(object).equals(field.get(exppectedField));
+    }
+
     public static double getDoubleByName(String fieldName, Object object) throws NoSuchFieldException, IllegalAccessException {
         Field field = object.getClass().getField(fieldName);
         return (double) field.get(object);
     }
 
     public static BigDecimal getBigDecimalByName(Object object, String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        if(StringUtils.isEmpty(fieldName)){
+        if (StringUtils.isEmpty(fieldName)) {
             return BigDecimal.ZERO;
         }
         Field field = object.getClass().getField(fieldName);

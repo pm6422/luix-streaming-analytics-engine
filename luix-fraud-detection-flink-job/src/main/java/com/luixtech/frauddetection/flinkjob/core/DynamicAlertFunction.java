@@ -1,14 +1,13 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.alert.Alert;
+import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
+import com.luixtech.frauddetection.common.rule.RuleEvaluationResult;
 import com.luixtech.frauddetection.common.transaction.Transaction;
-import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -21,7 +20,6 @@ import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -109,39 +107,21 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         ctx.timerService().registerEventTimeTimer(cleanupTime);
 
         Rule rule = ruleCommand.getRule();
-        Long windowStartTime = createdTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
-        // Calculate the aggregate value
-        SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
-        for (Long stateCreatedTime : windowState.keys()) {
-            if (isStateValueInWindow(stateCreatedTime, windowStartTime, createdTime)) {
-                Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
-                for (Transaction t : transactionsInWindow) {
-                    BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
-                    aggregator.add(aggregatedValue);
-                }
-            }
-        }
-
-        BigDecimal aggregateResult = aggregator.getLocalValue();
         // Evaluate the rule and trigger an alert if matched
-        boolean ruleMatched = rule.evaluate(null, aggregateResult);
+        RuleEvaluationResult result = RuleHelper.evaluate(rule, transaction, windowState);
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Matched: " + ruleMatched);
+                "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Matched: " + result.isRuleMatched());
 
-        if (ruleMatched) {
+        if (result.isRuleMatched()) {
             if (ruleCommand.getRule().isResetAfterMatch()) {
                 evictAllStateElements();
             }
             alertMeter.markEvent();
-            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
+            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), result.getAggregateResult()));
         }
-    }
-
-    private boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {
-        return stateCreatedTime >= windowStartTime && stateCreatedTime <= currentEventTime;
     }
 
     private static <K, V> void groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
