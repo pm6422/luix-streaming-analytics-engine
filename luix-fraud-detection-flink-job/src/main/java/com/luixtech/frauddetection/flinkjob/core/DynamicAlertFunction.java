@@ -2,6 +2,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.alert.Alert;
+import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
@@ -97,19 +98,21 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         }
 
         if (Command.ADD == ruleCommand.getCommand()) {
+            Rule rule = ruleCommand.getRule();
+
             long cleanupTime = (eventTime / 1000) * 1000;
             // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);
 
-            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(ruleCommand.getRule().getWindowMinutes());
+            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
             // Calculate the aggregate value
-            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(ruleCommand.getRule());
+            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
             for (Long stateEventTime : windowState.keys()) {
                 if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
                     Set<Transaction> inWindow = windowState.get(stateEventTime);
                     for (Transaction t : inWindow) {
-                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, ruleCommand.getRule().getAggregateFieldName());
+                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
                         aggregator.add(aggregatedValue);
                     }
                 }
@@ -117,18 +120,18 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
             BigDecimal aggregateResult = aggregator.getLocalValue();
             // Evaluate the rule and trigger an alert if matched
-            boolean ruleMatched = ruleCommand.getRule().apply(aggregateResult);
+            boolean ruleMatched = rule.apply(aggregateResult);
 
             // Print rule evaluation result
             ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                    "Rule: " + ruleCommand.getRule().getId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
+                    "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
 
             if (ruleMatched) {
                 if (ruleCommand.getRule().isResetAfterMatch()) {
                     evictAllStateElements();
                 }
                 alertMeter.markEvent();
-                out.collect(new Alert<>(ruleCommand.getRule().getId(), ruleCommand.getRule(), value.getKey(), value.getWrapped(), aggregateResult));
+                out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
             }
         }
     }
