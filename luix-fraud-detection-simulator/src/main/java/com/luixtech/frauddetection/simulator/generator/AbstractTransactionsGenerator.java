@@ -9,6 +9,9 @@ import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
+import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CRD;
+import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CSH;
+
 @Slf4j
 public abstract class AbstractTransactionsGenerator implements Runnable {
 
@@ -58,13 +61,13 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         transactionProducer.accept(generateOne(now));
     }
 
-    private static Transaction.PaymentType paymentType(long id) {
+    private static String paymentType(long id) {
         int name = (int) (id % 2);
         switch (name) {
             case 0:
-                return Transaction.PaymentType.CRD;
+                return PAYMENT_TYPE_CRD;
             case 1:
-                return Transaction.PaymentType.CSH;
+                return PAYMENT_TYPE_CSH;
             default:
                 throw new IllegalStateException("");
         }

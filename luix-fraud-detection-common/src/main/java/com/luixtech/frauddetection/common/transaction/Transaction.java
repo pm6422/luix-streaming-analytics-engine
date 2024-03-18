@@ -7,50 +7,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction implements IngestionTimeAssignable {
-    public  String      id;
+    public static final String PAYMENT_TYPE_CSH = "CSH";
+    public static final String PAYMENT_TYPE_CRD = "CRD";
+
+    public  String     id;
     /**
-     * Created timestamp of the transaction event, unit: milliseconds
+     * Created timestamp of the transaction, unit: ms
      */
-    public  long        createdTime;
+    public  long       createdTime;
     /**
-     * Timestamp of ingestion into the flink input source, unit: milliseconds
+     * Timestamp of ingestion into the flink input source, unit: ms
      */
-    private Long        ingestionTime;
-    public  long        payeeId;
-    public  long        beneficiaryId;
-    public  BigDecimal  paymentAmount;
-    public  PaymentType paymentType;
+    private Long       ingestionTime;
+    public  long       payeeId;
+    public  long       beneficiaryId;
+    public  BigDecimal paymentAmount;
+    public  String     paymentType;
 
-    private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US).withZone(ZoneOffset.UTC);
-
-    public enum PaymentType {
-        CSH("CSH"),
-        CRD("CRD");
-
-        String representation;
-
-        PaymentType(String repr) {
-            this.representation = repr;
-        }
-
-        public static PaymentType fromString(String representation) {
-            for (PaymentType b : PaymentType.values()) {
-                if (b.representation.equals(representation)) {
-                    return b;
-                }
-            }
-            return null;
-        }
-    }
 
     @Override
     public void setIngestionTime(Long timestamp) {

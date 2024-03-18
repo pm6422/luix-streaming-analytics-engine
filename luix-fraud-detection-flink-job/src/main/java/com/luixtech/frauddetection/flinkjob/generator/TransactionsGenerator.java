@@ -1,11 +1,13 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
 import com.luixtech.frauddetection.common.transaction.Transaction;
-import com.luixtech.frauddetection.common.transaction.Transaction.PaymentType;
 
 import java.math.BigDecimal;
 import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CRD;
+import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CSH;
 
 public class TransactionsGenerator extends BaseGenerator<Transaction> {
     private static final long   MAX_PAYEE_ID       = 100000;
@@ -38,13 +40,13 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
                 .build();
     }
 
-    private PaymentType paymentType(long id) {
+    private String paymentType(long id) {
         int name = (int) (id % 2);
         switch (name) {
             case 0:
-                return PaymentType.CRD;
+                return PAYMENT_TYPE_CRD;
             case 1:
-                return PaymentType.CSH;
+                return PAYMENT_TYPE_CSH;
             default:
                 throw new IllegalStateException("");
         }
