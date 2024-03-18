@@ -83,9 +83,10 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     @Override
     public void processElement(Keyed<Transaction, String, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
         Transaction transaction = value.getWrapped();
-        long eventTime = transaction.getGenerationTime();
-        // Store transaction to local map which is grouped by event time
-        groupTransactionByTime(windowState, eventTime, transaction);
+        long createdTime = transaction.getCreatedTime();
+
+        // Store transaction to local map which is grouped by created time
+        groupTransactionByTime(windowState, createdTime, transaction);
 
         // Calculate handling latency time
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTime());
@@ -100,16 +101,16 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         if (Command.ADD == ruleCommand.getCommand()) {
             Rule rule = ruleCommand.getRule();
 
-            long cleanupTime = (eventTime / 1000) * 1000;
+            long cleanupTime = (createdTime / 1000) * 1000;
             // Register cleanup timer
             ctx.timerService().registerEventTimeTimer(cleanupTime);
 
-            Long windowStartForEvent = eventTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+            Long windowStartForEvent = createdTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
             // Calculate the aggregate value
             SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
             for (Long stateEventTime : windowState.keys()) {
-                if (isStateValueInWindow(stateEventTime, windowStartForEvent, eventTime)) {
+                if (isStateValueInWindow(stateEventTime, windowStartForEvent, createdTime)) {
                     Set<Transaction> inWindow = windowState.get(stateEventTime);
                     for (Transaction t : inWindow) {
                         BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());

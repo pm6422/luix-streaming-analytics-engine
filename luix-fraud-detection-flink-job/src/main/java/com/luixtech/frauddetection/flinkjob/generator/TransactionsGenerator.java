@@ -33,7 +33,7 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
                 .beneficiaryId(beneficiaryId)
                 .paymentAmount(paymentAmount)
                 .paymentType(paymentType(transactionId))
-                .generationTime(System.currentTimeMillis())
+                .createdTime(System.currentTimeMillis())
                 .ingestionTime(System.currentTimeMillis())
                 .build();
     }

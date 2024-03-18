@@ -18,9 +18,9 @@ import java.util.Locale;
 public class Transaction implements IngestionTimeAssignable {
     public  String      id;
     /**
-     * Generation timestamp of the transaction event, unit: milliseconds
+     * Created timestamp of the transaction event, unit: milliseconds
      */
-    public  long        generationTime;
+    public  long        createdTime;
     /**
      * Timestamp of ingestion into the flink input source, unit: milliseconds
      */
