@@ -1,20 +1,12 @@
 package com.luixtech.frauddetection.common.rule;
 
-import java.util.Arrays;
-
 public enum Operator {
-    EQUAL("=="),
-    NOT_EQUAL("!="),
-    GREATER(">"),
-    LESS("<"),
-    GREATER_EQUAL(">="),
-    LESS_EQUAL("<=");
-
-    private final String operator;
-
-    Operator(String operator) {
-        this.operator = operator;
-    }
+    EQUAL,
+    NOT_EQUAL,
+    GREATER,
+    LESS,
+    GREATER_EQUAL,
+    LESS_EQUAL;
 
     public <T extends Comparable<T>> boolean compare(T actualValue, T expectedValue) {
         switch (this) {
@@ -33,12 +25,5 @@ public enum Operator {
             default:
                 throw new IllegalArgumentException("Unknown operator: " + this);
         }
-    }
-
-    public static Operator fromValue(String value) {
-        return Arrays.stream(Operator.values())
-                .filter(e -> e.operator.equals(value))
-                .findFirst()
-                .orElse(null);
     }
 }
