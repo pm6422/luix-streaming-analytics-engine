@@ -14,8 +14,8 @@ public class FieldsExtractor {
 
     public static boolean isSameFieldVal(Object object, String fieldName, String expectedFieldName) throws IllegalAccessException, NoSuchFieldException {
         Field field = object.getClass().getField(fieldName);
-        Field exppectedField = object.getClass().getField(expectedFieldName);
-        return field.get(object).equals(field.get(exppectedField));
+        Field expectedField = object.getClass().getField(expectedFieldName);
+        return field.get(object).equals(field.get(expectedField));
     }
 
     public static double getDoubleByName(String fieldName, Object object) throws NoSuchFieldException, IllegalAccessException {
