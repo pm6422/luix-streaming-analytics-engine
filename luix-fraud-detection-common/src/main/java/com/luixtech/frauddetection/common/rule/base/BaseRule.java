@@ -1,5 +1,6 @@
-package com.luixtech.frauddetection.common.rule;
+package com.luixtech.frauddetection.common.rule.base;
 
+import com.luixtech.frauddetection.common.rule.Operator;
 import lombok.Data;
 
 import java.util.List;

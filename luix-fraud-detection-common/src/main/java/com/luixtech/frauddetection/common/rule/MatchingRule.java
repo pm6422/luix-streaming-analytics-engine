@@ -1,5 +1,6 @@
 package com.luixtech.frauddetection.common.rule;
 
+import com.luixtech.frauddetection.common.rule.base.BaseRule;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
