@@ -33,6 +33,7 @@ public class DetectorRule {
     private BigDecimal limit;
     private Integer    windowMinutes;
     private boolean    resetAfterMatch;
+
     private Boolean    enabled;
 
     public RuleCommand toRuleCommand() {

@@ -39,7 +39,7 @@ public class Rule {
      *
      * @param comparisonValue value to be compared with the limit
      */
-    public boolean evaluate(Map<String, Object> inputRecord, BigDecimal comparisonValue) {
+    public boolean evaluate(Map<String, Object> matchingRecord, BigDecimal comparisonValue) {
         if (RuleType.AGGREGATING == determineType()) {
             switch (operator) {
                 case EQUAL:
@@ -59,9 +59,9 @@ public class Rule {
             }
         } else {
             if (StringUtils.isNotEmpty(expectedValue)) {
-                return expectedValue.equals(String.valueOf(inputRecord.get(fieldName)));
+                return expectedValue.equals(String.valueOf(matchingRecord.get(fieldName)));
             } else {
-                return inputRecord.get(expectedFieldName).equals(inputRecord.get(fieldName));
+                return matchingRecord.get(expectedFieldName).equals(matchingRecord.get(fieldName));
             }
         }
     }
