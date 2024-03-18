@@ -13,6 +13,11 @@ public class MatchingRule extends BaseRule {
     private String expectedValue;
     private String expectedFieldName;
 
+    @Override
+    protected RuleType getRuleType() {
+        return RuleType.MATCHING;
+    }
+
     public boolean evaluate(Map<String, Object> inputRecord) {
         if (StringUtils.isNotEmpty(expectedValue)) {
             return expectedValue.equals(String.valueOf(inputRecord.get(fieldName)));

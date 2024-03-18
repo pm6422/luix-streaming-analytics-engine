@@ -14,6 +14,11 @@ public class AggregatingRule extends BaseRule {
     private Integer    windowMinutes;
     private boolean    resetAfterMatch;
 
+    @Override
+    protected RuleType getRuleType() {
+        return RuleType.AGGREGATING;
+    }
+
     /**
      * Evaluates this rule by comparing provided value with rules' limit based on operator type.
      *
