@@ -6,17 +6,15 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Rules representation.
- */
 @Data
 @NoArgsConstructor
-public class Rule {
+public class AggregatorRule implements BaseRule {
     private String       id;
     private List<String> groupingKeys;
+    private Operator     operator;
+
     private String       aggregateFieldName;
     private Aggregator   aggregator;
-    private Operator     operator;
     private BigDecimal   limit;
     private Integer      windowMinutes;
     private boolean      resetAfterMatch;

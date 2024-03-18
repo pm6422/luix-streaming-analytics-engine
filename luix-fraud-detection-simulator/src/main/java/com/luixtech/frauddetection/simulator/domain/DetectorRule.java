@@ -24,16 +24,15 @@ import java.util.List;
 @AllArgsConstructor
 public class DetectorRule {
     @Id
-    private String             id;
-    private List<String>       groupingKeyNames;
-    private List<String>       unique;
-    private String     aggregateFieldName;
-    private Aggregator aggregator;
-    private Operator   operator;
-    private BigDecimal         limit;
-    private Integer            windowMinutes;
-    private boolean            resetAfterMatch;
-    private Boolean            enabled;
+    private String       id;
+    private List<String> groupingKeys;
+    private String       aggregateFieldName;
+    private Aggregator   aggregator;
+    private Operator     operator;
+    private BigDecimal   limit;
+    private Integer      windowMinutes;
+    private boolean      resetAfterMatch;
+    private Boolean      enabled;
 
     public RuleCommand toRuleCommand() {
         RuleCommand ruleCommand = new RuleCommand();
