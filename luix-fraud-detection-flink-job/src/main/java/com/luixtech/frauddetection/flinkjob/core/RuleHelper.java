@@ -68,55 +68,67 @@ public class RuleHelper {
      */
     public static RuleEvaluationResult evaluate(Rule rule, Transaction matchingRecord,
                                                 MapState<Long, Set<Transaction>> windowState) throws Exception {
+        return RuleType.MATCHING == rule.determineType()
+                ? evaluateMatchingRule(rule, matchingRecord)
+                : evaluateAggregatingRule(rule, matchingRecord, windowState);
+    }
+
+    private static RuleEvaluationResult evaluateMatchingRule(Rule rule, Transaction matchingRecord) throws IllegalAccessException, NoSuchFieldException {
         RuleEvaluationResult result = new RuleEvaluationResult();
         result.setMatched(false);
         result.setAggregateResult(BigDecimal.ZERO);
 
-        if (RuleType.AGGREGATING == rule.determineType()) {
-            Long windowStartTime = matchingRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+        if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
+            result.setMatched(rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(matchingRecord, rule.getFieldName())));
+        } else {
+            result.setMatched(FieldsExtractor.isFieldValSame(matchingRecord, rule.getFieldName(), rule.getExpectedFieldName()));
+        }
+        return result;
+    }
 
-            // Calculate the aggregate value
-            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
-            for (Long stateCreatedTime : windowState.keys()) {
-                if (isStateValueInWindow(stateCreatedTime, windowStartTime, matchingRecord.getCreatedTime())) {
-                    Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
-                    for (Transaction t : transactionsInWindow) {
-                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
-                        aggregator.add(aggregatedValue);
-                    }
+    private static RuleEvaluationResult evaluateAggregatingRule(Rule rule, Transaction matchingRecord,
+                                                                MapState<Long, Set<Transaction>> windowState) throws Exception {
+        RuleEvaluationResult result = new RuleEvaluationResult();
+        result.setMatched(false);
+        result.setAggregateResult(BigDecimal.ZERO);
+
+        Long windowStartTime = matchingRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+
+        // Calculate the aggregate value
+        SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
+        for (Long stateCreatedTime : windowState.keys()) {
+            if (isStateValueInWindow(stateCreatedTime, windowStartTime, matchingRecord.getCreatedTime())) {
+                Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
+                for (Transaction t : transactionsInWindow) {
+                    BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
+                    aggregator.add(aggregatedValue);
                 }
             }
-            BigDecimal comparisonValue = aggregator.getLocalValue();
-            switch (rule.getOperator()) {
-                case EQUAL:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) == 0);
-                    break;
-                case NOT_EQUAL:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) != 0);
-                    break;
-                case GREATER:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) > 0);
-                    break;
-                case LESS:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) < 0);
-                    break;
-                case GREATER_EQUAL:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) >= 0);
-                    break;
-                case LESS_EQUAL:
-                    result.setMatched(comparisonValue.compareTo(rule.getLimit()) <= 0);
-                    break;
-                default:
-                    throw new RuntimeException("Unknown operator: " + rule.getOperator());
-            }
-        } else {
-            if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
-                result.setMatched(rule.getExpectedValue()
-                        .equals(FieldsExtractor.getFieldValAsString(matchingRecord, rule.getFieldName())));
-            } else {
-                result.setMatched(FieldsExtractor.isFieldValSame(matchingRecord, rule.getFieldName(), rule.getExpectedFieldName()));
-            }
         }
+        BigDecimal comparisonValue = aggregator.getLocalValue();
+        switch (rule.getOperator()) {
+            case EQUAL:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) == 0);
+                break;
+            case NOT_EQUAL:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) != 0);
+                break;
+            case GREATER:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) > 0);
+                break;
+            case LESS:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) < 0);
+                break;
+            case GREATER_EQUAL:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) >= 0);
+                break;
+            case LESS_EQUAL:
+                result.setMatched(comparisonValue.compareTo(rule.getLimit()) <= 0);
+                break;
+            default:
+                throw new RuntimeException("Unknown operator: " + rule.getOperator());
+        }
+
         return result;
     }
 
