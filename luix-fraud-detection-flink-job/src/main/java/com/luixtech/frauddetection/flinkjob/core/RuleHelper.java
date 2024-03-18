@@ -95,22 +95,22 @@ public class RuleHelper {
                 }
             }
         }
-        BigDecimal comparisonValue = aggregator.getLocalValue();
-        rule.setActualAggregatedValue(comparisonValue);
+        BigDecimal actualAggregatedValue = aggregator.getLocalValue();
+        rule.setActualAggregatedValue(actualAggregatedValue);
 
         switch (rule.getOperator()) {
             case EQUAL:
-                return comparisonValue.compareTo(rule.getLimit()) == 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) == 0;
             case NOT_EQUAL:
-                return comparisonValue.compareTo(rule.getLimit()) != 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) != 0;
             case GREATER:
-                return comparisonValue.compareTo(rule.getLimit()) > 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) > 0;
             case LESS:
-                return comparisonValue.compareTo(rule.getLimit()) < 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) < 0;
             case GREATER_EQUAL:
-                return comparisonValue.compareTo(rule.getLimit()) >= 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) >= 0;
             case LESS_EQUAL:
-                return comparisonValue.compareTo(rule.getLimit()) <= 0;
+                return actualAggregatedValue.compareTo(rule.getLimit()) <= 0;
             default:
                 throw new RuntimeException("Unknown operator: " + rule.getOperator());
         }
