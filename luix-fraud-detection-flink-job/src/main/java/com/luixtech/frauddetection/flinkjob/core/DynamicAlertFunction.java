@@ -91,54 +91,56 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         // Calculate handling latency time
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTime());
 
-        // Get rule by ID
+        // Get rule command by ID
         RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
         if (ruleCommand == null) {
-            log.error("Rule with ID [{}] does not exist", value.getId());
+            log.error("Rule [{}] does not exist", value.getId());
             return;
         }
 
-        if (Command.ADD == ruleCommand.getCommand()) {
-            Rule rule = ruleCommand.getRule();
+        if (Command.ADD != ruleCommand.getCommand()) {
+            // Do NOT handle delete command
+            return;
+        }
 
-            long cleanupTime = (createdTime / 1000) * 1000;
-            // Register cleanup timer
-            ctx.timerService().registerEventTimeTimer(cleanupTime);
+        long cleanupTime = (createdTime / 1000) * 1000;
+        // Register cleanup timer
+        ctx.timerService().registerEventTimeTimer(cleanupTime);
 
-            Long windowStartForEvent = createdTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+        Rule rule = ruleCommand.getRule();
+        Long windowStartTime = createdTime - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
-            // Calculate the aggregate value
-            SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
-            for (Long stateEventTime : windowState.keys()) {
-                if (isStateValueInWindow(stateEventTime, windowStartForEvent, createdTime)) {
-                    Set<Transaction> inWindow = windowState.get(stateEventTime);
-                    for (Transaction t : inWindow) {
-                        BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
-                        aggregator.add(aggregatedValue);
-                    }
+        // Calculate the aggregate value
+        SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
+        for (Long stateCreatedTime : windowState.keys()) {
+            if (isStateValueInWindow(stateCreatedTime, windowStartTime, createdTime)) {
+                Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
+                for (Transaction t : transactionsInWindow) {
+                    BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
+                    aggregator.add(aggregatedValue);
                 }
             }
+        }
 
-            BigDecimal aggregateResult = aggregator.getLocalValue();
-            // Evaluate the rule and trigger an alert if matched
-            boolean ruleMatched = rule.apply(aggregateResult);
+        BigDecimal aggregateResult = aggregator.getLocalValue();
+        // Evaluate the rule and trigger an alert if matched
+        boolean ruleMatched = rule.evaluate(aggregateResult);
 
-            // Print rule evaluation result
-            ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                    "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
+        // Print rule evaluation result
+        ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
+                "Rule: " + rule.getId() + " | Keys: " + value.getKey() + " | Aggregate Result: " + aggregateResult.toString() + " | Matched: " + ruleMatched);
 
-            if (ruleMatched) {
-                if (ruleCommand.getRule().isResetAfterMatch()) {
-                    evictAllStateElements();
-                }
-                alertMeter.markEvent();
-                out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
+        if (ruleMatched) {
+            if (ruleCommand.getRule().isResetAfterMatch()) {
+                evictAllStateElements();
             }
+            alertMeter.markEvent();
+            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), aggregateResult));
         }
     }
 
-    private boolean isStateValueInWindow(Long stateEventTime, Long windowStartForEvent, long currentEventTime) {
-        return stateEventTime >= windowStartForEvent && stateEventTime <= currentEventTime;
+    private boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {
+        return stateCreatedTime >= windowStartTime && stateCreatedTime <= currentEventTime;
     }
 
     private static <K, V> void groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
