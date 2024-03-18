@@ -25,8 +25,8 @@ import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_KAFKA;
 import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_SOCKET;
 import static com.luixtech.frauddetection.flinkjob.input.RuleSource.initRulesSource;
 import static com.luixtech.frauddetection.flinkjob.input.RuleSource.stringsStreamToRules;
-import static com.luixtech.frauddetection.flinkjob.input.TransactionSource.initTransactionsSource;
-import static com.luixtech.frauddetection.flinkjob.input.TransactionSource.stringsStreamToTransactions;
+import static com.luixtech.frauddetection.flinkjob.input.InputRecordSource.initTransactionsSource;
+import static com.luixtech.frauddetection.flinkjob.input.InputRecordSource.stringsStreamToTransactions;
 
 @Slf4j
 @AllArgsConstructor
@@ -40,10 +40,10 @@ public class RulesEvaluator {
         DataStream<RuleCommand> ruleStream = createRuleStream(env);
         // Rule must be broadcast to all flink servers on the same cluster
         BroadcastStream<RuleCommand> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
-        DataStream<InputRecord> transactionStream = createTransactionStream(env);
+        DataStream<InputRecord> inputRecordStream = createInputRecordStream(env);
 
         // Processing pipeline setup
-        DataStream<Alert> alertStream = transactionStream
+        DataStream<Alert> alertStream = inputRecordStream
                 .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
                 .uid(DynamicKeyFunction.class.getSimpleName())
@@ -114,8 +114,8 @@ public class RulesEvaluator {
         return stringsStreamToRules(arguments, rulesStringStream);
     }
 
-    private DataStream<InputRecord> createTransactionStream(StreamExecutionEnvironment env) {
-        DataStream<String> transactionsStringsStream = initTransactionsSource(arguments, env);
-        return stringsStreamToTransactions(arguments, transactionsStringsStream);
+    private DataStream<InputRecord> createInputRecordStream(StreamExecutionEnvironment env) {
+        DataStream<String> inputRecordsStringsStream = initTransactionsSource(arguments, env);
+        return stringsStreamToTransactions(arguments, inputRecordsStringsStream);
     }
 }

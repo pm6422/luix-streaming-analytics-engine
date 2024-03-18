@@ -16,29 +16,29 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class KafkaTransactionConsumer implements ConsumerSeekAware {
+public class KafkaInputConsumer implements ConsumerSeekAware {
 
 //    private final SimpMessagingTemplate         simpMessagingTemplate;
     private final ApplicationProperties         applicationProperties;
     private final KafkaListenerEndpointRegistry listenerEndpointRegistry;
 
-    @KafkaListener(id = "${application.kafka.listener.transaction}", topics = "${application.kafka.topic.transaction}", groupId = "transactionConsumeGrp")
+    @KafkaListener(id = "${application.kafka.listener.input}", topics = "${application.kafka.topic.input}", groupId = "inputRecordConsumeGrp")
     public void consumeTransactions(@Payload String message) {
-        log.debug("Received transaction {}", message);
+        log.debug("Received input record {}", message);
         // Send to websocket
 //        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransaction(), message);
     }
 
     public void start() {
-        MessageListenerContainer transactionConsumerListener = listenerEndpointRegistry
-                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction());
-        transactionConsumerListener.start();
+        MessageListenerContainer inputRecordConsumerListener = listenerEndpointRegistry
+                .getListenerContainer(applicationProperties.getKafka().getListener().getInput());
+        inputRecordConsumerListener.start();
     }
 
     public void stop() {
-        MessageListenerContainer transactionConsumerListener = listenerEndpointRegistry
-                .getListenerContainer(applicationProperties.getKafka().getListener().getTransaction());
-        transactionConsumerListener.stop();
+        MessageListenerContainer inputRecordConsumerListener = listenerEndpointRegistry
+                .getListenerContainer(applicationProperties.getKafka().getListener().getInput());
+        inputRecordConsumerListener.stop();
     }
 
     @Override

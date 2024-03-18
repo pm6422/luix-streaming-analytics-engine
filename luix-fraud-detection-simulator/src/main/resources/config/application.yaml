@@ -155,16 +155,11 @@ luix:
 application:
   kafka:
     listener:
-      transaction: transaction
+      input: input
     topic:
-      transaction: transaction
+      input: input
       rule: rule
       alert: alert
       latency: latency
-  web-socket:
-    topic:
-      transaction: /topic/transaction
-      alert: /topic/alert
-      latency: /topic/latency
-  transaction:
-    max-transaction-speed: 50
+  input:
+    max-input-speed: 50

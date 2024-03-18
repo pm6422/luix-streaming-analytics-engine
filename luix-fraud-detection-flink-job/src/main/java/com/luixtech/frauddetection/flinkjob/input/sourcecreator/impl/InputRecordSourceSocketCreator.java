@@ -9,12 +9,12 @@ import com.luixtech.utilities.serviceloader.annotation.SpiName;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-@SpiName("transaction-" + Arguments.CHANNEL_SOCKET)
-public class TransactionSourceSocketCreator implements SourceCreator {
+@SpiName("input-record-" + Arguments.CHANNEL_SOCKET)
+public class InputRecordSourceSocketCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
-        int transactionsPerSecond = arguments.recordsPerSecond;
-        JsonGeneratorWrapper<InputRecord> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
+        int inputRecordsPerSecond = arguments.recordsPerSecond;
+        JsonGeneratorWrapper<InputRecord> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(inputRecordsPerSecond));
         return env.addSource(generatorSource);
     }
 }

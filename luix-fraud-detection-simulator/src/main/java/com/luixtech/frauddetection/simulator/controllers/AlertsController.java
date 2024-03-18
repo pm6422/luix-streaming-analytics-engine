@@ -6,7 +6,7 @@ import com.luixtech.frauddetection.common.alert.Alert;
 import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
-import com.luixtech.frauddetection.simulator.kafka.producer.KafkaTransactionProducer;
+import com.luixtech.frauddetection.simulator.kafka.producer.KafkaInputProducer;
 import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
 import com.luixtech.utilities.exception.DataNotFoundException;
 import lombok.AllArgsConstructor;
@@ -23,18 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AlertsController {
 
-    private static final ObjectMapper             OBJECT_MAPPER = new ObjectMapper();
-    private final        DetectorRuleRepository   detectorRuleRepository;
-    private final        KafkaTransactionProducer transactionsPusher;
+    private static final ObjectMapper           OBJECT_MAPPER = new ObjectMapper();
+    private final        DetectorRuleRepository detectorRuleRepository;
+    private final        KafkaInputProducer     kafkaInputProducer;
     //    private final        SimpMessagingTemplate    simpSender;
-    private final        ApplicationProperties    applicationProperties;
+    private final        ApplicationProperties  applicationProperties;
 
     @GetMapping("/alerts/mock")
     public Alert mockAlert(@RequestParam(value = "ruleId") String ruleId) throws JsonProcessingException {
         DetectorRule detectorRule = detectorRuleRepository.findById(ruleId).orElseThrow(() -> new DataNotFoundException(ruleId.toString()));
-        InputRecord triggeringEvent = transactionsPusher.getLastTransaction();
+        InputRecord triggeringEvent = kafkaInputProducer.getLastInputRecord();
         if (triggeringEvent == null) {
-            log.warn("No transactions found, please start generating transactions first");
+            log.warn("No input record found, please start generating input records first");
             return null;
         }
         Alert alert = new Alert(detectorRule.getId(), detectorRule.toRuleCommand().getRule(), StringUtils.EMPTY, triggeringEvent);

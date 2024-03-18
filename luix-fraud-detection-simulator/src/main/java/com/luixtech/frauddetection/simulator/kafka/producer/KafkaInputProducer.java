@@ -12,19 +12,19 @@ import java.util.function.Consumer;
 
 @Service
 @Slf4j
-public class KafkaTransactionProducer implements Consumer<InputRecord> {
+public class KafkaInputProducer implements Consumer<InputRecord> {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
     @Resource
     private ApplicationProperties         applicationProperties;
     @Getter
-    private InputRecord                   lastTransaction;
+    private InputRecord                   lastInputRecord;
 
     @Override
     public void accept(InputRecord input) {
-        lastTransaction = input;
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getTransaction(), input);
+        lastInputRecord = input;
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getInput(), input);
         log.debug("Pushed input with content {}", input);
     }
 }

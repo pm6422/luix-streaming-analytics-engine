@@ -12,18 +12,18 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 @Slf4j
-public class TransactionSource {
+public class InputRecordSource {
 
     public static DataStreamSource<String> initTransactionsSource(Arguments arguments, StreamExecutionEnvironment env) {
         DataStreamSource<String> dataStreamSource = SourceCreator
-                .getInstance("transaction-" + arguments.messageChannel)
+                .getInstance("input-record-" + arguments.messageChannel)
                 .create(env, arguments);
         dataStreamSource.setParallelism(arguments.sourceParallelism);
         return dataStreamSource;
     }
 
-    public static DataStream<InputRecord> stringsStreamToTransactions(Arguments arguments, DataStream<String> transactionStrings) {
-        return transactionStrings
+    public static DataStream<InputRecord> stringsStreamToTransactions(Arguments arguments, DataStream<String> inputRecordStrings) {
+        return inputRecordStrings
                 .flatMap(new JsonDeserializer<>(InputRecord.class))
                 .name(arguments.messageChannel)
                 .returns(InputRecord.class)

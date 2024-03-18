@@ -80,14 +80,13 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      */
     @Override
     public void processElement(Keyed<InputRecord, String, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
-        InputRecord transaction = value.getWrapped();
-        long createdTime = transaction.getCreatedTime();
+        InputRecord record = value.getWrapped();
 
-        // Store transaction to local map which is grouped by created time
-        groupTransactionByTime(windowState, createdTime, transaction);
+        // Store record to local map which is grouped by created time
+        groupTransactionByTime(windowState, record.getCreatedTime(), record);
 
         // Calculate handling latency time
-        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - transaction.getIngestionTime());
+        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
 
         // Get rule command by ID
         RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
@@ -101,14 +100,14 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             return;
         }
 
-        long cleanupTime = (createdTime / 1000) * 1000;
+        long cleanupTime = (record.getCreatedTime() / 1000) * 1000;
         // Register cleanup timer
         ctx.timerService().registerEventTimeTimer(cleanupTime);
 
         Rule rule = ruleCommand.getRule();
 
         // Evaluate the rule and trigger an alert if matched
-        boolean ruleMatched = RuleHelper.evaluate(rule, transaction, windowState);
+        boolean ruleMatched = RuleHelper.evaluate(rule, record, windowState);
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,

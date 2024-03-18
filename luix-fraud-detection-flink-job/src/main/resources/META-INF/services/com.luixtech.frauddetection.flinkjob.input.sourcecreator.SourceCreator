@@ -2,5 +2,5 @@
 # The file must be encoded in UTF-8.
 com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.RuleSourceKafkaCreator
 com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.RuleSourceSocketCreator
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionSourceKafkaCreator
-com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.TransactionSourceSocketCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.InputRecordSourceKafkaCreator
+com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl.InputRecordSourceSocketCreator

@@ -8,15 +8,15 @@ import java.util.SplittableRandom;
 import java.util.function.Consumer;
 
 @Slf4j
-public class TransactionsGenerator extends AbstractTransactionsGenerator {
+public class InputRecordGenerator extends AbstractTransactionsGenerator {
 
     private       long       lastPayeeIdBeneficiaryIdTriggered = System.currentTimeMillis();
     private       long       lastBeneficiaryIdTriggered        = System.currentTimeMillis();
     private final BigDecimal beneficiaryLimit                  = new BigDecimal(10000000);
     private final BigDecimal payeeBeneficiaryLimit             = new BigDecimal(20000000);
 
-    public TransactionsGenerator(Consumer<InputRecord> transactionProducer, int maxRecordsPerSecond) {
-        super(transactionProducer, maxRecordsPerSecond);
+    public InputRecordGenerator(Consumer<InputRecord> inputRecordProducer, int maxRecordsPerSecond) {
+        super(inputRecordProducer, maxRecordsPerSecond);
     }
 
     @Override

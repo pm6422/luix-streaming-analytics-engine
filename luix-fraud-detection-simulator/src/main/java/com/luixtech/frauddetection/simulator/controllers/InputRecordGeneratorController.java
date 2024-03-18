@@ -1,8 +1,8 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.generator.TransactionsGenerator;
-import com.luixtech.frauddetection.simulator.kafka.consumer.KafkaTransactionConsumer;
+import com.luixtech.frauddetection.simulator.generator.InputRecordGenerator;
+import com.luixtech.frauddetection.simulator.kafka.consumer.KafkaInputConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,57 +17,57 @@ import java.util.stream.IntStream;
 
 @RestController
 @Slf4j
-public class TransactionGeneratorController {
+public class InputRecordGeneratorController {
 
-    private static final ExecutorService          EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
+    private static final ExecutorService       EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
     @Resource
-    private              TransactionsGenerator    transactionsGenerator;
+    private              InputRecordGenerator  inputRecordGenerator;
     @Resource
-    private              ApplicationProperties    applicationProperties;
+    private              ApplicationProperties applicationProperties;
     @Resource
-    private              KafkaTransactionConsumer kafkaTransactionConsumer;
-    private              boolean                  listenerContainerRunning = true;
+    private KafkaInputConsumer    kafkaInputConsumer;
+    private boolean               listenerContainerRunning = true;
     private static final AtomicBoolean            GENERATING               = new AtomicBoolean(false);
 
-    @GetMapping("/api/transaction-generator/start")
+    @GetMapping("/api/input-record-generator/start")
     public void start(@RequestParam(value = "quantity", required = false) Integer quantity) {
         if (quantity != null) {
             long now = System.currentTimeMillis();
-            IntStream.range(0, quantity).forEach(i -> transactionsGenerator.generateAndPublishOne(now));
+            IntStream.range(0, quantity).forEach(i -> inputRecordGenerator.generateAndPublishOne(now));
             return;
         }
         if (GENERATING.compareAndSet(false, true)) {
-            EXECUTOR_SERVICE.submit(transactionsGenerator);
+            EXECUTOR_SERVICE.submit(inputRecordGenerator);
         }
     }
 
-    @GetMapping("/api/transaction-generator/stop")
+    @GetMapping("/api/input-record-generator/stop")
     public void stop() {
         if (GENERATING.compareAndSet(true, false)) {
-            transactionsGenerator.cancel();
+            inputRecordGenerator.cancel();
         }
     }
 
-    @GetMapping("/api/transaction-generator/speed/{speed}")
+    @GetMapping("/api/input-record-generator/speed/{speed}")
     public void setGeneratorSpeed(@PathVariable Long speed) {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {
-            transactionsGenerator.cancel();
+            inputRecordGenerator.cancel();
             GENERATING.set(false);
             return;
         } else {
             start(null);
         }
 
-        if (speed > applicationProperties.getTransaction().getMaxTransactionSpeed()) {
-            kafkaTransactionConsumer.stop();
+        if (speed > applicationProperties.getInput().getMaxInputSpeed()) {
+            kafkaInputConsumer.stop();
             listenerContainerRunning = false;
         } else if (!listenerContainerRunning) {
-            kafkaTransactionConsumer.start();
+            kafkaInputConsumer.start();
         }
 
-        if (transactionsGenerator != null) {
-            transactionsGenerator.adjustMaxRecordsPerSecond(speed);
+        if (inputRecordGenerator != null) {
+            inputRecordGenerator.adjustMaxRecordsPerSecond(speed);
         }
     }
 }

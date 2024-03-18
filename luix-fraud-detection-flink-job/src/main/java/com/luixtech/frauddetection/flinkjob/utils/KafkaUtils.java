@@ -23,7 +23,7 @@ public class KafkaUtils {
         Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", arguments.kafkaHost + ":" + arguments.kafkaPort);
         // 2 minutes
-        properties.setProperty("transaction.timeout.ms", "120000");
+//        properties.setProperty("transaction.timeout.ms", "120000");
         return properties;
     }
 }
