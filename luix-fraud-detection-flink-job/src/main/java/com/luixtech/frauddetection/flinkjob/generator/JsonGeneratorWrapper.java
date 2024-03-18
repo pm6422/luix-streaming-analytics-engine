@@ -16,8 +16,8 @@ public class JsonGeneratorWrapper<T> extends BaseGenerator<String> {
     }
 
     @Override
-    public String randomEvent(SplittableRandom rnd, long id) {
-        T transaction = wrappedGenerator.randomEvent(rnd, id);
+    public String randomOne(SplittableRandom rnd, long id) {
+        T transaction = wrappedGenerator.randomOne(rnd, id);
         String json;
         try {
             json = objectMapper.writeValueAsString(transaction);

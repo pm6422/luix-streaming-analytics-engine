@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.Map;
  * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, RuleCommand, Keyed<Transaction, String, String>> {
+public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, RuleCommand, Keyed<InputRecord, String, String>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -28,7 +28,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Keyed<Transaction, String, String>> out) throws Exception {
+    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Keyed<InputRecord, String, String>> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
@@ -36,7 +36,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
     }
 
     @Override
-    public void processElement(Transaction transaction, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, String>> out) throws Exception {
+    public void processElement(InputRecord input, ReadOnlyContext ctx, Collector<Keyed<InputRecord, String, String>> out) throws Exception {
         ReadOnlyBroadcastState<String, RuleCommand> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         int ruleCounter = 0;
         for (Map.Entry<String, RuleCommand> entry : rulesState.immutableEntries()) {
@@ -47,7 +47,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
             // in the cluster. That is to say, elements with the same key are assigned to the same partition.
             // This will allow tracking all transactions between payer #25 and beneficiary #12 and evaluating defined rules
             // within the desired time window.
-            out.collect(new Keyed<>(transaction, ruleCommand.getRule().getId(), KeysExtractor.toKeys(transaction, ruleCommand.getRule().getGroupingKeys())));
+            out.collect(new Keyed<>(input, ruleCommand.getRule().getId(), KeysExtractor.toKeys(input.getRecord(), ruleCommand.getRule().getGroupingKeys())));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);

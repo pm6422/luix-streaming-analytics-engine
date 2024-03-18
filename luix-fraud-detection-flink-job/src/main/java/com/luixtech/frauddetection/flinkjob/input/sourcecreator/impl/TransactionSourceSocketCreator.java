@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input.sourcecreator.impl;
 
-import com.luixtech.frauddetection.common.transaction.Transaction;
+import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.flinkjob.generator.JsonGeneratorWrapper;
 import com.luixtech.frauddetection.flinkjob.generator.TransactionsGenerator;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
@@ -14,7 +14,7 @@ public class TransactionSourceSocketCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
         int transactionsPerSecond = arguments.recordsPerSecond;
-        JsonGeneratorWrapper<Transaction> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
+        JsonGeneratorWrapper<InputRecord> generatorSource = new JsonGeneratorWrapper<>(new TransactionsGenerator(transactionsPerSecond));
         return env.addSource(generatorSource);
     }
 }

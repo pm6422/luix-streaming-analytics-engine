@@ -1,15 +1,16 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.common.transaction.Transaction;
+import com.luixtech.frauddetection.common.input.InputRecord;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CRD;
-import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CSH;
-
-public class TransactionsGenerator extends BaseGenerator<Transaction> {
+public class TransactionsGenerator extends BaseGenerator<InputRecord> {
+    private static final String PAYMENT_TYPE_CSH = "CSH";
+    private static final String PAYMENT_TYPE_CRD = "CRD";
     private static final long   MAX_PAYEE_ID       = 100000;
     private static final long   MAX_BENEFICIARY_ID = 100000;
     private static final double MIN_PAYMENT_AMOUNT = 5d;
@@ -20,8 +21,8 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
     }
 
     @Override
-    public Transaction randomEvent(SplittableRandom rnd, long id) {
-        long transactionId = rnd.nextLong(Long.MAX_VALUE);
+    public InputRecord randomOne(SplittableRandom rnd, long id) {
+        long recordId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
         double paymentAmountDouble =
@@ -29,14 +30,16 @@ public class TransactionsGenerator extends BaseGenerator<Transaction> {
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100;
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
-        return Transaction.builder()
-                .id(String.valueOf(transactionId))
-                .payeeId(payeeId)
-                .beneficiaryId(beneficiaryId)
-                .paymentAmount(paymentAmount)
-                .paymentType(paymentType(transactionId))
+        Map<String, Object> record = new HashMap<>();
+        record.put("payeeId", payeeId);
+        record.put("beneficiaryId", beneficiaryId);
+        record.put("paymentAmount", paymentAmount);
+        record.put("paymentType", paymentType(recordId));
+
+        return InputRecord.builder()
+                .recordId(String.valueOf(recordId))
                 .createdTime(System.currentTimeMillis())
-                .ingestionTime(System.currentTimeMillis())
+                .record(record)
                 .build();
     }
 

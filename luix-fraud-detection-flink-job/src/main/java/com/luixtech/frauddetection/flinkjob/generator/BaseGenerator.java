@@ -55,7 +55,7 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
         final Object lock = ctx.getCheckpointLock();
 
         while (running) {
-            T event = randomEvent(rnd, id);
+            T event = randomOne(rnd, id);
 
             synchronized (lock) {
                 ctx.collect(event);
@@ -93,7 +93,7 @@ public abstract class BaseGenerator<T> extends RichParallelSourceFunction<T> imp
         }
     }
 
-    public abstract T randomEvent(SplittableRandom rnd, long id);
+    public abstract T randomOne(SplittableRandom rnd, long id);
 
 
 }

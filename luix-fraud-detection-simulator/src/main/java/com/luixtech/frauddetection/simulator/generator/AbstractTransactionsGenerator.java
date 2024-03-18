@@ -1,20 +1,21 @@
 package com.luixtech.frauddetection.simulator.generator;
 
-import com.luixtech.frauddetection.common.transaction.Transaction;
+import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.utilities.thread.Throttler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
-import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CRD;
-import static com.luixtech.frauddetection.common.transaction.Transaction.PAYMENT_TYPE_CSH;
-
 @Slf4j
 public abstract class AbstractTransactionsGenerator implements Runnable {
 
+    private static final String                PAYMENT_TYPE_CSH   = "CSH";
+    private static final String                PAYMENT_TYPE_CRD   = "CRD";
     private static final long                  MAX_PAYEE_ID       = 100000;
     private static final long                  MAX_BENEFICIARY_ID = 100000;
     private static final double                MIN_PAYMENT_AMOUNT = 5d;
@@ -22,9 +23,9 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
     private final        Throttler             throttler;
     private volatile     boolean               running            = true;
     private final        Integer               maxRecordsPerSecond;
-    private final        Consumer<Transaction> transactionProducer;
+    private final        Consumer<InputRecord> transactionProducer;
 
-    public AbstractTransactionsGenerator(Consumer<Transaction> transactionProducer, int maxRecordsPerSecond) {
+    public AbstractTransactionsGenerator(Consumer<InputRecord> transactionProducer, int maxRecordsPerSecond) {
         this.transactionProducer = transactionProducer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond, 1);
@@ -34,8 +35,8 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         throttler.adjustMaxRecordsPerSecond(maxRecordsPerSecond);
     }
 
-    protected Transaction randomTransaction(SplittableRandom rnd, Long eventTime) {
-        long transactionId = rnd.nextLong(Long.MAX_VALUE);
+    protected InputRecord randomOne(SplittableRandom rnd, Long eventTime) {
+        long recordId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
         double paymentAmountDouble =
@@ -43,18 +44,21 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         paymentAmountDouble = Math.floor(paymentAmountDouble * 100) / 100;
         BigDecimal paymentAmount = BigDecimal.valueOf(paymentAmountDouble);
 
-        return Transaction.builder()
-                .id(String.valueOf(transactionId))
-                .payeeId(payeeId)
-                .beneficiaryId(beneficiaryId)
-                .paymentAmount(paymentAmount)
-                .paymentType(paymentType(transactionId))
-                .createdTime(eventTime != null ? eventTime : System.currentTimeMillis())
+        Map<String, Object> record = new HashMap<>();
+        record.put("payeeId", payeeId);
+        record.put("beneficiaryId", beneficiaryId);
+        record.put("paymentAmount", paymentAmount);
+        record.put("paymentType", paymentType(recordId));
+
+        return InputRecord.builder()
+                .recordId(String.valueOf(recordId))
+                .createdTime(System.currentTimeMillis())
+                .record(record)
                 .build();
     }
 
-    public Transaction generateOne(long now) {
-        return randomTransaction(new SplittableRandom(), now);
+    public InputRecord generateOne(long now) {
+        return randomOne(new SplittableRandom(), now);
     }
 
     public void generateAndPublishOne(long now) {
@@ -80,8 +84,8 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         final SplittableRandom rnd = new SplittableRandom();
 
         while (running) {
-            Transaction transaction = randomTransaction(rnd, null);
-            transactionProducer.accept(transaction);
+            InputRecord input = randomOne(rnd, null);
+            transactionProducer.accept(input);
             try {
                 throttler.throttle();
             } catch (InterruptedException e) {

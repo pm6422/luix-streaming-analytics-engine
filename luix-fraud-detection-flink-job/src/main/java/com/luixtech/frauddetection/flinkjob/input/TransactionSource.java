@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.input;
 
-import com.luixtech.frauddetection.common.transaction.Transaction;
+import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.flinkjob.core.Arguments;
 import com.luixtech.frauddetection.flinkjob.core.TimeStamper;
 import com.luixtech.frauddetection.flinkjob.input.sourcecreator.SourceCreator;
@@ -22,13 +22,13 @@ public class TransactionSource {
         return dataStreamSource;
     }
 
-    public static DataStream<Transaction> stringsStreamToTransactions(Arguments arguments, DataStream<String> transactionStrings) {
+    public static DataStream<InputRecord> stringsStreamToTransactions(Arguments arguments, DataStream<String> transactionStrings) {
         return transactionStrings
-                .flatMap(new JsonDeserializer<>(Transaction.class))
+                .flatMap(new JsonDeserializer<>(InputRecord.class))
                 .name(arguments.messageChannel)
-                .returns(Transaction.class)
+                .returns(InputRecord.class)
                 .flatMap(new TimeStamper<>())
-                .returns(Transaction.class)
+                .returns(InputRecord.class)
                 .assignTimestampsAndWatermarks(new SimpleBoundedOutOfOrdernessTimestampExtractor<>(arguments.outOfOrderdness));
     }
 }

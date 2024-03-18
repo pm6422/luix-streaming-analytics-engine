@@ -1,11 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
+import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.rule.RuleType;
-import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
-import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
@@ -62,8 +61,8 @@ public class RuleHelper {
         }
     }
 
-    public static boolean evaluate(Rule rule, Transaction inputRecord,
-                                   MapState<Long, Set<Transaction>> windowState) throws Exception {
+    public static boolean evaluate(Rule rule, InputRecord inputRecord,
+                                   MapState<Long, Set<InputRecord>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
                 ? evaluateMatchingRule(rule, inputRecord)
                 : evaluateAggregatingRule(rule, inputRecord, windowState);
@@ -72,39 +71,39 @@ public class RuleHelper {
     /**
      * Evaluates matching rule by comparing field value with expected value based on operator.
      *
-     * @param rule        matching rule to evaluate
-     * @param inputRecord input data record
+     * @param rule  matching rule to evaluate
+     * @param input input data input
      * @return true if matched, otherwise false
      * @throws IllegalAccessException if exception throws
      * @throws NoSuchFieldException   if exception throws
      */
-    private static boolean evaluateMatchingRule(Rule rule, Transaction inputRecord) throws IllegalAccessException, NoSuchFieldException {
+    private static boolean evaluateMatchingRule(Rule rule, InputRecord input) throws IllegalAccessException, NoSuchFieldException {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
-            return rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(inputRecord, rule.getFieldName()));
+            return rule.getExpectedValue().equals(input.getRecord().get(rule.getFieldName()).toString());
         }
-        return FieldsExtractor.isSameFieldVal(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
+        return input.getRecord().get(rule.getFieldName()).equals(input.getRecord().get(rule.getExpectedFieldName()));
     }
 
     /**
      * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
      *
      * @param rule        aggregation rule to evaluate
-     * @param inputRecord input data record
+     * @param inputRecord input data input
      * @param windowState input data group by time window
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
      */
-    private static boolean evaluateAggregatingRule(Rule rule, Transaction inputRecord,
-                                                   MapState<Long, Set<Transaction>> windowState) throws Exception {
+    private static boolean evaluateAggregatingRule(Rule rule, InputRecord inputRecord,
+                                                   MapState<Long, Set<InputRecord>> windowState) throws Exception {
         Long windowStartTime = inputRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregate value
         SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
         for (Long stateCreatedTime : windowState.keys()) {
             if (isStateValueInWindow(stateCreatedTime, windowStartTime, inputRecord.getCreatedTime())) {
-                Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
-                for (Transaction t : transactionsInWindow) {
-                    BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
+                Set<InputRecord> inputsInWindow = windowState.get(stateCreatedTime);
+                for (InputRecord input : inputsInWindow) {
+                    BigDecimal aggregatedValue = getBigDecimalByFieldName(input.getRecord(), rule.getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }
             }
@@ -132,5 +131,12 @@ public class RuleHelper {
 
     private static boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {
         return stateCreatedTime >= windowStartTime && stateCreatedTime <= currentEventTime;
+    }
+
+    private static BigDecimal getBigDecimalByFieldName(Map<String, Object> record, String fieldName) {
+        if (StringUtils.isEmpty(fieldName)) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(record.get(fieldName).toString());
     }
 }
