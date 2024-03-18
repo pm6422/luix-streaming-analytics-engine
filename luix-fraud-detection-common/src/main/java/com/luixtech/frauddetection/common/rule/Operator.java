@@ -3,12 +3,12 @@ package com.luixtech.frauddetection.common.rule;
 import java.util.Arrays;
 
 public enum Operator {
-    EQUAL("="),
+    EQUAL("=="),
     NOT_EQUAL("!="),
-    GREATER_EQUAL(">="),
-    LESS_EQUAL("<="),
     GREATER(">"),
-    LESS("<");
+    LESS("<"),
+    GREATER_EQUAL(">="),
+    LESS_EQUAL("<=");
 
     private final String operator;
 
