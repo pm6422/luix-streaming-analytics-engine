@@ -24,7 +24,7 @@ public class RuleHelper {
     public static void handleRule(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
         switch (ruleCommand.getCommand()) {
             case ADD:
-                // merge rule
+                // merge rule by ID
                 broadcastState.put(ruleCommand.getRule().getId(), ruleCommand);
                 break;
             case DELETE:
