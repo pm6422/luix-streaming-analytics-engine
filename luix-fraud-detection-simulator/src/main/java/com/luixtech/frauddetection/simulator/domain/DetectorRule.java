@@ -26,13 +26,14 @@ public class DetectorRule {
     @Id
     private String       id;
     private List<String> groupingKeys;
-    private String       aggregateFieldName;
-    private Aggregator   aggregator;
     private Operator     operator;
-    private BigDecimal   limit;
-    private Integer      windowMinutes;
-    private boolean      resetAfterMatch;
-    private Boolean      enabled;
+
+    private String     aggregateFieldName;
+    private Aggregator aggregator;
+    private BigDecimal limit;
+    private Integer    windowMinutes;
+    private boolean    resetAfterMatch;
+    private Boolean    enabled;
 
     public RuleCommand toRuleCommand() {
         RuleCommand ruleCommand = new RuleCommand();

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
+@Deprecated
 @Data
 @NoArgsConstructor
 public class MatchingRule extends BaseRule {
