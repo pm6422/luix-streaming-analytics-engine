@@ -60,11 +60,6 @@ public class RuleHelper {
         }
     }
 
-    /**
-     * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
-     *
-     * @param comparisonValue value to be compared with the limit
-     */
     public static boolean evaluate(Rule rule, Transaction inputRecord,
                                    MapState<Long, Set<Transaction>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
@@ -80,6 +75,15 @@ public class RuleHelper {
         return FieldsExtractor.isFieldValSame(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
     }
 
+    /**
+     * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
+     *
+     * @param rule        rule to evaluate
+     * @param inputRecord input data
+     * @param windowState input data group by time window
+     * @return true if matched, otherwise false
+     * @throws Exception if exception throws
+     */
     private static boolean evaluateAggregatingRule(Rule rule, Transaction inputRecord,
                                                    MapState<Long, Set<Transaction>> windowState) throws Exception {
         Long windowStartTime = inputRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
