@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Keyed<IN, ID, KEY> {
     /**
-     * Transaction
+     * Input record
      */
-    private IN  wrapped;
+    private IN  inputRecord;
     /**
      * The id of the rule that matched the input record
      */
-    private ID  id;
+    private ID  ruleId;
     /**
-     * Keys used to partition the input record, e.g: {payeeId=9905;beneficiaryId=29926}
+     * Keys used to partition the input record, e.g: {tenant=tesla;model=X9}
      */
-    private KEY key;
+    private KEY groupKeys;
 }

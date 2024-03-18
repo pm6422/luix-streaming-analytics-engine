@@ -2,6 +2,7 @@ package com.luixtech.frauddetection.common.alert;
 
 import com.luixtech.frauddetection.common.rule.Rule;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class Alert<E> {
     private String ruleId;
     private Rule   violatedRule;
-    private String key;
+    private String groupKeys;
     private E      triggeringInputRecord;
 }

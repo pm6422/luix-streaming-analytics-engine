@@ -70,7 +70,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     /**
      * Called for each element after received rule
      *
-     * @param value The stream element.
+     * @param keyed The stream element.
      * @param ctx   A {@link ReadOnlyContext} that allows querying the timestamp of the element,
      *              querying the current processing/event time and iterating the broadcast state with
      *              <b>read-only</b> access. The context is only valid during the invocation of this method,
@@ -79,8 +79,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      * @throws Exception exception
      */
     @Override
-    public void processElement(Keyed<InputRecord, String, String> value, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
-        InputRecord record = value.getWrapped();
+    public void processElement(Keyed<InputRecord, String, String> keyed, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+        InputRecord record = keyed.getInputRecord();
 
         // Store record to local map which is grouped by created time
         groupTransactionByTime(windowState, record.getCreatedTime(), record);
@@ -89,9 +89,9 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
 
         // Get rule command by ID
-        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(value.getId());
+        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(keyed.getRuleId());
         if (ruleCommand == null) {
-            log.error("Rule [{}] does not exist", value.getId());
+            log.error("Rule [{}] does not exist", keyed.getRuleId());
             return;
         }
 
@@ -111,14 +111,14 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + rule.getId() + " , Keys: " + value.getKey() + " , Matched: " + ruleMatched);
+                "Rule: " + rule.getId() + " , Keys: " + keyed.getGroupKeys() + " , Matched: " + ruleMatched);
 
         if (ruleMatched) {
             if (ruleCommand.getRule().isResetAfterMatch()) {
                 evictAllStateElements();
             }
             alertMeter.markEvent();
-            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped()));
+            out.collect(new Alert<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInputRecord()));
         }
     }
 

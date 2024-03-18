@@ -49,7 +49,7 @@ public class RulesEvaluator {
                 .uid(DynamicKeyFunction.class.getSimpleName())
                 .name("Dynamic Partitioning Function")
                 // cannot be optimized to lambda
-                .keyBy((keyed) -> keyed.getKey())
+                .keyBy((keyed) -> keyed.getGroupKeys())
                 .connect(broadcastRuleStream)
                 .process(new DynamicAlertFunction())
                 .uid(DynamicAlertFunction.class.getSimpleName())
