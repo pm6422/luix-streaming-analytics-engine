@@ -39,9 +39,7 @@ public class AlertsController {
             log.warn("No transactions found, please start generating transactions first");
             return null;
         }
-        BigDecimal triggeringValue = triggeringEvent.getPaymentAmount().multiply(new BigDecimal(10));
-
-        Alert alert = new Alert(detectorRule.getId(), detectorRule.toRuleCommand().getRule(), StringUtils.EMPTY, triggeringEvent, triggeringValue);
+        Alert alert = new Alert(detectorRule.getId(), detectorRule.toRuleCommand().getRule(), StringUtils.EMPTY, triggeringEvent);
         String result = OBJECT_MAPPER.writeValueAsString(alert);
         // Push to websocket queue
 //        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), result);

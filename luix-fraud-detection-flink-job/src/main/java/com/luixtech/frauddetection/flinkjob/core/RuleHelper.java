@@ -2,7 +2,6 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.common.rule.RuleEvaluationResult;
 import com.luixtech.frauddetection.common.rule.RuleType;
 import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
@@ -66,38 +65,29 @@ public class RuleHelper {
      *
      * @param comparisonValue value to be compared with the limit
      */
-    public static RuleEvaluationResult evaluate(Rule rule, Transaction matchingRecord,
-                                                MapState<Long, Set<Transaction>> windowState) throws Exception {
+    public static boolean evaluate(Rule rule, Transaction inputRecord,
+                                   MapState<Long, Set<Transaction>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
-                ? evaluateMatchingRule(rule, matchingRecord)
-                : evaluateAggregatingRule(rule, matchingRecord, windowState);
+                ? evaluateMatchingRule(rule, inputRecord)
+                : evaluateAggregatingRule(rule, inputRecord, windowState);
     }
 
-    private static RuleEvaluationResult evaluateMatchingRule(Rule rule, Transaction matchingRecord) throws IllegalAccessException, NoSuchFieldException {
-        RuleEvaluationResult result = new RuleEvaluationResult();
-        result.setMatched(false);
-        result.setAggregateResult(BigDecimal.ZERO);
-
+    private static boolean evaluateMatchingRule(Rule rule, Transaction inputRecord) throws IllegalAccessException, NoSuchFieldException {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
-            result.setMatched(rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(matchingRecord, rule.getFieldName())));
-        } else {
-            result.setMatched(FieldsExtractor.isFieldValSame(matchingRecord, rule.getFieldName(), rule.getExpectedFieldName()));
+            return rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(inputRecord, rule.getFieldName()));
         }
-        return result;
+
+        return FieldsExtractor.isFieldValSame(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
     }
 
-    private static RuleEvaluationResult evaluateAggregatingRule(Rule rule, Transaction matchingRecord,
-                                                                MapState<Long, Set<Transaction>> windowState) throws Exception {
-        RuleEvaluationResult result = new RuleEvaluationResult();
-        result.setMatched(false);
-        result.setAggregateResult(BigDecimal.ZERO);
-
-        Long windowStartTime = matchingRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+    private static boolean evaluateAggregatingRule(Rule rule, Transaction inputRecord,
+                                                   MapState<Long, Set<Transaction>> windowState) throws Exception {
+        Long windowStartTime = inputRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregate value
         SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
         for (Long stateCreatedTime : windowState.keys()) {
-            if (isStateValueInWindow(stateCreatedTime, windowStartTime, matchingRecord.getCreatedTime())) {
+            if (isStateValueInWindow(stateCreatedTime, windowStartTime, inputRecord.getCreatedTime())) {
                 Set<Transaction> transactionsInWindow = windowState.get(stateCreatedTime);
                 for (Transaction t : transactionsInWindow) {
                     BigDecimal aggregatedValue = FieldsExtractor.getBigDecimalByName(t, rule.getAggregateFieldName());
@@ -106,30 +96,24 @@ public class RuleHelper {
             }
         }
         BigDecimal comparisonValue = aggregator.getLocalValue();
+        rule.setActualAggregatedValue(comparisonValue);
+
         switch (rule.getOperator()) {
             case EQUAL:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) == 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) == 0;
             case NOT_EQUAL:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) != 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) != 0;
             case GREATER:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) > 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) > 0;
             case LESS:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) < 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) < 0;
             case GREATER_EQUAL:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) >= 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) >= 0;
             case LESS_EQUAL:
-                result.setMatched(comparisonValue.compareTo(rule.getLimit()) <= 0);
-                break;
+                return comparisonValue.compareTo(rule.getLimit()) <= 0;
             default:
                 throw new RuntimeException("Unknown operator: " + rule.getOperator());
         }
-
-        return result;
     }
 
     private static boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {

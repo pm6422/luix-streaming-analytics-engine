@@ -32,6 +32,8 @@ public class Rule {
     private BigDecimal limit;
     private Integer    windowMinutes;
     private boolean    resetAfterMatch;
+    private BigDecimal actualAggregatedValue;
+
 
     public RuleType determineType() {
         if (aggregator != null && limit != null && windowMinutes != null) {

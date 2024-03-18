@@ -4,7 +4,6 @@ import com.luixtech.frauddetection.common.alert.Alert;
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.common.rule.RuleEvaluationResult;
 import com.luixtech.frauddetection.common.transaction.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -109,18 +108,18 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
         Rule rule = ruleCommand.getRule();
 
         // Evaluate the rule and trigger an alert if matched
-        RuleEvaluationResult result = RuleHelper.evaluate(rule, transaction, windowState);
+        boolean ruleMatched = RuleHelper.evaluate(rule, transaction, windowState);
 
-        // Print rule evaluation result
+        // Print rule evaluation ruleMatched
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + rule.getId() + " , Keys: " + value.getKey() + " , Matched: " + result.isMatched());
+                "Rule: " + rule.getId() + " , Keys: " + value.getKey() + " , Matched: " + ruleMatched);
 
-        if (result.isMatched()) {
+        if (ruleMatched) {
             if (ruleCommand.getRule().isResetAfterMatch()) {
                 evictAllStateElements();
             }
             alertMeter.markEvent();
-            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped(), result.getAggregateResult()));
+            out.collect(new Alert<>(rule.getId(), rule, value.getKey(), value.getWrapped()));
         }
     }
 
