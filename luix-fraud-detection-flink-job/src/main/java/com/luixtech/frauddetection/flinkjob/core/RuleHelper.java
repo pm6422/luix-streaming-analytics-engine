@@ -69,6 +69,15 @@ public class RuleHelper {
                 : evaluateAggregatingRule(rule, inputRecord, windowState);
     }
 
+    /**
+     * Evaluates matching rule by comparing field value with expected value based on operator.
+     *
+     * @param rule        matching rule to evaluate
+     * @param inputRecord input data record
+     * @return true if matched, otherwise false
+     * @throws IllegalAccessException if exception throws
+     * @throws NoSuchFieldException   if exception throws
+     */
     private static boolean evaluateMatchingRule(Rule rule, Transaction inputRecord) throws IllegalAccessException, NoSuchFieldException {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
             return rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(inputRecord, rule.getFieldName()));
@@ -79,8 +88,8 @@ public class RuleHelper {
     /**
      * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
      *
-     * @param rule        rule to evaluate
-     * @param inputRecord input data
+     * @param rule        aggregation rule to evaluate
+     * @param inputRecord input data record
      * @param windowState input data group by time window
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
