@@ -26,7 +26,7 @@ public class Rule {
      *
      * @param comparisonValue value to be compared with the limit
      */
-    public boolean evaluateAggregator(BigDecimal comparisonValue) {
+    public boolean evaluate(BigDecimal comparisonValue) {
         switch (operator) {
             case EQUAL:
                 return comparisonValue.compareTo(limit) == 0;

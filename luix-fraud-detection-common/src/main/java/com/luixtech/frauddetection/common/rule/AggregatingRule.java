@@ -4,27 +4,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class AggregatorRule implements BaseRule {
-    private String       id;
-    private List<String> groupingKeys;
-    private Operator     operator;
-
-    private String       aggregateFieldName;
-    private Aggregator   aggregator;
-    private BigDecimal   limit;
-    private Integer      windowMinutes;
-    private boolean      resetAfterMatch;
+public class AggregatingRule extends BaseRule {
+    private String     aggregateFieldName;
+    private Aggregator aggregator;
+    private BigDecimal limit;
+    private Integer    windowMinutes;
+    private boolean    resetAfterMatch;
 
     /**
-     * Evaluates this rule by comparing provided value with rules' limit based on limit operator type.
+     * Evaluates this rule by comparing provided value with rules' limit based on operator type.
      *
      * @param comparisonValue value to be compared with the limit
      */
-    public boolean evaluateAggregator(BigDecimal comparisonValue) {
+    public boolean evaluate(BigDecimal comparisonValue) {
         switch (operator) {
             case EQUAL:
                 return comparisonValue.compareTo(limit) == 0;

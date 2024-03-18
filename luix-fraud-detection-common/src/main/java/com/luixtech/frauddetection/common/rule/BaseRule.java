@@ -1,17 +1,12 @@
 package com.luixtech.frauddetection.common.rule;
 
+import lombok.Data;
+
 import java.util.List;
 
-public interface BaseRule {
-    void setId(String id);
-
-    String getId();
-
-    void setOperator(Operator operator);
-
-    Operator getOperator();
-
-    void setGroupingKeys(List<String> groupingKeys);
-
-    List<String> getGroupingKeys();
+@Data
+public abstract class BaseRule {
+    protected String       id;
+    protected List<String> groupingKeys;
+    protected Operator     operator;
 }
