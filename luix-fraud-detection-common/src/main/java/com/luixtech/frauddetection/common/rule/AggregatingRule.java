@@ -34,7 +34,7 @@ public class AggregatingRule extends BaseRule {
             case GREATER_EQUAL:
                 return comparisonValue.compareTo(limit) >= 0;
             default:
-                throw new RuntimeException("Unknown operator type: " + operator);
+                throw new RuntimeException("Unknown operator: " + operator);
         }
     }
 }
