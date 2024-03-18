@@ -104,17 +104,17 @@ public class RuleHelper {
 
         switch (rule.getOperator()) {
             case EQUAL:
-                return actualAggregatedValue.compareTo(rule.getLimit()) == 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) == 0;
             case NOT_EQUAL:
-                return actualAggregatedValue.compareTo(rule.getLimit()) != 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) != 0;
             case GREATER:
-                return actualAggregatedValue.compareTo(rule.getLimit()) > 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) > 0;
             case LESS:
-                return actualAggregatedValue.compareTo(rule.getLimit()) < 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) < 0;
             case GREATER_EQUAL:
-                return actualAggregatedValue.compareTo(rule.getLimit()) >= 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) >= 0;
             case LESS_EQUAL:
-                return actualAggregatedValue.compareTo(rule.getLimit()) <= 0;
+                return actualAggregatedValue.compareTo(rule.getExpectedLimitValue()) <= 0;
             default:
                 throw new RuntimeException("Unknown operator: " + rule.getOperator());
         }

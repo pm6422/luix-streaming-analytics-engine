@@ -30,7 +30,7 @@ public class DetectorRule {
 
     private String     aggregateFieldName;
     private Aggregator aggregator;
-    private BigDecimal limit;
+    private BigDecimal expectedLimitValue;
     private Integer    windowMinutes;
     private boolean    resetAfterMatch;
 

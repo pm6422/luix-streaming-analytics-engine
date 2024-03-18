@@ -29,14 +29,14 @@ public class Rule {
      */
     private String     aggregateFieldName;
     private Aggregator aggregator;
-    private BigDecimal limit;
+    private BigDecimal expectedLimitValue;
     private Integer    windowMinutes;
     private boolean    resetAfterMatch;
     private BigDecimal actualAggregatedValue;
 
 
     public RuleType determineType() {
-        if (aggregator != null && limit != null && windowMinutes != null) {
+        if (aggregator != null && expectedLimitValue != null && windowMinutes != null) {
             return RuleType.AGGREGATING;
         } else if (StringUtils.isNotEmpty(fieldName)
                 && (StringUtils.isNotEmpty(expectedValue) || StringUtils.isNotEmpty(expectedFieldName))) {

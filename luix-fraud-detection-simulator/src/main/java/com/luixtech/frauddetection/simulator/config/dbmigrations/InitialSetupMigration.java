@@ -25,7 +25,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRule1.setAggregateFieldName("paymentAmount");
         detectorRule1.setAggregator(Aggregator.SUM);
         detectorRule1.setGroupingKeys(Arrays.asList("payeeId", "beneficiaryId"));
-        detectorRule1.setLimit(new BigDecimal("20000000"));
+        detectorRule1.setExpectedLimitValue(new BigDecimal("20000000"));
         detectorRule1.setOperator(Operator.GREATER);
         detectorRule1.setWindowMinutes(43200);
         detectorRule1.setEnabled(true);
@@ -34,7 +34,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRule2.setId("2");
         detectorRule2.setAggregator(Aggregator.COUNT);
         detectorRule2.setGroupingKeys(List.of("paymentType"));
-        detectorRule2.setLimit(new BigDecimal("300"));
+        detectorRule2.setExpectedLimitValue(new BigDecimal("300"));
         detectorRule2.setOperator(Operator.LESS);
         detectorRule2.setWindowMinutes(1440);
         detectorRule2.setEnabled(false);
@@ -44,7 +44,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRule3.setAggregateFieldName("paymentAmount");
         detectorRule3.setAggregator(Aggregator.SUM);
         detectorRule3.setGroupingKeys(List.of("beneficiaryId"));
-        detectorRule3.setLimit(new BigDecimal("10000000"));
+        detectorRule3.setExpectedLimitValue(new BigDecimal("10000000"));
         detectorRule3.setOperator(Operator.GREATER_EQUAL);
         detectorRule3.setWindowMinutes(1440);
         detectorRule3.setEnabled(true);
@@ -53,7 +53,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         detectorRule4.setId("4");
         detectorRule4.setAggregator(Aggregator.COUNT);
         detectorRule4.setGroupingKeys(List.of("paymentType"));
-        detectorRule4.setLimit(new BigDecimal("100"));
+        detectorRule4.setExpectedLimitValue(new BigDecimal("100"));
         detectorRule4.setOperator(Operator.GREATER_EQUAL);
         detectorRule4.setWindowMinutes(1440);
         detectorRule4.setResetAfterMatch(true);
