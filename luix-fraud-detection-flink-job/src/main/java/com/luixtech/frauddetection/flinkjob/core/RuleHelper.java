@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/* Collection of helper methods for Rules. */
+/**
+ * Collection of helper methods for Rules.
+ */
 @Slf4j
 public class RuleHelper {
     public static void handleRule(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
@@ -71,7 +73,6 @@ public class RuleHelper {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
             return rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(inputRecord, rule.getFieldName()));
         }
-
         return FieldsExtractor.isSameFieldVal(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
     }
 
