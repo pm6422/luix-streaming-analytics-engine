@@ -72,7 +72,7 @@ public class RuleHelper {
             return rule.getExpectedValue().equals(FieldsExtractor.getFieldValAsString(inputRecord, rule.getFieldName()));
         }
 
-        return FieldsExtractor.isFieldValSame(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
+        return FieldsExtractor.isSameFieldVal(inputRecord, rule.getFieldName(), rule.getExpectedFieldName());
     }
 
     /**

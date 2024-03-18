@@ -12,7 +12,7 @@ public class FieldsExtractor {
         return field.get(object).toString();
     }
 
-    public static boolean isFieldValSame(Object object, String fieldName, String expectedFieldName) throws IllegalAccessException, NoSuchFieldException {
+    public static boolean isSameFieldVal(Object object, String fieldName, String expectedFieldName) throws IllegalAccessException, NoSuchFieldException {
         Field field = object.getClass().getField(fieldName);
         Field exppectedField = object.getClass().getField(expectedFieldName);
         return field.get(object).equals(field.get(exppectedField));
