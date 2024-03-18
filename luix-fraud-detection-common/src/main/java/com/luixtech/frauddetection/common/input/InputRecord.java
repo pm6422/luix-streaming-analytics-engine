@@ -6,11 +6,10 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class InputLog implements IngestionTimeAssignable {
+public class InputRecord implements IngestionTimeAssignable {
 
     private String              recordId;
     private Map<String, Object> record;
-    private Map<String, Object> recordState;
     /**
      * Timestamp of ingestion into the flink input source, unit: ms
      */
