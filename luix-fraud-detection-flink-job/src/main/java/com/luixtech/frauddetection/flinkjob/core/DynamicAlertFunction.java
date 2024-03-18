@@ -7,6 +7,7 @@ import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.transaction.Transaction;
 import com.luixtech.frauddetection.flinkjob.utils.FieldsExtractor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Transaction, String, String>, RuleCommand, Alert> {
 
-    private static final String                                     WIDEST_RULE_KEY         = "" + Integer.MIN_VALUE;
+    private static final String                                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
     private              Meter                                      alertMeter;
     private transient    MapState<Long, Set<Transaction>>           windowState;
     private static final MapStateDescriptor<Long, Set<Transaction>> WINDOW_STATE_DESCRIPTOR =
