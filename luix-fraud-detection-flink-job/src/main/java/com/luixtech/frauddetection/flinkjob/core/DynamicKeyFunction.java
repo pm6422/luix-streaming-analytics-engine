@@ -47,7 +47,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Transaction, Ru
             // in the cluster. That is to say, elements with the same key are assigned to the same partition.
             // This will allow tracking all transactions between payer #25 and beneficiary #12 and evaluating defined rules
             // within the desired time window.
-            out.collect(new Keyed<>(transaction, ruleCommand.getRule().getId(), KeysExtractor.toKeys(transaction, ruleCommand.getRule().getGroupingKeyNames())));
+            out.collect(new Keyed<>(transaction, ruleCommand.getRule().getId(), KeysExtractor.toKeys(transaction, ruleCommand.getRule().getGroupingKeys())));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);

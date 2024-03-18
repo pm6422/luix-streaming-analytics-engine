@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Rule {
     private String       id;
-    private List<String> groupingKeyNames;
+    private List<String> groupingKeys;
     private List<String> unique;
     private String       aggregateFieldName;
     private Aggregator   aggregator;
@@ -27,7 +27,7 @@ public class Rule {
      *
      * @param comparisonValue value to be compared with the limit
      */
-    public boolean evaluate(BigDecimal comparisonValue) {
+    public boolean evaluateAggregator(BigDecimal comparisonValue) {
         switch (operator) {
             case EQUAL:
                 return comparisonValue.compareTo(limit) == 0;
