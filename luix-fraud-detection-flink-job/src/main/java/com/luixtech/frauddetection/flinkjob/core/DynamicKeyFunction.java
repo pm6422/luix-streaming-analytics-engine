@@ -4,6 +4,7 @@ import com.luixtech.frauddetection.common.input.InputRecord;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import lombok.Data;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.ReadOnlyBroadcastState;
@@ -53,13 +54,10 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, Ru
         ruleCounterGauge.setValue(ruleCounter);
     }
 
+    @Setter
     @Data
     private static class RuleCounterGauge implements Gauge<Integer> {
         private int value = 0;
-
-        public void setValue(int value) {
-            this.value = value;
-        }
 
         @Override
         public Integer getValue() {
