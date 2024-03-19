@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.input.Input;
-import com.luixtech.frauddetection.common.rule.Aggregator;
+import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.rule.RuleType;
@@ -80,10 +80,12 @@ public class RuleHelper {
      * @return true if matched, otherwise false
      */
     private static boolean evaluateMatchingRule(Rule rule, Input input) {
-        if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
-            return rule.getExpectedValue().equals(input.getRecord().get(rule.getFieldName()).toString());
+        if (StringUtils.isNotEmpty(rule.getMatchingRule().getExpectedValue())) {
+            return rule.getMatchingRule().getExpectedValue()
+                    .equals(input.getRecord().get(rule.getMatchingRule().getFieldName()).toString());
         }
-        return input.getRecord().get(rule.getFieldName()).equals(input.getRecord().get(rule.getExpectedFieldName()));
+        return input.getRecord().get(rule.getMatchingRule().getFieldName())
+                .equals(input.getRecord().get(rule.getMatchingRule().getExpectedFieldName()));
     }
 
     /**
@@ -100,21 +102,21 @@ public class RuleHelper {
         Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregated value
-        SimpleAccumulator<BigDecimal> aggregator = getAggregator(rule.getAggregator());
+        SimpleAccumulator<BigDecimal> aggregator = getAggregator(rule.getAggregatingRule().getAggregator());
         for (Long stateCreatedTime : windowState.keys()) {
             if (isStateValueInWindow(stateCreatedTime, windowStartTime, input.getCreatedTime())) {
                 Set<Input> inputsInWindow = windowState.get(stateCreatedTime);
                 for (Input inputInWindow : inputsInWindow) {
-                    BigDecimal aggregatedValue = getBigDecimalByFieldName(inputInWindow.getRecord(), rule.getAggregateFieldName());
+                    BigDecimal aggregatedValue = getBigDecimalByFieldName(inputInWindow.getRecord(), rule.getAggregatingRule().getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }
             }
         }
         BigDecimal actualAggregatedValue = aggregator.getLocalValue();
-        rule.setActualAggregatedValue(actualAggregatedValue);
+        rule.getAggregatingRule().setActualAggregatedValue(actualAggregatedValue);
 
         // compare the expected value with the actual one based on operator
-        return rule.getOperator().compare(actualAggregatedValue, rule.getExpectedLimitValue());
+        return rule.getOperator().compare(actualAggregatedValue, rule.getAggregatingRule().getExpectedLimitValue());
     }
 
     private static boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {

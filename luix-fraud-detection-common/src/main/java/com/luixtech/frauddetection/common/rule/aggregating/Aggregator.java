@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.common.rule;
+package com.luixtech.frauddetection.common.rule.aggregating;
 
 public enum Aggregator {
     COUNT,

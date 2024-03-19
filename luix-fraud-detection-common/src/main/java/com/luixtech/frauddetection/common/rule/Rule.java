@@ -1,5 +1,7 @@
 package com.luixtech.frauddetection.common.rule;
 
+import com.luixtech.frauddetection.common.rule.aggregating.AggregatingRule;
+import com.luixtech.frauddetection.common.rule.matching.MatchingRule;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -13,35 +15,27 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Rule {
-    private String       id;
-    private List<String> groupingKeys;
-    private Operator     operator;
-
+    private String          id;
+    private List<String>    groupingKeys;
+    private Operator        operator;
+    private Integer         windowMinutes;
+    private boolean         resetAfterMatch;
     /**
      * Matching rule fields
      */
-    private String fieldName;
-    private String expectedValue;
-    private String expectedFieldName;
-
+    private MatchingRule    matchingRule;
     /**
      * Aggregating rule fields
      */
-    private String     aggregateFieldName;
-    private Aggregator aggregator;
-    private BigDecimal expectedLimitValue;
-    private Integer    windowMinutes;
-    private boolean    resetAfterMatch;
-    private BigDecimal actualAggregatedValue;
+    private AggregatingRule aggregatingRule;
 
 
     public RuleType determineType() {
-        if (aggregator != null && expectedLimitValue != null && windowMinutes != null) {
+        if (aggregatingRule != null) {
             return RuleType.AGGREGATING;
-        } else if (StringUtils.isNotEmpty(fieldName)
-                && (StringUtils.isNotEmpty(expectedValue) || StringUtils.isNotEmpty(expectedFieldName))) {
+        } else if (matchingRule != null) {
             return RuleType.MATCHING;
         }
-        throw new RuntimeException("Unknown rule type");
+        throw new RuntimeException("Unsupported rule type");
     }
 }
