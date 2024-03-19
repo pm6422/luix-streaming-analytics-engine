@@ -14,7 +14,13 @@ import java.util.Map;
 @AllArgsConstructor
 public class Input implements IngestionTimeAssignable {
 
+    /**
+     * ID of the record
+     */
     private String              recordId;
+    /**
+     * Input record data which can be a nested structure
+     */
     private Map<String, Object> record;
     /**
      * Created timestamp of the input record, unit: ms
