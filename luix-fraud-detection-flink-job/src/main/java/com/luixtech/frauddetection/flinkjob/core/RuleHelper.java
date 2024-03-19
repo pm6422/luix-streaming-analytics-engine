@@ -74,10 +74,8 @@ public class RuleHelper {
      * @param rule  matching rule to evaluate
      * @param input input data input
      * @return true if matched, otherwise false
-     * @throws IllegalAccessException if exception throws
-     * @throws NoSuchFieldException   if exception throws
      */
-    private static boolean evaluateMatchingRule(Rule rule, InputRecord input) throws IllegalAccessException, NoSuchFieldException {
+    private static boolean evaluateMatchingRule(Rule rule, InputRecord input) {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
             return rule.getExpectedValue().equals(input.getRecord().get(rule.getFieldName()).toString());
         }
