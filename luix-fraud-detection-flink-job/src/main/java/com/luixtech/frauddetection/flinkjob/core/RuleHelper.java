@@ -69,6 +69,10 @@ public class RuleHelper {
         if (ruleGroup == null) {
             return false;
         }
+        if (StringUtils.isNotEmpty(ruleGroup.getTenant()) && !ruleGroup.getTenant().equals(input.getTenant())) {
+            // return false if existing tenant value of rule is not identical to the one of input object
+            return false;
+        }
         boolean result = ruleGroup.getLogicalOperator() == LogicalOperator.AND;
 
         // Evaluate child rule groups
