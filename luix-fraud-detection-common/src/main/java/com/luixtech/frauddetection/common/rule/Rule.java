@@ -40,9 +40,9 @@ public class Rule {
 
 
     public RuleType determineType() {
-        if (aggregatingRule != null) {
+        if (aggregatingRule != null && matchingRule == null) {
             return RuleType.AGGREGATING;
-        } else if (matchingRule != null) {
+        } else if (matchingRule != null && aggregatingRule == null) {
             return RuleType.MATCHING;
         }
         throw new RuntimeException("Unsupported rule type");
