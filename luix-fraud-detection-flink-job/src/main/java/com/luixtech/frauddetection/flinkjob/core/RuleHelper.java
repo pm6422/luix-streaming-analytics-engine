@@ -66,8 +66,7 @@ public class RuleHelper {
         }
     }
 
-    public static boolean evaluate(Rule rule, Input input,
-                                   MapState<Long, Set<Input>> windowState) throws Exception {
+    public static boolean evaluate(Rule rule, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
                 ? evaluateMatchingRule(rule, input)
                 : evaluateAggregatingRule(rule, input, windowState);
