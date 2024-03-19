@@ -34,7 +34,7 @@ public class Arguments {
     @Parameter(names = "--checkpoint.min-pause", description = "The minimal pause before the next checkpoint is triggered")
     public              Long    minPauseBetweenCheckpoints = 10000L;
     @Parameter(names = "--out-of-orderdness", description = "")
-    public              Integer outOfOrderdness            = 500;
-    @Parameter(names = "--generator.records-per-second", description = "Max records per second for input record generator")
-    public              Integer recordsPerSecond           = 2;
+    public              Integer outOfOrderdness = 500;
+    @Parameter(names = "--generator.inputs-per-second", description = "Max records per second for input record generator")
+    public              Integer inputsPerSecond = 2;
 }

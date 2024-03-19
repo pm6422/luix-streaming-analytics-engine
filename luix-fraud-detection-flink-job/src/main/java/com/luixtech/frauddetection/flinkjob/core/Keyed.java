@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Keyed<IN, KEY, ID> {
     /**
-     * Input record
+     * Input
      */
-    private IN  inputRecord;
+    private IN  input;
     /**
      * Keys used to partition the input record, e.g: {tenant=tesla;model=X9}
      */

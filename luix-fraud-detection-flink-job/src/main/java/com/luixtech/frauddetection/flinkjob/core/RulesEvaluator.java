@@ -25,8 +25,8 @@ import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_KAFKA;
 import static com.luixtech.frauddetection.flinkjob.core.Arguments.CHANNEL_SOCKET;
 import static com.luixtech.frauddetection.flinkjob.input.RuleSource.initRulesSource;
 import static com.luixtech.frauddetection.flinkjob.input.RuleSource.stringsStreamToRules;
-import static com.luixtech.frauddetection.flinkjob.input.InputRecordSource.initTransactionsSource;
-import static com.luixtech.frauddetection.flinkjob.input.InputRecordSource.stringsStreamToTransactions;
+import static com.luixtech.frauddetection.flinkjob.input.InputSource.initInputSource;
+import static com.luixtech.frauddetection.flinkjob.input.InputSource.stringsStreamToInput;
 
 @Slf4j
 @AllArgsConstructor
@@ -40,10 +40,10 @@ public class RulesEvaluator {
         DataStream<RuleCommand> ruleStream = createRuleStream(env);
         // Rule must be broadcast to all flink servers on the same cluster
         BroadcastStream<RuleCommand> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
-        DataStream<Input> inputRecordStream = createInputRecordStream(env);
+        DataStream<Input> inputStream = createInputStream(env);
 
         // Processing pipeline setup
-        DataStream<Output> outputStream = inputRecordStream
+        DataStream<Output> outputStream = inputStream
                 .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
                 .uid(DynamicKeyFunction.class.getSimpleName())
@@ -114,8 +114,8 @@ public class RulesEvaluator {
         return stringsStreamToRules(arguments, rulesStringStream);
     }
 
-    private DataStream<Input> createInputRecordStream(StreamExecutionEnvironment env) {
-        DataStream<String> inputStringsStream = initTransactionsSource(arguments, env);
-        return stringsStreamToTransactions(arguments, inputStringsStream);
+    private DataStream<Input> createInputStream(StreamExecutionEnvironment env) {
+        DataStream<String> inputStringStream = initInputSource(arguments, env);
+        return stringsStreamToInput(arguments, inputStringStream);
     }
 }

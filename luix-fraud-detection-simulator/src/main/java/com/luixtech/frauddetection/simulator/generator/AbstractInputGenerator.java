@@ -12,21 +12,21 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 @Slf4j
-public abstract class AbstractTransactionsGenerator implements Runnable {
+public abstract class AbstractInputGenerator implements Runnable {
 
-    private static final String                PAYMENT_TYPE_CSH   = "CSH";
-    private static final String                PAYMENT_TYPE_CRD   = "CRD";
-    private static final long                  MAX_PAYEE_ID       = 100000;
-    private static final long                  MAX_BENEFICIARY_ID = 100000;
-    private static final double                MIN_PAYMENT_AMOUNT = 5d;
-    private static final double                MAX_PAYMENT_AMOUNT = 20d;
-    private final        Throttler             throttler;
-    private volatile     boolean               running            = true;
+    private static final String          PAYMENT_TYPE_CSH   = "CSH";
+    private static final String          PAYMENT_TYPE_CRD   = "CRD";
+    private static final long            MAX_PAYEE_ID       = 100000;
+    private static final long            MAX_BENEFICIARY_ID = 100000;
+    private static final double          MIN_PAYMENT_AMOUNT = 5d;
+    private static final double          MAX_PAYMENT_AMOUNT = 20d;
+    private final        Throttler       throttler;
+    private volatile     boolean         running            = true;
     private final        Integer         maxRecordsPerSecond;
-    private final        Consumer<Input> inputRecordProducer;
+    private final        Consumer<Input> inputProducer;
 
-    public AbstractTransactionsGenerator(Consumer<Input> inputRecordProducer, int maxRecordsPerSecond) {
-        this.inputRecordProducer = inputRecordProducer;
+    public AbstractInputGenerator(Consumer<Input> inputProducer, int maxRecordsPerSecond) {
+        this.inputProducer = inputProducer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond, 1);
     }
@@ -62,7 +62,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
     }
 
     public void generateAndPublishOne(long now) {
-        inputRecordProducer.accept(generateOne(now));
+        inputProducer.accept(generateOne(now));
     }
 
     private static String paymentType(long id) {
@@ -85,7 +85,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
 
         while (running) {
             Input input = randomOne(rnd, null);
-            inputRecordProducer.accept(input);
+            inputProducer.accept(input);
             try {
                 throttler.throttle();
             } catch (InterruptedException e) {

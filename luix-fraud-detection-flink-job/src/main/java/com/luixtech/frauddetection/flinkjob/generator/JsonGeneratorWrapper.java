@@ -17,10 +17,10 @@ public class JsonGeneratorWrapper<T> extends BaseGenerator<String> {
 
     @Override
     public String randomOne(SplittableRandom rnd, long id) {
-        T inputRecord = wrappedGenerator.randomOne(rnd, id);
+        T input = wrappedGenerator.randomOne(rnd, id);
         String json;
         try {
-            json = objectMapper.writeValueAsString(inputRecord);
+            json = objectMapper.writeValueAsString(input);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

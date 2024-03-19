@@ -1,7 +1,7 @@
 package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
-import com.luixtech.frauddetection.simulator.generator.InputRecordGenerator;
+import com.luixtech.frauddetection.simulator.generator.InputGenerator;
 import com.luixtech.frauddetection.simulator.kafka.consumer.KafkaInputConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,42 +17,42 @@ import java.util.stream.IntStream;
 
 @RestController
 @Slf4j
-public class InputRecordGeneratorController {
+public class InputGeneratorController {
 
     private static final ExecutorService       EXECUTOR_SERVICE         = Executors.newSingleThreadExecutor();
     @Resource
-    private              InputRecordGenerator  inputRecordGenerator;
+    private              InputGenerator        inputGenerator;
     @Resource
     private              ApplicationProperties applicationProperties;
     @Resource
-    private KafkaInputConsumer    kafkaInputConsumer;
-    private boolean               listenerContainerRunning = true;
-    private static final AtomicBoolean            GENERATING               = new AtomicBoolean(false);
+    private              KafkaInputConsumer    kafkaInputConsumer;
+    private              boolean               listenerContainerRunning = true;
+    private static final AtomicBoolean         GENERATING               = new AtomicBoolean(false);
 
-    @GetMapping("/api/input-record-generator/start")
+    @GetMapping("/api/input-generator/start")
     public void start(@RequestParam(value = "quantity", required = false) Integer quantity) {
         if (quantity != null) {
             long now = System.currentTimeMillis();
-            IntStream.range(0, quantity).forEach(i -> inputRecordGenerator.generateAndPublishOne(now));
+            IntStream.range(0, quantity).forEach(i -> inputGenerator.generateAndPublishOne(now));
             return;
         }
         if (GENERATING.compareAndSet(false, true)) {
-            EXECUTOR_SERVICE.submit(inputRecordGenerator);
+            EXECUTOR_SERVICE.submit(inputGenerator);
         }
     }
 
-    @GetMapping("/api/input-record-generator/stop")
+    @GetMapping("/api/input-generator/stop")
     public void stop() {
         if (GENERATING.compareAndSet(true, false)) {
-            inputRecordGenerator.cancel();
+            inputGenerator.cancel();
         }
     }
 
-    @GetMapping("/api/input-record-generator/speed/{speed}")
+    @GetMapping("/api/input-generator/speed/{speed}")
     public void setGeneratorSpeed(@PathVariable Long speed) {
         log.info("Generator speed change request: " + speed);
         if (speed <= 0) {
-            inputRecordGenerator.cancel();
+            inputGenerator.cancel();
             GENERATING.set(false);
             return;
         } else {
@@ -66,8 +66,8 @@ public class InputRecordGeneratorController {
             kafkaInputConsumer.start();
         }
 
-        if (inputRecordGenerator != null) {
-            inputRecordGenerator.adjustMaxRecordsPerSecond(speed);
+        if (inputGenerator != null) {
+            inputGenerator.adjustMaxRecordsPerSecond(speed);
         }
     }
 }

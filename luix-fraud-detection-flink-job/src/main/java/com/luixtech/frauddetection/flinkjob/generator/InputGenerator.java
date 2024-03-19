@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class TransactionsGenerator extends BaseGenerator<Input> {
+public class InputGenerator extends BaseGenerator<Input> {
     private static final String PAYMENT_TYPE_CSH = "CSH";
     private static final String PAYMENT_TYPE_CRD = "CRD";
     private static final long   MAX_PAYEE_ID       = 100000;
@@ -16,7 +16,7 @@ public class TransactionsGenerator extends BaseGenerator<Input> {
     private static final double MIN_PAYMENT_AMOUNT = 5d;
     private static final double MAX_PAYMENT_AMOUNT = 20d;
 
-    public TransactionsGenerator(int maxRecordsPerSecond) {
+    public InputGenerator(int maxRecordsPerSecond) {
         super(maxRecordsPerSecond);
     }
 

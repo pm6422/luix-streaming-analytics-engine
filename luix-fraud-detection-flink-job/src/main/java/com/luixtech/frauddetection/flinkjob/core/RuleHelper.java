@@ -72,7 +72,7 @@ public class RuleHelper {
      * Evaluates matching rule by comparing field value with expected value based on operator.
      *
      * @param rule  matching rule to evaluate
-     * @param input input data input
+     * @param input inputInWindow data
      * @return true if matched, otherwise false
      */
     private static boolean evaluateMatchingRule(Rule rule, Input input) {
@@ -86,22 +86,22 @@ public class RuleHelper {
      * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
      *
      * @param rule        aggregation rule to evaluate
-     * @param inputRecord input data input
-     * @param windowState input data group by time window
+     * @param input inputInWindow data
+     * @param windowState inputInWindow data group by time window
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
      */
-    private static boolean evaluateAggregatingRule(Rule rule, Input inputRecord,
+    private static boolean evaluateAggregatingRule(Rule rule, Input input,
                                                    MapState<Long, Set<Input>> windowState) throws Exception {
-        Long windowStartTime = inputRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
+        Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregate value
         SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
         for (Long stateCreatedTime : windowState.keys()) {
-            if (isStateValueInWindow(stateCreatedTime, windowStartTime, inputRecord.getCreatedTime())) {
+            if (isStateValueInWindow(stateCreatedTime, windowStartTime, input.getCreatedTime())) {
                 Set<Input> inputsInWindow = windowState.get(stateCreatedTime);
-                for (Input input : inputsInWindow) {
-                    BigDecimal aggregatedValue = getBigDecimalByFieldName(input.getRecord(), rule.getAggregateFieldName());
+                for (Input inputInWindow : inputsInWindow) {
+                    BigDecimal aggregatedValue = getBigDecimalByFieldName(inputInWindow.getRecord(), rule.getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }
             }

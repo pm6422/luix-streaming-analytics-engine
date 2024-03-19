@@ -18,27 +18,27 @@ import java.util.Map;
 @Slf4j
 public class KafkaInputConsumer implements ConsumerSeekAware {
 
-//    private final SimpMessagingTemplate         simpMessagingTemplate;
+    //    private final SimpMessagingTemplate         simpMessagingTemplate;
     private final ApplicationProperties         applicationProperties;
     private final KafkaListenerEndpointRegistry listenerEndpointRegistry;
 
-    @KafkaListener(id = "${application.kafka.listener.input}", topics = "${application.kafka.topic.input}", groupId = "inputRecordConsumeGrp")
-    public void consumeTransactions(@Payload String message) {
-        log.debug("Received input record {}", message);
+    @KafkaListener(id = "${application.kafka.listener.input}", topics = "${application.kafka.topic.input}", groupId = "inputConsumeGrp")
+    public void consumeInputs(@Payload String message) {
+        log.debug("Received input {}", message);
         // Send to websocket
-//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getTransaction(), message);
+//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getInput(), message);
     }
 
     public void start() {
-        MessageListenerContainer inputRecordConsumerListener = listenerEndpointRegistry
+        MessageListenerContainer inputConsumerListener = listenerEndpointRegistry
                 .getListenerContainer(applicationProperties.getKafka().getListener().getInput());
-        inputRecordConsumerListener.start();
+        inputConsumerListener.start();
     }
 
     public void stop() {
-        MessageListenerContainer inputRecordConsumerListener = listenerEndpointRegistry
+        MessageListenerContainer inputConsumerListener = listenerEndpointRegistry
                 .getListenerContainer(applicationProperties.getKafka().getListener().getInput());
-        inputRecordConsumerListener.stop();
+        inputConsumerListener.stop();
     }
 
     @Override

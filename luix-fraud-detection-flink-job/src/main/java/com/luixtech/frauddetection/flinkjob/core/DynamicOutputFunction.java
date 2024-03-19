@@ -80,10 +80,10 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
      */
     @Override
     public void processElement(Keyed<Input, String, String> keyed, ReadOnlyContext ctx, Collector<Output> out) throws Exception {
-        Input record = keyed.getInputRecord();
+        Input record = keyed.getInput();
 
         // Store record to local map which is grouped by created time
-        groupTransactionByTime(windowState, record.getCreatedTime(), record);
+        groupInputByTime(windowState, record.getCreatedTime(), record);
 
         // Calculate handling latency time
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
@@ -118,11 +118,11 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
                 evictAllStateElements();
             }
             outputMeter.markEvent();
-            out.collect(new Output<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInputRecord()));
+            out.collect(new Output<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInput()));
         }
     }
 
-    private static <K, V> void groupTransactionByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
+    private static <K, V> void groupInputByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
         Set<V> valuesSet = mapState.get(key);
         if (valuesSet == null) {
             valuesSet = new HashSet<>();

@@ -10,11 +10,11 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import static com.luixtech.frauddetection.flinkjob.utils.KafkaUtils.createKafkaSource;
 
-@SpiName("input-record-" + Arguments.CHANNEL_KAFKA)
-public class InputRecordSourceKafkaCreator implements SourceCreator {
+@SpiName("input-" + Arguments.CHANNEL_KAFKA)
+public class InputSourceKafkaCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
-        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.inputTopic, "inputRecordGrp");
+        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.inputTopic, "inputGrp");
 
         // NOTE: Idiomatically, watermarks should be assigned here, but this done later
         // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
