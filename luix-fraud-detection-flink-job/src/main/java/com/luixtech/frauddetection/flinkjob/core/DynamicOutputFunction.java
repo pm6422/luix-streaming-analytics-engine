@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 import com.luixtech.frauddetection.common.output.Output;
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.input.Input;
-import com.luixtech.frauddetection.common.rule.Rule;
+import com.luixtech.frauddetection.common.rule.RuleGroup;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +62,7 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
             broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
             return;
         }
-        if (ruleCommand.getRule().getWindowMinutes() > widestWindowRule.getRule().getWindowMinutes()) {
+        if (ruleCommand.getRuleGroup().getWindowMinutes() > widestWindowRule.getRuleGroup().getWindowMinutes()) {
             broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
         }
     }
@@ -104,21 +104,21 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
         // Register cleanup timer
         ctx.timerService().registerEventTimeTimer(cleanupTime);
 
-        Rule rule = ruleCommand.getRule();
+        RuleGroup ruleGroup = ruleCommand.getRuleGroup();
 
         // Evaluate the rule and trigger an output if matched
-        boolean ruleMatched = RuleHelper.evaluate(rule, record, windowState);
+        boolean ruleMatched = RuleHelper.evaluateRuleGroup(ruleGroup, record, windowState);
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + rule.getId() + " , Keys: " + keyed.getGroupKeys() + " , Matched: " + ruleMatched);
+                "Rule: " + ruleGroup.getId() + " , Keys: " + keyed.getGroupKeys() + " , Matched: " + ruleMatched);
 
         if (ruleMatched) {
-            if (ruleCommand.getRule().isResetAfterMatch()) {
+            if (ruleCommand.getRuleGroup().isResetAfterMatch()) {
                 evictAllStateElements();
             }
             outputMeter.markEvent();
-            out.collect(new Output<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInput()));
+            out.collect(new Output<>(ruleGroup.getId(), ruleGroup, keyed.getGroupKeys(), keyed.getInput()));
         }
     }
 
@@ -137,7 +137,7 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
         if (widestWindowRule == null) {
             return;
         }
-        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getRule().getWindowMinutes());
+        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getRuleGroup().getWindowMinutes());
         long cleanupEventTimeThreshold = timestamp - cleanupEventTimeWindow;
         evictAgedElementsFromWindow(cleanupEventTimeThreshold);
     }

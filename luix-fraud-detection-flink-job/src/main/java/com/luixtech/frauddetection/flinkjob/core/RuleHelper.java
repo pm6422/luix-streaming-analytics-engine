@@ -1,10 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.input.Input;
+import com.luixtech.frauddetection.common.rule.*;
 import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
-import com.luixtech.frauddetection.common.rule.Rule;
-import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.common.rule.RuleType;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +25,10 @@ public class RuleHelper {
         switch (ruleCommand.getCommand()) {
             case ADD:
                 // merge rule by ID
-                broadcastState.put(ruleCommand.getRule().getId(), ruleCommand);
+                broadcastState.put(ruleCommand.getRuleGroup().getId(), ruleCommand);
                 break;
             case DELETE:
-                broadcastState.remove(ruleCommand.getRule().getId());
+                broadcastState.remove(ruleCommand.getRuleGroup().getId());
                 break;
             case DELETE_ALL:
                 Iterator<Map.Entry<String, RuleCommand>> entriesIterator = broadcastState.iterator();
@@ -66,7 +64,35 @@ public class RuleHelper {
         }
     }
 
-    public static boolean evaluate(Rule rule, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
+    public static boolean evaluateRuleGroup(RuleGroup ruleGroup, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
+        if (ruleGroup == null) {
+            return false;
+        }
+        boolean result = ruleGroup.getLogicalOperator() == LogicalOperator.AND;
+
+        // Evaluate child rule groups
+        for (RuleGroup childGroup : ruleGroup.getChildren()) {
+            boolean childResult = evaluateRuleGroup(childGroup, input, windowState);
+            if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
+                result = result && childResult;
+            } else {
+                result = result || childResult;
+            }
+        }
+
+        // Evaluate rules
+        for (Rule rule : ruleGroup.getRules()) {
+            boolean ruleResult = evaluateRule(rule, input, windowState);
+            if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
+                result = result && ruleResult;
+            } else {
+                result = result || ruleResult;
+            }
+        }
+        return result;
+    }
+
+    public static boolean evaluateRule(Rule rule, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
                 ? evaluateMatchingRule(rule, input)
                 : evaluateAggregatingRule(rule, input, windowState);

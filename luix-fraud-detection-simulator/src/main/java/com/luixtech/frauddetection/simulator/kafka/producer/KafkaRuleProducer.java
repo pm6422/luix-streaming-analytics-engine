@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.rule.Rule;
+import com.luixtech.frauddetection.common.rule.RuleGroup;
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
@@ -25,9 +25,9 @@ public class KafkaRuleProducer {
     public void deleteRule(String ruleId) {
         RuleCommand ruleCommand = new RuleCommand();
         ruleCommand.setCommand(Command.DELETE);
-        Rule rule = new Rule();
-        rule.setId(ruleId);
-        ruleCommand.setRule(rule);
+        RuleGroup ruleGroup = new RuleGroup();
+        ruleGroup.setId(ruleId);
+        ruleCommand.setRuleGroup(ruleGroup);
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getRule(), ruleCommand);
         log.info("Pushed deleting rule with ID {}", ruleId);
     }

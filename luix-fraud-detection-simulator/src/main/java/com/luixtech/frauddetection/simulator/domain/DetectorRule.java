@@ -1,10 +1,9 @@
 package com.luixtech.frauddetection.simulator.domain;
 
 import com.luixtech.frauddetection.common.command.Command;
+import com.luixtech.frauddetection.common.rule.RuleGroup;
 import com.luixtech.frauddetection.common.rule.aggregating.AggregatingRule;
-import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
 import com.luixtech.frauddetection.common.rule.Operator;
-import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.rule.matching.MatchingRule;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -48,10 +46,10 @@ public class DetectorRule {
         } else {
             ruleCommand.setCommand(Command.DELETE);
         }
-        Rule rule = new Rule();
-        BeanUtils.copyProperties(this, rule);
+        RuleGroup ruleGroup = new RuleGroup();
+        BeanUtils.copyProperties(this, ruleGroup);
         ruleCommand.setCreatedTime(System.currentTimeMillis());
-        ruleCommand.setRule(rule);
+        ruleCommand.setRuleGroup(ruleGroup);
         return ruleCommand;
     }
 }

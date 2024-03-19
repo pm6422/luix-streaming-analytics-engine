@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.luixtech.frauddetection.common.rule.RuleGroup;
 
 import java.util.Map;
 
@@ -13,6 +14,10 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Input implements IngestionTimeAssignable {
+    /**
+     * It will be evaluated by rule groups which have the same tenant.
+     */
+    private String              tenant;
     /**
      * ID of the record
      */
@@ -29,6 +34,11 @@ public class Input implements IngestionTimeAssignable {
      * Timestamp of ingestion into the flink input source, unit: ms
      */
     private Long                ingestionTime;
+    /**
+     * Grouping field name and value pair, used to shading the input records by flink,
+     * the field is used in combination with field 'groupingKeys' of {@link RuleGroup}
+     */
+    private Map<String, Object> groupingValues;
 
     @Override
     public void setIngestionTime(Long timestamp) {

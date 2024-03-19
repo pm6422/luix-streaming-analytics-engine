@@ -20,11 +20,8 @@ public class Rule {
     private static final String MAPPING_INPUT_RECORD_MSG   = "msg";
     private static final String MAPPING_INPUT_RECORD_EVENT = "event";
 
-    private String          id;
-    private List<String>    groupingKeys;
     private Operator        operator;
     private Integer         windowMinutes;
-    private boolean         resetAfterMatch;
     /**
      * Matching rule fields
      */
@@ -37,7 +34,10 @@ public class Rule {
      * The actual data storing in field 'record' of {@link Input} class
      */
     private String          mappingInputRecord;
-
+    /**
+     * Logical operator for multiple rules
+     */
+    private LogicalOperator logicalOperator;
 
     public RuleType determineType() {
         if (aggregatingRule != null && matchingRule == null) {

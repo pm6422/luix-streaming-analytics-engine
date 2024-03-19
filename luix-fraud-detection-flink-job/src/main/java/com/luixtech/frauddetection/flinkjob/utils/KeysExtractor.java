@@ -14,6 +14,7 @@ public class KeysExtractor {
      *
      * @param record   target for values extraction
      * @param keyNames list of field names
+     * @return key string, e.g "{payerId=25;beneficiaryId=12}"
      */
     public static String toKeys(Map<String, Object> record, List<String> keyNames) {
         StringBuilder sb = new StringBuilder();

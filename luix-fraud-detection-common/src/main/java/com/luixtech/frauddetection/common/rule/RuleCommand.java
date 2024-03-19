@@ -9,19 +9,19 @@ public class RuleCommand implements IngestionTimeAssignable {
     /**
      * Command
      */
-    private Command command;
+    private Command   command;
     /**
-     * Rule data
+     * Rule group data
      */
-    private Rule    rule;
+    private RuleGroup ruleGroup;
     /**
      * Created timestamp of the input record, unit: ms
      */
-    public  long    createdTime;
+    public  long      createdTime;
     /**
      * Timestamp of ingestion into the flink input source, unit: milliseconds
      */
-    private Long    ingestionTime;
+    private Long      ingestionTime;
 
     @Override
     public void setIngestionTime(Long timestamp) {
