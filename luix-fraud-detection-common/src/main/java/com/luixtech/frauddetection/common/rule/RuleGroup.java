@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * Rules representation.
+ * A rule group consists of a set of rules or child rule groups.
  */
 @Data
 @NoArgsConstructor
@@ -21,14 +21,23 @@ public class RuleGroup {
      */
     private String          tenant;
     /**
-     * The biggest time window of all the rules under sub group
+     * The biggest time window of all the rules
      */
     private Integer         windowMinutes;
-    private boolean         resetAfterMatch;
-    private List<RuleGroup> children;
-    private List<Rule>      rules;
     /**
-     * Logical operator for multiple rule groups
+     * Clear local existing inputs cache after rule matched
+     */
+    private boolean         resetAfterMatch;
+    /**
+     * It represents logical relationship for this rule group with the next rule group
      */
     private LogicalOperator logicalOperator = LogicalOperator.AND;
+    /**
+     * child rule groups, and it is necessary to ensure logical order
+     */
+    private List<RuleGroup> children;
+    /**
+     * Rules under the group, and it is necessary to ensure logical order
+     */
+    private List<Rule>      rules;
 }

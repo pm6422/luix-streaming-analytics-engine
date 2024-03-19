@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.common.rule;
 
-public enum Operator {
+public enum ArithmeticOperator {
     EQUAL,
     NOT_EQUAL,
     GREATER,

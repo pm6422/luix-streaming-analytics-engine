@@ -152,7 +152,7 @@ public class RuleHelper {
         rule.getAggregatingRule().setActualAggregatedValue(actualAggregatedValue);
 
         // compare the expected value with the actual one based on operator
-        return rule.getOperator().compare(actualAggregatedValue, rule.getAggregatingRule().getExpectedLimitValue());
+        return rule.getArithmeticOperator().compare(actualAggregatedValue, rule.getAggregatingRule().getExpectedLimitValue());
     }
 
     private static boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {

@@ -4,7 +4,7 @@ import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleGroup;
 import com.luixtech.frauddetection.common.rule.aggregating.AggregatingRule;
 import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
-import com.luixtech.frauddetection.common.rule.Operator;
+import com.luixtech.frauddetection.common.rule.ArithmeticOperator;
 import com.luixtech.frauddetection.simulator.domain.Detector;
 import com.luixtech.frauddetection.simulator.repository.DetectorRepository;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         aggregatingRule1.setExpectedLimitValue(new BigDecimal("20000000"));
 
         Rule rule1 = new Rule();
-        rule1.setOperator(Operator.GREATER);
+        rule1.setArithmeticOperator(ArithmeticOperator.GREATER);
         rule1.setAggregatingRule(aggregatingRule1);
         rule1.setWindowMinutes(43200);
 
@@ -53,7 +53,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         aggregatingRule3.setExpectedLimitValue(new BigDecimal("10000000"));
 
         Rule rule3 = new Rule();
-        rule3.setOperator(Operator.GREATER_EQUAL);
+        rule3.setArithmeticOperator(ArithmeticOperator.GREATER_EQUAL);
         rule3.setAggregatingRule(aggregatingRule3);
         rule3.setWindowMinutes(1440);
 
@@ -75,7 +75,7 @@ public class InitialSetupMigration implements ApplicationRunner {
         aggregatingRule4.setExpectedLimitValue(new BigDecimal("100"));
 
         Rule rule4 = new Rule();
-        rule4.setOperator(Operator.GREATER_EQUAL);
+        rule4.setArithmeticOperator(ArithmeticOperator.GREATER_EQUAL);
         rule4.setAggregatingRule(aggregatingRule3);
         rule4.setWindowMinutes(1440);
 

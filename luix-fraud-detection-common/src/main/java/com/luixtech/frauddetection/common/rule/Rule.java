@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,24 +19,31 @@ public class Rule {
     private static final String MAPPING_INPUT_RECORD_MSG   = "msg";
     private static final String MAPPING_INPUT_RECORD_EVENT = "event";
 
-    private Operator        operator;
-    private Integer         windowMinutes;
+    /**
+     * Arithmetic operator
+     */
+    private ArithmeticOperator arithmeticOperator;
+    /**
+     * The time window of the rule
+     */
+    private Integer            windowMinutes;
     /**
      * Matching rule fields
      */
-    private MatchingRule    matchingRule;
+    private MatchingRule       matchingRule;
     /**
      * Aggregating rule fields
      */
-    private AggregatingRule aggregatingRule;
+    private AggregatingRule    aggregatingRule;
     /**
+     * TODO：
      * The actual data storing in field 'record' of {@link Input} class
      */
-    private String          mappingInputRecord;
+    private String             mappingInputRecord;
     /**
-     * Logical operator for multiple rules
+     * It represents logical relationship for this rule with the next rule
      */
-    private LogicalOperator logicalOperator = LogicalOperator.AND;
+    private LogicalOperator    logicalOperator = LogicalOperator.AND;
 
     public RuleType determineType() {
         if (aggregatingRule != null && matchingRule == null) {
