@@ -45,6 +45,7 @@ public class DetectorRule {
         }
         Rule rule = new Rule();
         BeanUtils.copyProperties(this, rule);
+        ruleCommand.setCreatedTime(System.currentTimeMillis());
         ruleCommand.setRule(rule);
         return ruleCommand;
     }
