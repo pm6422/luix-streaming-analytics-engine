@@ -68,7 +68,7 @@ public class RulesEvaluator {
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Handling Latency Sink");
 
-        env.execute("Fraud Detection Engine");
+        env.execute("Rule Evaluation Engine");
     }
 
     private StreamExecutionEnvironment createExecutionEnv() {
