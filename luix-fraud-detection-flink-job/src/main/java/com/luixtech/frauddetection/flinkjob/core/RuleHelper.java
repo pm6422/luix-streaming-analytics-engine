@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.rule.RuleType;
@@ -61,11 +61,11 @@ public class RuleHelper {
         }
     }
 
-    public static boolean evaluate(Rule rule, InputRecord inputRecord,
-                                   MapState<Long, Set<InputRecord>> windowState) throws Exception {
+    public static boolean evaluate(Rule rule, Input input,
+                                   MapState<Long, Set<Input>> windowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
-                ? evaluateMatchingRule(rule, inputRecord)
-                : evaluateAggregatingRule(rule, inputRecord, windowState);
+                ? evaluateMatchingRule(rule, input)
+                : evaluateAggregatingRule(rule, input, windowState);
     }
 
     /**
@@ -75,7 +75,7 @@ public class RuleHelper {
      * @param input input data input
      * @return true if matched, otherwise false
      */
-    private static boolean evaluateMatchingRule(Rule rule, InputRecord input) {
+    private static boolean evaluateMatchingRule(Rule rule, Input input) {
         if (StringUtils.isNotEmpty(rule.getExpectedValue())) {
             return rule.getExpectedValue().equals(input.getRecord().get(rule.getFieldName()).toString());
         }
@@ -91,16 +91,16 @@ public class RuleHelper {
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
      */
-    private static boolean evaluateAggregatingRule(Rule rule, InputRecord inputRecord,
-                                                   MapState<Long, Set<InputRecord>> windowState) throws Exception {
+    private static boolean evaluateAggregatingRule(Rule rule, Input inputRecord,
+                                                   MapState<Long, Set<Input>> windowState) throws Exception {
         Long windowStartTime = inputRecord.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregate value
         SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
         for (Long stateCreatedTime : windowState.keys()) {
             if (isStateValueInWindow(stateCreatedTime, windowStartTime, inputRecord.getCreatedTime())) {
-                Set<InputRecord> inputsInWindow = windowState.get(stateCreatedTime);
-                for (InputRecord input : inputsInWindow) {
+                Set<Input> inputsInWindow = windowState.get(stateCreatedTime);
+                for (Input input : inputsInWindow) {
                     BigDecimal aggregatedValue = getBigDecimalByFieldName(input.getRecord(), rule.getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }

@@ -2,7 +2,7 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.alert.Alert;
 import com.luixtech.frauddetection.common.command.Command;
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
  * Implements main rule evaluation and alerting logic.
  */
 @Slf4j
-public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<InputRecord, String, String>, RuleCommand, Alert> {
+public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Input, String, String>, RuleCommand, Alert> {
 
-    private static final String                                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
-    private              Meter                                      alertMeter;
-    private transient    MapState<Long, Set<InputRecord>>           windowState;
-    private static final MapStateDescriptor<Long, Set<InputRecord>> WINDOW_STATE_DESCRIPTOR =
+    private static final String                               WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
+    private              Meter                                alertMeter;
+    private transient    MapState<Long, Set<Input>>           windowState;
+    private static final MapStateDescriptor<Long, Set<Input>> WINDOW_STATE_DESCRIPTOR =
             new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
 
@@ -79,8 +79,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      * @throws Exception exception
      */
     @Override
-    public void processElement(Keyed<InputRecord, String, String> keyed, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
-        InputRecord record = keyed.getInputRecord();
+    public void processElement(Keyed<Input, String, String> keyed, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+        Input record = keyed.getInputRecord();
 
         // Store record to local map which is grouped by created time
         groupTransactionByTime(windowState, record.getCreatedTime(), record);

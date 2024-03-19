@@ -12,7 +12,7 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InputRecord implements IngestionTimeAssignable {
+public class Input implements IngestionTimeAssignable {
 
     private String              recordId;
     private Map<String, Object> record;

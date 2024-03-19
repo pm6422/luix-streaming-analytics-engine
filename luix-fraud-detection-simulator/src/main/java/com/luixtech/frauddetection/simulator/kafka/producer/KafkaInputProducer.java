@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,18 +12,18 @@ import java.util.function.Consumer;
 
 @Service
 @Slf4j
-public class KafkaInputProducer implements Consumer<InputRecord> {
+public class KafkaInputProducer implements Consumer<Input> {
 
     @Resource
     private KafkaTemplate<String, Object> kafkaTemplate;
     @Resource
     private ApplicationProperties         applicationProperties;
     @Getter
-    private InputRecord                   lastInputRecord;
+    private Input                         lastInput;
 
     @Override
-    public void accept(InputRecord input) {
-        lastInputRecord = input;
+    public void accept(Input input) {
+        lastInput = input;
         kafkaTemplate.send(applicationProperties.getKafka().getTopic().getInput(), input);
         log.debug("Pushed input with content {}", input);
     }

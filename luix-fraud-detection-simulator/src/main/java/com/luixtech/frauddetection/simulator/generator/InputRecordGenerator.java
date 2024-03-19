@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.generator;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -15,13 +15,13 @@ public class InputRecordGenerator extends AbstractTransactionsGenerator {
     private final BigDecimal beneficiaryLimit                  = new BigDecimal(10000000);
     private final BigDecimal payeeBeneficiaryLimit             = new BigDecimal(20000000);
 
-    public InputRecordGenerator(Consumer<InputRecord> inputRecordProducer, int maxRecordsPerSecond) {
+    public InputRecordGenerator(Consumer<Input> inputRecordProducer, int maxRecordsPerSecond) {
         super(inputRecordProducer, maxRecordsPerSecond);
     }
 
     @Override
-    protected InputRecord randomOne(SplittableRandom rnd, Long eventTime) {
-        InputRecord input = super.randomOne(rnd, eventTime);
+    protected Input randomOne(SplittableRandom rnd, Long eventTime) {
+        Input input = super.randomOne(rnd, eventTime);
         long now = System.currentTimeMillis();
         if (now - lastBeneficiaryIdTriggered > 8000 + rnd.nextInt(5000)) {
             input.getRecord().put("paymentAmount", beneficiaryLimit.add(new BigDecimal(rnd.nextInt(1000000))));

@@ -3,7 +3,7 @@ package com.luixtech.frauddetection.simulator.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luixtech.frauddetection.common.alert.Alert;
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import com.luixtech.frauddetection.simulator.domain.DetectorRule;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaInputProducer;
@@ -32,7 +32,7 @@ public class AlertsController {
     @GetMapping("/alerts/mock")
     public Alert mockAlert(@RequestParam(value = "ruleId") String ruleId) throws JsonProcessingException {
         DetectorRule detectorRule = detectorRuleRepository.findById(ruleId).orElseThrow(() -> new DataNotFoundException(ruleId.toString()));
-        InputRecord triggeringEvent = kafkaInputProducer.getLastInputRecord();
+        Input triggeringEvent = kafkaInputProducer.getLastInput();
         if (triggeringEvent == null) {
             log.warn("No input record found, please start generating input records first");
             return null;

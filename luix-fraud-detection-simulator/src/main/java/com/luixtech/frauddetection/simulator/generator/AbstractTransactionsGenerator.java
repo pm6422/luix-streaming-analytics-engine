@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.generator;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.utilities.thread.Throttler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,10 +22,10 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
     private static final double                MAX_PAYMENT_AMOUNT = 20d;
     private final        Throttler             throttler;
     private volatile     boolean               running            = true;
-    private final        Integer               maxRecordsPerSecond;
-    private final        Consumer<InputRecord> inputRecordProducer;
+    private final        Integer         maxRecordsPerSecond;
+    private final        Consumer<Input> inputRecordProducer;
 
-    public AbstractTransactionsGenerator(Consumer<InputRecord> inputRecordProducer, int maxRecordsPerSecond) {
+    public AbstractTransactionsGenerator(Consumer<Input> inputRecordProducer, int maxRecordsPerSecond) {
         this.inputRecordProducer = inputRecordProducer;
         this.maxRecordsPerSecond = maxRecordsPerSecond;
         this.throttler = new Throttler(maxRecordsPerSecond, 1);
@@ -35,7 +35,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         throttler.adjustMaxRecordsPerSecond(maxRecordsPerSecond);
     }
 
-    protected InputRecord randomOne(SplittableRandom rnd, Long eventTime) {
+    protected Input randomOne(SplittableRandom rnd, Long eventTime) {
         long recordId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
@@ -50,14 +50,14 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         record.put("paymentAmount", paymentAmount);
         record.put("paymentType", paymentType(recordId));
 
-        return InputRecord.builder()
+        return Input.builder()
                 .recordId(String.valueOf(recordId))
                 .createdTime(System.currentTimeMillis())
                 .record(record)
                 .build();
     }
 
-    public InputRecord generateOne(long now) {
+    public Input generateOne(long now) {
         return randomOne(new SplittableRandom(), now);
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractTransactionsGenerator implements Runnable {
         final SplittableRandom rnd = new SplittableRandom();
 
         while (running) {
-            InputRecord input = randomOne(rnd, null);
+            Input input = randomOne(rnd, null);
             inputRecordProducer.accept(input);
             try {
                 throttler.throttle();

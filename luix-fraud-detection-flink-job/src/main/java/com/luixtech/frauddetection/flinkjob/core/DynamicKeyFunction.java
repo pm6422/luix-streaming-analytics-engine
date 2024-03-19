@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import lombok.Data;
@@ -19,7 +19,7 @@ import java.util.Map;
  * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, RuleCommand, Keyed<InputRecord, String, String>> {
+public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleCommand, Keyed<Input, String, String>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -29,7 +29,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, Ru
     }
 
     @Override
-    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Keyed<InputRecord, String, String>> out) throws Exception {
+    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Keyed<Input, String, String>> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
@@ -37,7 +37,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<InputRecord, Ru
     }
 
     @Override
-    public void processElement(InputRecord input, ReadOnlyContext ctx, Collector<Keyed<InputRecord, String, String>> out) throws Exception {
+    public void processElement(Input input, ReadOnlyContext ctx, Collector<Keyed<Input, String, String>> out) throws Exception {
         ReadOnlyBroadcastState<String, RuleCommand> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         int ruleCounter = 0;
         for (Map.Entry<String, RuleCommand> entry : rulesState.immutableEntries()) {

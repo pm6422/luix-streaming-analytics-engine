@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.generator;
 
-import com.luixtech.frauddetection.common.input.InputRecord;
+import com.luixtech.frauddetection.common.input.Input;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class TransactionsGenerator extends BaseGenerator<InputRecord> {
+public class TransactionsGenerator extends BaseGenerator<Input> {
     private static final String PAYMENT_TYPE_CSH = "CSH";
     private static final String PAYMENT_TYPE_CRD = "CRD";
     private static final long   MAX_PAYEE_ID       = 100000;
@@ -21,7 +21,7 @@ public class TransactionsGenerator extends BaseGenerator<InputRecord> {
     }
 
     @Override
-    public InputRecord randomOne(SplittableRandom rnd, long id) {
+    public Input randomOne(SplittableRandom rnd, long id) {
         long recordId = rnd.nextLong(Long.MAX_VALUE);
         long payeeId = rnd.nextLong(MAX_PAYEE_ID);
         long beneficiaryId = rnd.nextLong(MAX_BENEFICIARY_ID);
@@ -36,7 +36,7 @@ public class TransactionsGenerator extends BaseGenerator<InputRecord> {
         record.put("paymentAmount", paymentAmount);
         record.put("paymentType", paymentType(recordId));
 
-        return InputRecord.builder()
+        return Input.builder()
                 .recordId(String.valueOf(recordId))
                 .createdTime(System.currentTimeMillis())
                 .record(record)
