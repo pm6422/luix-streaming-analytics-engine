@@ -13,7 +13,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Input implements IngestionTimeAssignable {
-
     /**
      * ID of the record
      */
