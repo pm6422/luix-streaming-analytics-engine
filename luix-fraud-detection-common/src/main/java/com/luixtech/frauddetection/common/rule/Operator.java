@@ -23,7 +23,7 @@ public enum Operator {
             case LESS_EQUAL:
                 return actualValue.compareTo(expectedValue) <= 0;
             default:
-                throw new IllegalArgumentException("Unknown operator: " + this);
+                throw new IllegalArgumentException("Unsupported operator: " + this);
         }
     }
 }
