@@ -37,7 +37,7 @@ public class Rule {
     /**
      * Logical operator for multiple rules
      */
-    private LogicalOperator logicalOperator;
+    private LogicalOperator logicalOperator = LogicalOperator.AND;
 
     public RuleType determineType() {
         if (aggregatingRule != null && matchingRule == null) {

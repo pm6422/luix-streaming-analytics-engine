@@ -54,6 +54,8 @@ public abstract class AbstractInputGenerator implements Runnable {
                 .recordId(String.valueOf(recordId))
                 .createdTime(System.currentTimeMillis())
                 .record(record)
+                .tenant("tesla")
+                .groupingValues(Map.of("tenant", "tesla"))
                 .build();
     }
 

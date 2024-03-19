@@ -5,6 +5,7 @@ import com.luixtech.frauddetection.common.rule.*;
 import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
 import com.luixtech.frauddetection.flinkjob.core.accumulator.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import org.apache.flink.api.common.state.BroadcastState;
@@ -71,22 +72,26 @@ public class RuleHelper {
         boolean result = ruleGroup.getLogicalOperator() == LogicalOperator.AND;
 
         // Evaluate child rule groups
-        for (RuleGroup childGroup : ruleGroup.getChildren()) {
-            boolean childResult = evaluateRuleGroup(childGroup, input, windowState);
-            if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
-                result = result && childResult;
-            } else {
-                result = result || childResult;
+        if (CollectionUtils.isNotEmpty(ruleGroup.getChildren())) {
+            for (RuleGroup childGroup : ruleGroup.getChildren()) {
+                boolean childResult = evaluateRuleGroup(childGroup, input, windowState);
+                if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
+                    result = result && childResult;
+                } else {
+                    result = result || childResult;
+                }
             }
         }
 
         // Evaluate rules
-        for (Rule rule : ruleGroup.getRules()) {
-            boolean ruleResult = evaluateRule(rule, input, windowState);
-            if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
-                result = result && ruleResult;
-            } else {
-                result = result || ruleResult;
+        if (CollectionUtils.isNotEmpty(ruleGroup.getRules())) {
+            for (Rule rule : ruleGroup.getRules()) {
+                boolean ruleResult = evaluateRule(rule, input, windowState);
+                if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
+                    result = result && ruleResult;
+                } else {
+                    result = result || ruleResult;
+                }
             }
         }
         return result;

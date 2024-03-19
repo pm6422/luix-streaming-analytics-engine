@@ -12,7 +12,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.metrics.Gauge;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
-
 import java.util.Map;
 
 /**
@@ -48,8 +47,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleComm
             // in the cluster. That is to say, elements with the same key are assigned to the same partition.
             // This will allow tracking all input records between payer #25 and beneficiary #12 and evaluating defined rules
             // within the desired time window.
-            out.collect(new Keyed<>(input, KeysExtractor.toKeys(input.getGroupingValues(),
-                            ruleCommand.getRuleGroup().getGroupingKeys()), ruleCommand.getRuleGroup().getId()));
+            out.collect(new Keyed<>(input, KeysExtractor.toKeys(input.getGroupingValues()), ruleCommand.getRuleGroup().getId()));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);

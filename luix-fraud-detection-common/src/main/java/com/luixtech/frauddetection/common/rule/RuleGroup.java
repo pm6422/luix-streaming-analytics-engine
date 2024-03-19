@@ -12,18 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 public class RuleGroup {
     /**
-     * It will evaluate input data which have the same tenant.
-     * It will evaluate all input data if the field is empty.
-     */
-    private String          tenant;
-    /**
      * The ID of rule group
      */
     private String          id;
     /**
-     * TODO: remove
+     * It will evaluate input data which have the same tenant.
+     * It will evaluate all input data if the field is empty.
      */
-    private List<String>    groupingKeys;
+    private String          tenant;
     /**
      * The biggest time window of all the rules under sub group
      */

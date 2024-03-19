@@ -1,7 +1,8 @@
 package com.luixtech.frauddetection.flinkjob.utils;
 
+import org.apache.commons.collections4.MapUtils;
+
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,28 +14,27 @@ public class KeysExtractor {
      * Extracts and concatenates field values by names.
      *
      * @param record   target for values extraction
-     * @param keyNames list of field names
      * @return key string, e.g "{payerId=25;beneficiaryId=12}"
      */
-    public static String toKeys(Map<String, Object> record, List<String> keyNames) {
+    public static String toKeys(Map<String, Object> record) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (keyNames.size() > 0) {
-            Iterator<String> it = keyNames.iterator();
-            appendKeyValue(sb, it.next(), record);
-
+        if (MapUtils.isNotEmpty(record)) {
+            Iterator<Map.Entry<String, Object>> it = record.entrySet().iterator();
             while (it.hasNext()) {
-                sb.append(";");
-                appendKeyValue(sb, it.next(), record);
+                appendKeyValue(sb, it.next());
+                if (it.hasNext()) {
+                    sb.append(";");
+                }
             }
         }
         sb.append("}");
         return sb.toString();
     }
 
-    private static void appendKeyValue(StringBuilder sb, String fieldName, Map<String, Object> record) {
-        sb.append(fieldName);
+    private static void appendKeyValue(StringBuilder sb, Map.Entry<String, Object> entry) {
+        sb.append(entry.getKey());
         sb.append("=");
-        sb.append(record.get(fieldName));
+        sb.append(entry.getValue());
     }
 }

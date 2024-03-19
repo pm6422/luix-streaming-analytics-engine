@@ -1,10 +1,12 @@
 package com.luixtech.frauddetection.simulator.config.dbmigrations;
 
+import com.luixtech.frauddetection.common.rule.Rule;
+import com.luixtech.frauddetection.common.rule.RuleGroup;
 import com.luixtech.frauddetection.common.rule.aggregating.AggregatingRule;
 import com.luixtech.frauddetection.common.rule.aggregating.Aggregator;
 import com.luixtech.frauddetection.common.rule.Operator;
-import com.luixtech.frauddetection.simulator.domain.DetectorRule;
-import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
+import com.luixtech.frauddetection.simulator.domain.Detector;
+import com.luixtech.frauddetection.simulator.repository.DetectorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -12,69 +14,86 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 @AllArgsConstructor
 public class InitialSetupMigration implements ApplicationRunner {
 
-    private final DetectorRuleRepository detectorRuleRepository;
+    private final DetectorRepository detectorRepository;
 
     public void run(ApplicationArguments args) {
+        // rule 1
         AggregatingRule aggregatingRule1 = new AggregatingRule();
         aggregatingRule1.setAggregateFieldName("paymentAmount");
         aggregatingRule1.setAggregator(Aggregator.SUM);
         aggregatingRule1.setExpectedLimitValue(new BigDecimal("20000000"));
 
-        DetectorRule detectorRule1 = new DetectorRule();
-        detectorRule1.setId("1");
-        detectorRule1.setGroupingKeys(Arrays.asList("payeeId", "beneficiaryId"));
-        detectorRule1.setOperator(Operator.GREATER);
-        detectorRule1.setWindowMinutes(43200);
-        detectorRule1.setEnabled(true);
-        detectorRule1.setAggregatingRule(aggregatingRule1);
+        Rule rule1 = new Rule();
+        rule1.setOperator(Operator.GREATER);
+        rule1.setAggregatingRule(aggregatingRule1);
+        rule1.setWindowMinutes(43200);
 
-        AggregatingRule aggregatingRule2 = new AggregatingRule();
-        aggregatingRule2.setAggregator(Aggregator.COUNT);
-        aggregatingRule2.setExpectedLimitValue(new BigDecimal("300"));
+        RuleGroup ruleGroup1 = new RuleGroup();
+        ruleGroup1.setId("1");
+        ruleGroup1.setTenant("tesla");
+        ruleGroup1.setWindowMinutes(rule1.getWindowMinutes());
+        ruleGroup1.setRules(Arrays.asList(rule1));
 
-        DetectorRule detectorRule2 = new DetectorRule();
-        detectorRule2.setId("2");
-        detectorRule2.setGroupingKeys(List.of("paymentType"));
-        detectorRule2.setOperator(Operator.LESS);
-        detectorRule2.setWindowMinutes(1440);
-        detectorRule2.setEnabled(false);
-        detectorRule2.setAggregatingRule(aggregatingRule2);
+        Detector detector1 = new Detector();
+        detector1.setId(ruleGroup1.getId());
+        detector1.setTenant(ruleGroup1.getTenant());
+        detector1.setEnabled(true);
+        detector1.setRuleGroup(ruleGroup1);
 
+
+        // rule 3
         AggregatingRule aggregatingRule3 = new AggregatingRule();
         aggregatingRule3.setAggregateFieldName("paymentAmount");
         aggregatingRule3.setAggregator(Aggregator.SUM);
         aggregatingRule3.setExpectedLimitValue(new BigDecimal("10000000"));
 
-        DetectorRule detectorRule3 = new DetectorRule();
-        detectorRule3.setId("3");
-        detectorRule3.setGroupingKeys(List.of("beneficiaryId"));
-        detectorRule3.setOperator(Operator.GREATER_EQUAL);
-        detectorRule3.setWindowMinutes(1440);
-        detectorRule3.setEnabled(true);
-        detectorRule3.setAggregatingRule(aggregatingRule3);
+        Rule rule3 = new Rule();
+        rule3.setOperator(Operator.GREATER_EQUAL);
+        rule3.setAggregatingRule(aggregatingRule3);
+        rule3.setWindowMinutes(1440);
 
+        RuleGroup ruleGroup3 = new RuleGroup();
+        ruleGroup3.setId("3");
+        ruleGroup3.setTenant("honda");
+        ruleGroup3.setWindowMinutes(rule3.getWindowMinutes());
+        ruleGroup3.setRules(Arrays.asList(rule3));
+
+        Detector detector3 = new Detector();
+        detector3.setId(ruleGroup3.getId());
+        detector3.setTenant(ruleGroup3.getTenant());
+        detector3.setEnabled(true);
+        detector3.setRuleGroup(ruleGroup3);
+
+        // rule 4
         AggregatingRule aggregatingRule4 = new AggregatingRule();
         aggregatingRule4.setAggregator(Aggregator.COUNT);
         aggregatingRule4.setExpectedLimitValue(new BigDecimal("100"));
 
-        DetectorRule detectorRule4 = new DetectorRule();
-        detectorRule4.setId("4");
-        detectorRule4.setGroupingKeys(List.of("paymentType"));
-        detectorRule4.setOperator(Operator.GREATER_EQUAL);
-        detectorRule4.setWindowMinutes(1440);
-        detectorRule4.setResetAfterMatch(true);
-        detectorRule4.setEnabled(true);
-        detectorRule4.setAggregatingRule(aggregatingRule4);
+        Rule rule4 = new Rule();
+        rule4.setOperator(Operator.GREATER_EQUAL);
+        rule4.setAggregatingRule(aggregatingRule3);
+        rule4.setWindowMinutes(1440);
 
-        detectorRuleRepository.save(detectorRule1);
-        detectorRuleRepository.save(detectorRule2);
-        detectorRuleRepository.save(detectorRule3);
-        detectorRuleRepository.save(detectorRule4);
+        RuleGroup ruleGroup4 = new RuleGroup();
+        ruleGroup4.setId("4");
+        ruleGroup4.setTenant("tesla");
+        ruleGroup4.setWindowMinutes(rule4.getWindowMinutes());
+        ruleGroup4.setRules(Arrays.asList(rule4));
+        ruleGroup4.setResetAfterMatch(true);
+
+        Detector detector4 = new Detector();
+        detector4.setId("4");
+        detector4.setTenant(ruleGroup4.getTenant());
+        detector4.setEnabled(true);
+        detector4.setRuleGroup(ruleGroup4);
+
+        detectorRepository.save(detector1);
+        detectorRepository.save(detector3);
+        detectorRepository.save(detector4);
     }
 }

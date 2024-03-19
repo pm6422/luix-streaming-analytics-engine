@@ -2,9 +2,9 @@ package com.luixtech.frauddetection.simulator.controllers;
 
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.simulator.domain.DetectorRule;
+import com.luixtech.frauddetection.simulator.domain.Detector;
 import com.luixtech.frauddetection.simulator.kafka.producer.KafkaRuleProducer;
-import com.luixtech.frauddetection.simulator.repository.DetectorRuleRepository;
+import com.luixtech.frauddetection.simulator.repository.DetectorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,14 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 public class SyncRuleController {
 
-    private final DetectorRuleRepository detectorRuleRepository;
-    private final KafkaRuleProducer      kafkaRuleProducer;
+    private final DetectorRepository detectorRepository;
+    private final KafkaRuleProducer  kafkaRuleProducer;
 
     @GetMapping("/api/rules/sync-all")
     public void syncAllRules() {
-        List<DetectorRule> detectorRules = detectorRuleRepository.findAll();
-        for (DetectorRule detectorRule : detectorRules) {
-            kafkaRuleProducer.addRule(detectorRule.toRuleCommand());
+        List<Detector> detectors = detectorRepository.findAll();
+        for (Detector detector : detectors) {
+            kafkaRuleProducer.addRule(detector.toRuleCommand());
         }
     }
 
