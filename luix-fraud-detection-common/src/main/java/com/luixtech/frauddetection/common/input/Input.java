@@ -35,7 +35,7 @@ public class Input implements IngestionTimeAssignable {
      */
     private Long                ingestionTime;
     /**
-     * Grouping field name and value pair, used to shading the input records by flink,
+     * Grouping field name and value pair, used to sharding the input records by flink,
      * the field is used in combination with field 'groupingKeys' of {@link RuleGroup}
      */
     private Map<String, Object> groupingValues;

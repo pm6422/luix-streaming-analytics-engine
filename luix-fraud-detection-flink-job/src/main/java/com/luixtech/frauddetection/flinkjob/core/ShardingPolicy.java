@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Keyed<IN, KEY, ID> {
+public class ShardingPolicy<IN, KEY, ID> {
     /**
      * Input
      */
     private IN  input;
     /**
-     * Keys used to partition the input record, e.g: {tenant=tesla;model=X9}
+     * Sharding key used to partition the input, e.g: {tenant=tesla;model=X9}
      */
-    private KEY groupKeys;
+    private KEY shardingKey;
     /**
-     * The id of the rule that matched the input record
+     * The id of the rule group
      */
-    private ID  ruleId;
+    private ID  ruleGroupId;
 }

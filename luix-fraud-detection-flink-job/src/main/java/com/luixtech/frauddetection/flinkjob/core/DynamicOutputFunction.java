@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * Implements main rule evaluation and outputting logic.
  */
 @Slf4j
-public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String, Keyed<Input, String, String>, RuleCommand, Output> {
+public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
 
     private static final String                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
     private              Meter                      outputMeter;
@@ -70,7 +70,7 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
     /**
      * Called for each element after received rule
      *
-     * @param keyed The stream element.
+     * @param shardingPolicy The stream element.
      * @param ctx   A {@link ReadOnlyContext} that allows querying the timestamp of the element,
      *              querying the current processing/event time and iterating the broadcast state with
      *              <b>read-only</b> access. The context is only valid during the invocation of this method,
@@ -79,8 +79,8 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
      * @throws Exception exception
      */
     @Override
-    public void processElement(Keyed<Input, String, String> keyed, ReadOnlyContext ctx, Collector<Output> out) throws Exception {
-        Input record = keyed.getInput();
+    public void processElement(ShardingPolicy<Input, String, String> shardingPolicy, ReadOnlyContext ctx, Collector<Output> out) throws Exception {
+        Input record = shardingPolicy.getInput();
 
         // Store record to local map which is grouped by created time
         groupInputByTime(windowState, record.getCreatedTime(), record);
@@ -89,9 +89,9 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
 
         // Get rule command by ID
-        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(keyed.getRuleId());
+        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(shardingPolicy.getRuleGroupId());
         if (ruleCommand == null) {
-            log.error("Rule [{}] does not exist", keyed.getRuleId());
+            log.error("Rule [{}] does not exist", shardingPolicy.getRuleGroupId());
             return;
         }
 
@@ -111,14 +111,14 @@ public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String,
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + ruleGroup.getId() + " , Keys: " + keyed.getGroupKeys() + " , Matched: " + ruleMatched);
+                "Rule: " + ruleGroup.getId() + " , Keys: " + shardingPolicy.getShardingKey() + " , Matched: " + ruleMatched);
 
         if (ruleMatched) {
             if (ruleCommand.getRuleGroup().isResetAfterMatch()) {
                 evictAllStateElements();
             }
             outputMeter.markEvent();
-            out.collect(new Output<>(ruleGroup.getId(), ruleGroup, keyed.getGroupKeys(), keyed.getInput()));
+            out.collect(new Output<>(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
         }
     }
 

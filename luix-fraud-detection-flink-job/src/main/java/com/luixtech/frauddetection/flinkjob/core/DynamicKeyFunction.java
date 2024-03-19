@@ -2,7 +2,6 @@ package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
-import com.luixtech.frauddetection.flinkjob.utils.KeysExtractor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,7 @@ import java.util.Map;
  * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleCommand, Keyed<Input, String, String>> {
+public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleCommand, ShardingPolicy<Input, String, String>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -28,7 +27,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleComm
     }
 
     @Override
-    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Keyed<Input, String, String>> out) throws Exception {
+    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<ShardingPolicy<Input, String, String>> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
@@ -36,18 +35,16 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleComm
     }
 
     @Override
-    public void processElement(Input input, ReadOnlyContext ctx, Collector<Keyed<Input, String, String>> out) throws Exception {
+    public void processElement(Input input, ReadOnlyContext ctx, Collector<ShardingPolicy<Input, String, String>> out) throws Exception {
         ReadOnlyBroadcastState<String, RuleCommand> rulesState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         int ruleCounter = 0;
         for (Map.Entry<String, RuleCommand> entry : rulesState.immutableEntries()) {
             final RuleCommand ruleCommand = entry.getValue();
-            // KeysExtractor.toKeys() uses reflection to extract the required values of groupingKeys fields from {@link RuleGroup}
-            // and combines them as a single concatenated String key, e.g "{payerId=25;beneficiaryId=12}".
+            // Combines groupingValues as a single concatenated key, e.g "{tenant=tesla, model=X9}".
             // Flink will calculate the hash of this key and assign the processing of this particular combination to a specific server
-            // in the cluster. That is to say, elements with the same key are assigned to the same partition.
-            // This will allow tracking all input records between payer #25 and beneficiary #12 and evaluating defined rules
-            // within the desired time window.
-            out.collect(new Keyed<>(input, KeysExtractor.toKeys(input.getGroupingValues()), ruleCommand.getRuleGroup().getId()));
+            // in the cluster. That is to say, inputs with the same key are assigned to the same partition.
+            // This will allow tracking all input between tenant #tesla and model #X9 and iterate all rules and evaluate it to all inputs
+            out.collect(new ShardingPolicy<>(input, input.getGroupingValues().toString(), ruleCommand.getRuleGroup().getId()));
             ruleCounter++;
         }
         ruleCounterGauge.setValue(ruleCounter);
