@@ -82,10 +82,10 @@ public class RuleHelper {
     private static boolean evaluateMatchingRule(Rule rule, Input input) {
         if (StringUtils.isNotEmpty(rule.getMatchingRule().getExpectedValue())) {
             return rule.getMatchingRule().getExpectedValue()
-                    .equals(input.getRecord().get(rule.getMatchingRule().getFieldName()).toString());
+                    .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName()).toString());
         }
-        return input.getRecord().get(rule.getMatchingRule().getFieldName())
-                .equals(input.getRecord().get(rule.getMatchingRule().getExpectedFieldName()));
+        return rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName())
+                .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getExpectedFieldName()));
     }
 
     /**
@@ -107,7 +107,8 @@ public class RuleHelper {
             if (isStateValueInWindow(stateCreatedTime, windowStartTime, input.getCreatedTime())) {
                 Set<Input> inputsInWindow = windowState.get(stateCreatedTime);
                 for (Input inputInWindow : inputsInWindow) {
-                    BigDecimal aggregatedValue = getBigDecimalByFieldName(inputInWindow.getRecord(), rule.getAggregatingRule().getAggregateFieldName());
+                    BigDecimal aggregatedValue = getBigDecimalByFieldName(
+                            rule.getMappingRecord(inputInWindow), rule.getAggregatingRule().getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }
             }
