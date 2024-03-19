@@ -1,6 +1,7 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
 import com.luixtech.frauddetection.common.input.Input;
+import com.luixtech.frauddetection.common.rule.Aggregator;
 import com.luixtech.frauddetection.common.rule.Rule;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.common.rule.RuleType;
@@ -42,22 +43,26 @@ public class RuleHelper {
         }
     }
 
-    /* Picks and returns a new accumulator, based on the Rule's aggregator function type. */
-    public static SimpleAccumulator<BigDecimal> getAggregator(Rule rule) {
-        switch (rule.getAggregator()) {
+    /**
+     * Picks and returns a new accumulator, based on the Rule's aggregator
+     *
+     * @param aggregator aggregator of rule
+     * @return aggregator instance
+     */
+    public static SimpleAccumulator<BigDecimal> getAggregator(Aggregator aggregator) {
+        switch (aggregator) {
             case COUNT:
-                return new BigDecimalCounter();
+                return new BigDecimalCountAccumulator();
             case SUM:
-                return new BigDecimalAdder();
-            case AVG:
+                return new BigDecimalSumAccumulator();
+            case AVERAGE:
                 return new BigDecimalAverageAccumulator();
             case MAX:
-                return new BigDecimalMaximum();
+                return new BigDecimalMaxAccumulator();
             case MIN:
-                return new BigDecimalMinimum();
+                return new BigDecimalMinAccumulator();
             default:
-                throw new RuntimeException(
-                        "Unsupported aggregation function type: " + rule.getAggregator());
+                throw new IllegalArgumentException("Unsupported aggregator: " + aggregator);
         }
     }
 
@@ -86,7 +91,7 @@ public class RuleHelper {
      * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
      *
      * @param rule        aggregation rule to evaluate
-     * @param input inputInWindow data
+     * @param input       inputInWindow data
      * @param windowState inputInWindow data group by time window
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
@@ -95,8 +100,8 @@ public class RuleHelper {
                                                    MapState<Long, Set<Input>> windowState) throws Exception {
         Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
-        // Calculate the aggregate value
-        SimpleAccumulator<BigDecimal> aggregator = RuleHelper.getAggregator(rule);
+        // Calculate the aggregated value
+        SimpleAccumulator<BigDecimal> aggregator = getAggregator(rule.getAggregator());
         for (Long stateCreatedTime : windowState.keys()) {
             if (isStateValueInWindow(stateCreatedTime, windowStartTime, input.getCreatedTime())) {
                 Set<Input> inputsInWindow = windowState.get(stateCreatedTime);

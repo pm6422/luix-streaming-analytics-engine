@@ -7,29 +7,28 @@ import org.apache.flink.api.common.accumulators.SimpleAccumulator;
 import java.math.BigDecimal;
 
 /**
- * A counter.
+ * An accumulator that sums up {@code double} values.
  */
 @PublicEvolving
-public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
+public class BigDecimalSumAccumulator implements SimpleAccumulator<BigDecimal> {
 
     private static final long       serialVersionUID = 1L;
     private              BigDecimal localValue       = BigDecimal.ZERO;
 
-    public BigDecimalCounter() {
+    public BigDecimalSumAccumulator() {
     }
 
-    public BigDecimalCounter(BigDecimal value) {
+    public BigDecimalSumAccumulator(BigDecimal value) {
         this.localValue = value;
     }
 
     // ------------------------------------------------------------------------
-    //  Counter
+    //  Accumulator
     // ------------------------------------------------------------------------
 
     @Override
     public void add(BigDecimal value) {
-        // ignore the passing argument
-        localValue = localValue.add(BigDecimal.ONE);
+        localValue = localValue.add(value);
     }
 
     @Override
@@ -48,8 +47,8 @@ public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
     }
 
     @Override
-    public BigDecimalCounter clone() {
-        BigDecimalCounter result = new BigDecimalCounter();
+    public BigDecimalSumAccumulator clone() {
+        BigDecimalSumAccumulator result = new BigDecimalSumAccumulator();
         result.localValue = localValue;
         return result;
     }
@@ -57,6 +56,7 @@ public class BigDecimalCounter implements SimpleAccumulator<BigDecimal> {
     // ------------------------------------------------------------------------
     //  Utilities
     // ------------------------------------------------------------------------
+
     @Override
     public String toString() {
         return "BigDecimalCounter " + this.localValue;
