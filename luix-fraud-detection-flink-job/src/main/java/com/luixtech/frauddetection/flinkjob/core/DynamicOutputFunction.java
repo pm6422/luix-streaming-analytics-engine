@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.alert.Alert;
+import com.luixtech.frauddetection.common.output.Output;
 import com.luixtech.frauddetection.common.command.Command;
 import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.Rule;
@@ -25,14 +25,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements main rule evaluation and alerting logic.
+ * Implements main rule evaluation and outputting logic.
  */
 @Slf4j
-public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, Keyed<Input, String, String>, RuleCommand, Alert> {
+public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String, Keyed<Input, String, String>, RuleCommand, Output> {
 
-    private static final String                               WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
-    private              Meter                                alertMeter;
-    private transient    MapState<Long, Set<Input>>           windowState;
+    private static final String                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
+    private              Meter                      outputMeter;
+    private transient    MapState<Long, Set<Input>> windowState;
     private static final MapStateDescriptor<Long, Set<Input>> WINDOW_STATE_DESCRIPTOR =
             new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
@@ -40,12 +40,12 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     @Override
     public void open(Configuration parameters) {
         windowState = getRuntimeContext().getMapState(WINDOW_STATE_DESCRIPTOR);
-        alertMeter = new MeterView(60);
-        getRuntimeContext().getMetricGroup().meter("alertsPerSecond", alertMeter);
+        outputMeter = new MeterView(60);
+        getRuntimeContext().getMetricGroup().meter("outputsPerSecond", outputMeter);
     }
 
     @Override
-    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Alert> out) throws Exception {
+    public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Output> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
         // Merge the new rule with the existing one
@@ -79,7 +79,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
      * @throws Exception exception
      */
     @Override
-    public void processElement(Keyed<Input, String, String> keyed, ReadOnlyContext ctx, Collector<Alert> out) throws Exception {
+    public void processElement(Keyed<Input, String, String> keyed, ReadOnlyContext ctx, Collector<Output> out) throws Exception {
         Input record = keyed.getInputRecord();
 
         // Store record to local map which is grouped by created time
@@ -106,7 +106,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
 
         Rule rule = ruleCommand.getRule();
 
-        // Evaluate the rule and trigger an alert if matched
+        // Evaluate the rule and trigger an output if matched
         boolean ruleMatched = RuleHelper.evaluate(rule, record, windowState);
 
         // Print rule evaluation result
@@ -117,8 +117,8 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
             if (ruleCommand.getRule().isResetAfterMatch()) {
                 evictAllStateElements();
             }
-            alertMeter.markEvent();
-            out.collect(new Alert<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInputRecord()));
+            outputMeter.markEvent();
+            out.collect(new Output<>(rule.getId(), rule, keyed.getGroupKeys(), keyed.getInputRecord()));
         }
     }
 
@@ -132,7 +132,7 @@ public class DynamicAlertFunction extends KeyedBroadcastProcessFunction<String, 
     }
 
     @Override
-    public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out) throws Exception {
+    public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Output> out) throws Exception {
         RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
         if (widestWindowRule == null) {
             return;

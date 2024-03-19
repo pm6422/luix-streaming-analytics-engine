@@ -159,7 +159,7 @@ application:
     topic:
       input: input
       rule: rule
-      alert: alert
+      output: output
       latency: latency
   input:
     max-input-speed: 50

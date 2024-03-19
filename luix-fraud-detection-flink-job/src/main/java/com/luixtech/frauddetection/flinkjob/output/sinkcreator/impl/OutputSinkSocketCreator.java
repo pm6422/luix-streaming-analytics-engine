@@ -7,8 +7,8 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSink;
 import org.apache.flink.streaming.api.functions.sink.PrintSinkFunction;
 
-@SpiName("alert-" + Arguments.CHANNEL_SOCKET)
-public class AlertSinkSocketCreator implements SinkCreator {
+@SpiName("output-" + Arguments.CHANNEL_SOCKET)
+public class OutputSinkSocketCreator implements SinkCreator {
     @Override
     public DataStreamSink<String> create(DataStream<String> stream, Arguments arguments) {
         return stream.addSink(new PrintSinkFunction<>(true));

@@ -13,8 +13,8 @@ import org.apache.flink.streaming.api.datastream.DataStreamSink;
 
 import java.util.Properties;
 
-@SpiName("alert-" + Arguments.CHANNEL_KAFKA)
-public class AlertSinkKafkaCreator implements SinkCreator {
+@SpiName("output-" + Arguments.CHANNEL_KAFKA)
+public class OutputSinkKafkaCreator implements SinkCreator {
     @Override
     public DataStreamSink<String> create(DataStream<String> stream, Arguments arguments) {
         Properties kafkaProps = KafkaUtils.initProducerProperties(arguments);
@@ -23,7 +23,7 @@ public class AlertSinkKafkaCreator implements SinkCreator {
                         .setKafkaProducerConfig(kafkaProps)
                         .setRecordSerializer(
                                 KafkaRecordSerializationSchema.builder()
-                                        .setTopic(arguments.alertTopic)
+                                        .setTopic(arguments.outputTopic)
                                         .setValueSerializationSchema(new SimpleStringSchema())
                                         .build())
                         .setDeliverGuarantee(DeliveryGuarantee.AT_LEAST_ONCE)

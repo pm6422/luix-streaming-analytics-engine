@@ -35,9 +35,9 @@ public class ApplicationProperties {
         @Data
         public static class Topic {
             private String input;
-            private String alert;
-            private String latency;
             private String rule;
+            private String output;
+            private String latency;
         }
 
         @Data

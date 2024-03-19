@@ -1,6 +1,6 @@
 package com.luixtech.frauddetection.simulator.kafka.producer;
 
-import com.luixtech.frauddetection.common.alert.Alert;
+import com.luixtech.frauddetection.common.output.Output;
 import com.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,14 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 @Slf4j
 @Deprecated
-public class KafkaAlertProducer implements Consumer<Alert> {
+public class KafkaOutputProducer implements Consumer<Output> {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ApplicationProperties         applicationProperties;
 
     @Override
-    public void accept(Alert alert) {
-        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getAlert(), alert);
-        log.warn("Pushed alert with content {}", alert);
+    public void accept(Output output) {
+        kafkaTemplate.send(applicationProperties.getKafka().getTopic().getOutput(), output);
+        log.warn("Pushed output with content {}", output);
     }
 }

@@ -102,9 +102,9 @@
 //            testHarness.processElement1(new StreamRecord<>(keyed3, 17L));
 //
 //            ConcurrentLinkedQueue<Object> expectedOutput = new ConcurrentLinkedQueue<>();
-//            Alert<Transaction, BigDecimal> alert1 =
+//            Output<Transaction, BigDecimal> alert1 =
 //                    new Alert<>(rule1.getRuleId(), rule1, "CSH", event1, BigDecimal.valueOf(22));
-//            Alert<Transaction, BigDecimal> alert2 =
+//            Output<Transaction, BigDecimal> alert2 =
 //                    new Alert<>(rule1.getRuleId(), rule1, "CRD", event3, BigDecimal.valueOf(21));
 //
 //            expectedOutput.add(new StreamRecord<>(alert1, 15L));

@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.common.alert;
+package com.luixtech.frauddetection.common.output;
 
 import com.luixtech.frauddetection.common.rule.Rule;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Alert<E> {
+public class Output<E> {
     private String ruleId;
     private Rule   violatedRule;
     private String groupKeys;

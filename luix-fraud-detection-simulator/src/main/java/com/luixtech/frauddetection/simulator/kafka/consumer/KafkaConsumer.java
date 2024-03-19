@@ -15,11 +15,11 @@ public class KafkaConsumer {
 //    private final SimpMessagingTemplate simpMessagingTemplate;
     private final ApplicationProperties applicationProperties;
 
-    @KafkaListener(topics = "${application.kafka.topic.alert}", groupId = "alertConsumeGrp")
-    public void templateAlerts(@Payload String message) {
-        log.warn("Detected alert {}", message);
+    @KafkaListener(topics = "${application.kafka.topic.output}", groupId = "outputConsumeGrp")
+    public void templateOutputs(@Payload String message) {
+        log.warn("Found output {}", message);
         // Send to websocket
-//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getAlert(), message);
+//        simpMessagingTemplate.convertAndSend(applicationProperties.getWebSocket().getTopic().getOutput(), message);
     }
 
     @KafkaListener(topics = "${application.kafka.topic.latency}", groupId = "latencyConsumeGrp")

@@ -23,8 +23,8 @@ public class Arguments {
     public              String  ruleTopic                  = "rule";
     @Parameter(names = "--kafka.topic.latency", description = "Latency topic")
     public              String  latencyTopic               = "latency";
-    @Parameter(names = "--kafka.topic.alert", description = "Alert topic")
-    public              String  alertTopic                 = "alert";
+    @Parameter(names = "--kafka.topic.output", description = "Output topic")
+    public              String  outputTopic                = "output";
     @Parameter(names = "--source-parallelism", description = "Parallelism for input record source")
     public              Integer sourceParallelism          = 2;
     @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshotted. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)

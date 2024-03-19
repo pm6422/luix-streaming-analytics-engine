@@ -1,10 +1,10 @@
 package com.luixtech.frauddetection.flinkjob.core;
 
-import com.luixtech.frauddetection.common.alert.Alert;
+import com.luixtech.frauddetection.common.output.Output;
 import com.luixtech.frauddetection.common.input.Input;
 import com.luixtech.frauddetection.common.rule.RuleCommand;
 import com.luixtech.frauddetection.flinkjob.core.function.AverageAggregate;
-import com.luixtech.frauddetection.flinkjob.output.AlertSink;
+import com.luixtech.frauddetection.flinkjob.output.OutputSink;
 import com.luixtech.frauddetection.flinkjob.output.LatencySink;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class RulesEvaluator {
         DataStream<Input> inputRecordStream = createInputRecordStream(env);
 
         // Processing pipeline setup
-        DataStream<Alert> alertStream = inputRecordStream
+        DataStream<Output> outputStream = inputRecordStream
                 .connect(broadcastRuleStream)
                 .process(new DynamicKeyFunction())
                 .uid(DynamicKeyFunction.class.getSimpleName())
@@ -51,19 +51,19 @@ public class RulesEvaluator {
                 // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getGroupKeys())
                 .connect(broadcastRuleStream)
-                .process(new DynamicAlertFunction())
-                .uid(DynamicAlertFunction.class.getSimpleName())
+                .process(new DynamicOutputFunction())
+                .uid(DynamicOutputFunction.class.getSimpleName())
                 .name("Dynamic Rule Evaluation Function");
 
-        alertStream.print().name("Alert STDOUT Sink");
-        DataStream<String> alertsJson = AlertSink.alertsStreamToJson(alertStream);
-        DataStreamSink<String> alertSink = AlertSink.addAlertsSink(arguments, alertsJson);
-        alertSink.setParallelism(1).name("Alerts JSON Sink");
+        outputStream.print().name("Output STDOUT Sink");
+        DataStream<String> outputJson = OutputSink.outputStreamToJson(outputStream);
+        DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputJson);
+        outputSink.setParallelism(1).name("Output JSON Sink");
 
-        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
+        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
         allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
 
-        DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Alert>) alertStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
+        DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
         DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Handling Latency Sink");
@@ -115,7 +115,7 @@ public class RulesEvaluator {
     }
 
     private DataStream<Input> createInputRecordStream(StreamExecutionEnvironment env) {
-        DataStream<String> inputRecordsStringsStream = initTransactionsSource(arguments, env);
-        return stringsStreamToTransactions(arguments, inputRecordsStringsStream);
+        DataStream<String> inputStringsStream = initTransactionsSource(arguments, env);
+        return stringsStreamToTransactions(arguments, inputStringsStream);
     }
 }
