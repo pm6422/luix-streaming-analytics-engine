@@ -44,7 +44,7 @@ public class RuleHelper {
     }
 
     /**
-     * Picks and returns a new accumulator, based on the Rule's aggregator
+     * Picks and returns a new accumulator instance, based on the Rule's aggregator
      *
      * @param aggregator aggregator of rule
      * @return aggregator instance
