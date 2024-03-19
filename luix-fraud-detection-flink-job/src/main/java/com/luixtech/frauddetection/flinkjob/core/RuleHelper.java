@@ -109,6 +109,7 @@ public class RuleHelper {
         BigDecimal actualAggregatedValue = aggregator.getLocalValue();
         rule.setActualAggregatedValue(actualAggregatedValue);
 
+        // compare the expected value with the actual one based on operator
         return rule.getOperator().compare(actualAggregatedValue, rule.getExpectedLimitValue());
     }
 
