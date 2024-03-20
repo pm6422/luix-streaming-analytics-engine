@@ -77,12 +77,11 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         // get rule command by ID
         RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(shardingPolicy.getRuleGroupId());
         if (ruleCommand == null) {
-            log.error("Rule [{}] does not exist", shardingPolicy.getRuleGroupId());
+            log.error("Rule command [{}] does not exist", shardingPolicy.getRuleGroupId());
             return;
         }
-
         if (Command.ADD != ruleCommand.getCommand()) {
-            // Do NOT handle delete command
+            log.warn("Rule command [{}] is inactive", shardingPolicy.getRuleGroupId());
             return;
         }
 
