@@ -45,14 +45,14 @@ public class RulesEvaluator {
         // Processing pipeline setup
         DataStream<Output> outputStream = inputStream
                 .connect(broadcastRuleStream)
-                .process(new DynamicKeyFunction())
-                .uid(DynamicKeyFunction.class.getSimpleName())
+                .process(new InputShardingFunction())
+                .uid(InputShardingFunction.class.getSimpleName())
                 .name("Dynamic Partitioning Function")
                 // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getShardingKey())
                 .connect(broadcastRuleStream)
-                .process(new DynamicOutputFunction())
-                .uid(DynamicOutputFunction.class.getSimpleName())
+                .process(new RuleEvaluationFunction())
+                .uid(RuleEvaluationFunction.class.getSimpleName())
                 .name("Dynamic Rule Evaluation Function");
 
         outputStream.print().name("Output STDOUT Sink");

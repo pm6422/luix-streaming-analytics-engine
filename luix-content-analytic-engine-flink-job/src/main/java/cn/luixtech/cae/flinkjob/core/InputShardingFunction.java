@@ -17,7 +17,7 @@ import java.util.Map;
  * Implements dynamic data partitioning based on a set of broadcast rules.
  */
 @Slf4j
-public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleCommand, ShardingPolicy<Input, String, String>> {
+public class InputShardingFunction extends BroadcastProcessFunction<Input, RuleCommand, ShardingPolicy<Input, String, String>> {
     private RuleCounterGauge ruleCounterGauge;
 
     @Override
@@ -43,7 +43,7 @@ public class DynamicKeyFunction extends BroadcastProcessFunction<Input, RuleComm
             // Combines groupingValues as a single concatenated key, e.g "{tenant=tesla, model=X9}".
             // Flink will calculate the hash of this key and assign the processing of this particular combination to a specific server
             // in the cluster. That is to say, inputs with the same key are assigned to the same partition.
-            // This will allow tracking all input between tenant #tesla and model #X9 and iterate all rules and evaluate it to all inputs
+            // And iterate all rules and evaluate it for all inputs
             out.collect(new ShardingPolicy<>(input, input.getGroupingValues().toString(), ruleCommand.getRuleGroup().getId()));
             ruleCounter++;
         }

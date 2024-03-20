@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * Implements main rule evaluation and outputting logic.
  */
 @Slf4j
-public class DynamicOutputFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
+public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
 
     private static final String                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
     private              Meter                      outputMeter;
