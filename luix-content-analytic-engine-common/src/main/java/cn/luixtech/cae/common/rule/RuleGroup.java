@@ -25,6 +25,10 @@ public class RuleGroup {
      */
     private Integer         windowMinutes;
     /**
+     * Last matching time that the rule group matches the inputs
+     */
+    private long            lastMatchingTime;
+    /**
      * The rule group will not issue same output for same input record during the silent period to prevent excessive output from interfering. 0 represents no silent period
      */
     private Integer         silentMinutes;

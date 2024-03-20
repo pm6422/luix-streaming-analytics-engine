@@ -27,12 +27,12 @@ public class RuleCommand implements IngestionTimeAssignable {
     private Long      ingestionTime;
 
     @Override
-    public void setIngestionTime(Long timestamp) {
+    public void setIngestionTime(long timestamp) {
         this.ingestionTime = timestamp;
     }
 
     @Override
-    public Long getIngestionTime() {
+    public long getIngestionTime() {
         return this.ingestionTime;
     }
 }

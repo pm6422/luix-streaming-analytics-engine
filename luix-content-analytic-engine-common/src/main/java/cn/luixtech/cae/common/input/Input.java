@@ -45,12 +45,12 @@ public class Input implements IngestionTimeAssignable {
     private Map<String, Object> groupingValues;
 
     @Override
-    public void setIngestionTime(Long timestamp) {
+    public void setIngestionTime(long timestamp) {
         this.ingestionTime = timestamp;
     }
 
     @Override
-    public Long getIngestionTime() {
+    public long getIngestionTime() {
         return this.ingestionTime;
     }
 }

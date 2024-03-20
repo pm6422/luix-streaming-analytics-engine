@@ -1,7 +1,7 @@
 package cn.luixtech.cae.common;
 
 public interface IngestionTimeAssignable {
-    void setIngestionTime(Long timestamp);
+    void setIngestionTime(long timestamp);
 
-    Long getIngestionTime();
+    long getIngestionTime();
 }
