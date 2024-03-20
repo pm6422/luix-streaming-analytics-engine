@@ -35,22 +35,20 @@ public class RulesEvaluator {
     private final Arguments arguments;
 
     public void run() throws Exception {
-        // Create stream execution environment
-        StreamExecutionEnvironment env = createExecutionEnv();
-        DataStream<RuleCommand> ruleCommandStream = createRuleCommandStream(env);
-        // Rule must be broadcast to all flink servers on the same cluster
-        BroadcastStream<RuleCommand> broadcastRuleStream = ruleCommandStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        StreamExecutionEnvironment env = createStreamExecutionEnv();
+
+        BroadcastStream<RuleCommand> broadcastRuleCommandStream = createBroadcastRuleCommandStream(env);
         DataStream<Input> inputStream = createInputStream(env);
 
         // Processing pipeline setup
         DataStream<Output> outputStream = inputStream
-                .connect(broadcastRuleStream)
+                .connect(broadcastRuleCommandStream)
                 .process(new InputShardingFunction())
                 .uid(InputShardingFunction.class.getSimpleName())
                 .name("Input sharding function")
                 // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getShardingKey())
-                .connect(broadcastRuleStream)
+                .connect(broadcastRuleCommandStream)
                 .process(new RuleEvaluationFunction())
                 .uid(RuleEvaluationFunction.class.getSimpleName())
                 .name("Rule evaluation function");
@@ -72,7 +70,7 @@ public class RulesEvaluator {
         env.execute("Content analytic engine");
     }
 
-    private StreamExecutionEnvironment createExecutionEnv() {
+    private StreamExecutionEnvironment createStreamExecutionEnv() {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
@@ -108,6 +106,13 @@ public class RulesEvaluator {
                 // Default - unlimited restart strategy.
                 // env.setRestartStrategy(RestartStrategies.noRestart());
         }
+    }
+
+    private BroadcastStream<RuleCommand> createBroadcastRuleCommandStream(StreamExecutionEnvironment env) {
+        DataStream<RuleCommand> ruleCommandStream = createRuleCommandStream(env);
+        // Broadcast rules to all flink servers on the same cluster
+        BroadcastStream<RuleCommand> broadcastRuleStream = ruleCommandStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        return broadcastRuleStream;
     }
 
     private DataStream<RuleCommand> createRuleCommandStream(StreamExecutionEnvironment env) {
