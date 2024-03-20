@@ -38,7 +38,7 @@ Run the following command to build the project:
 This project contains multiple sub-modules.
 
 Run fraud-detection-flink-job module with main() method of:
-`com.luixtech.frauddetection.flinkjob.FlinkJobLauncher`
+`cn.luixtech.cae.flinkjob.FlinkJobLauncher`
 
 Access Flink Web UI with URL:
 http://localhost:8081[http://localhost:8081]

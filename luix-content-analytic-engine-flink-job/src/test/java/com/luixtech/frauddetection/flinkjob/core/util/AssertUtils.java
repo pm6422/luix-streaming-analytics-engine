@@ -1,4 +1,4 @@
-package com.luixtech.frauddetection.flinkjob.core.util;
+package cn.luixtech.cae.flinkjob.core.util;
 
 import java.util.HashMap;
 import java.util.Map;

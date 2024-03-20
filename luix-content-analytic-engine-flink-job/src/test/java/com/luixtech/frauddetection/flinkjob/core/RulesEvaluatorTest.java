@@ -1,12 +1,12 @@
-//package com.luixtech.frauddetection.flinkjob.core;
+//package cn.luixtech.cae.flinkjob.core;
 //
-//import com.luixtech.frauddetection.common.dto.Alert;
-//import com.luixtech.frauddetection.common.dto.Rule;
-//import com.luixtech.frauddetection.common.dto.Transaction;
-//import com.luixtech.frauddetection.flinkjob.core.util.AssertUtils;
-//import com.luixtech.frauddetection.flinkjob.core.util.BroadcastStreamKeyedOperatorTestHarness;
-//import com.luixtech.frauddetection.flinkjob.core.util.BroadcastStreamNonKeyedOperatorTestHarness;
-//import com.luixtech.frauddetection.flinkjob.serializer.RuleParser;
+//import cn.luixtech.cae.common.dto.Alert;
+//import cn.luixtech.cae.common.dto.Rule;
+//import cn.luixtech.cae.common.dto.Transaction;
+//import cn.luixtech.cae.flinkjob.core.util.AssertUtils;
+//import cn.luixtech.cae.flinkjob.core.util.BroadcastStreamKeyedOperatorTestHarness;
+//import cn.luixtech.cae.flinkjob.core.util.BroadcastStreamNonKeyedOperatorTestHarness;
+//import cn.luixtech.cae.flinkjob.serializer.RuleParser;
 //import org.apache.flink.api.common.state.BroadcastState;
 //import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 //import org.apache.flink.streaming.api.watermark.Watermark;
