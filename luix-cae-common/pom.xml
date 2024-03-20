@@ -6,7 +6,7 @@
         <artifactId>luix-content-analytic-engine</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-content-analytic-engine-common</artifactId>
+    <artifactId>luix-cae-common</artifactId>
     <properties>
         <java.version>11</java.version>
         <logback.version>1.2.11</logback.version>
