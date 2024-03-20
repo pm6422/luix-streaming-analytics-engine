@@ -41,6 +41,18 @@ public class Rule {
      */
     private String             mappingInputRecord;
     /**
+     * The reference key for the rule expression storing in 'record' map of {@link Input} class
+     * e.g. rule expression: model == X9, referenceRecordKey = state
+     * We can get model by using input.record.get("state").get("model")
+     */
+    private String             referenceRecordKey;
+    /**
+     * The target key for the rule expression storing in 'record' map of {@link Input} class
+     * e.g. rule expression: speed == engineSpeed, targetRecordKey = msg
+     * We can get engineSpeed by using input.record.get("msg").get("engineSpeed")
+     */
+    private String             targetRecordKey;
+    /**
      * It represents logical relationship for this rule with the next rule
      */
     private LogicalOperator    logicalOperator = LogicalOperator.AND;
