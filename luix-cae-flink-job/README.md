@@ -5,7 +5,10 @@
 ```
 nc -lk 9999
 ```
-2. Run main method of `cn.luixtech.cae.flinkjob.CaeFlinkJobApplication`
+2. Run main method of `cn.luixtech.cae.flinkjob.CaeFlinkJobApplication` with CLI params
+```
+--message.channel=socket
+```
 3. Submit to netcat in correct format:
 rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName field), (aggregation function), (limit operator), (limit), (window size in minutes)
 
@@ -23,9 +26,6 @@ rule_id, (rule_state), (aggregation keys), (unique keys), (aggregateFieldName fi
 {"ruleState": "CONTROL", "ruleControl":"DELETE_RULES_ALL"}
 {"ruleState": "CONTROL", "ruleControl":"EXPORT_RULES_CURRENT"}
 {"ruleState": "CONTROL", "ruleControl":"CLEAR_STATE_ALL"}
-
-##### Examles of CLI params:
---flink.dashboard.enabled=true --message.channel=socket
 
 ##### Special functions:
 1,(active),(paymentType),,(COUNT_FLINK),(SUM),(>),(50),(20)
