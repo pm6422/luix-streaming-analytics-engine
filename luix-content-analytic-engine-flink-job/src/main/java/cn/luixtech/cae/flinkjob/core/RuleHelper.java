@@ -75,7 +75,7 @@ public class RuleHelper {
         }
         boolean result = ruleGroup.getLogicalOperator() == LogicalOperator.AND;
 
-        // Evaluate child rule groups
+        // evaluate child rule groups
         if (CollectionUtils.isNotEmpty(ruleGroup.getChildren())) {
             for (RuleGroup childGroup : ruleGroup.getChildren()) {
                 boolean childResult = evaluateRuleGroup(childGroup, input, windowState);
@@ -87,7 +87,7 @@ public class RuleHelper {
             }
         }
 
-        // Evaluate rules
+        // evaluate rules
         if (CollectionUtils.isNotEmpty(ruleGroup.getRules())) {
             for (Rule rule : ruleGroup.getRules()) {
                 boolean ruleResult = evaluateRule(rule, input, windowState);
