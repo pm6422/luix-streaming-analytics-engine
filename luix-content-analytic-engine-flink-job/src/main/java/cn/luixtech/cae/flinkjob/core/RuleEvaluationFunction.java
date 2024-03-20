@@ -47,9 +47,9 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     @Override
     public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Output> out) throws Exception {
         log.debug("Received {}", ruleCommand);
-        BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR);
+        BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
         // Merge the new rule with the existing one
-        RuleHelper.handleRule(broadcastState, ruleCommand);
+        RuleHelper.handleRuleCommand(broadcastState, ruleCommand);
         updateWidestWindowRule(ruleCommand, broadcastState);
     }
 
@@ -89,7 +89,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
 
         // Get rule command by ID
-        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(shardingPolicy.getRuleGroupId());
+        RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(shardingPolicy.getRuleGroupId());
         if (ruleCommand == null) {
             log.error("Rule [{}] does not exist", shardingPolicy.getRuleGroupId());
             return;
@@ -133,7 +133,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Output> out) throws Exception {
-        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_DESCRIPTOR).get(WIDEST_RULE_KEY);
+        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_KEY);
         if (widestWindowRule == null) {
             return;
         }

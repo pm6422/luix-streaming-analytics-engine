@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RuleHelper {
-    public static void handleRule(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
+    public static void handleRuleCommand(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
         switch (ruleCommand.getCommand()) {
             case ADD:
                 // merge rule by ID
