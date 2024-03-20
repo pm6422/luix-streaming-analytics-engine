@@ -14,7 +14,7 @@ import static cn.luixtech.cae.flinkjob.utils.KafkaUtils.createKafkaSource;
 public class InputSourceKafkaCreator implements SourceCreator {
     @Override
     public DataStreamSource<String> create(StreamExecutionEnvironment env, Arguments arguments) {
-        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.inputTopic, "inputGrp");
+        KafkaSource<String> kafkaSource = createKafkaSource(arguments, arguments.inputTopic, arguments.inputTopicGroup);
 
         // NOTE: Idiomatically, watermarks should be assigned here, but this done later
         // because of the mix of the new Source (Kafka) and SourceFunction-based interfaces.
