@@ -1,13 +1,17 @@
 package cn.luixtech.cae.common.input;
 
 import cn.luixtech.cae.common.IngestionTimeAssignable;
+import cn.luixtech.cae.common.rule.Rule;
+import cn.luixtech.cae.common.rule.RuleGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import cn.luixtech.cae.common.rule.RuleGroup;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -52,5 +56,29 @@ public class Input implements IngestionTimeAssignable {
     @Override
     public long getIngestionTime() {
         return this.ingestionTime;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getRecordReferenceFieldValue(Rule rule, String fieldName) {
+        if (MapUtils.isEmpty(record)) {
+            return StringUtils.EMPTY;
+        }
+        if (StringUtils.isEmpty(rule.getReferenceRecordKey())) {
+            return Objects.toString(record.get(fieldName), StringUtils.EMPTY);
+        }
+        Object fieldValue = ((Map<String, Object>) record.get(rule.getReferenceRecordKey())).get(fieldName);
+        return Objects.toString(fieldValue, StringUtils.EMPTY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getTargetReferenceFieldValue(Rule rule, String fieldName) {
+        if (MapUtils.isEmpty(record)) {
+            return StringUtils.EMPTY;
+        }
+        if (StringUtils.isEmpty(rule.getTargetRecordKey())) {
+            return Objects.toString(record.get(fieldName), StringUtils.EMPTY);
+        }
+        Object fieldValue = ((Map<String, Object>) record.get(rule.getTargetRecordKey())).get(fieldName);
+        return Objects.toString(fieldValue, StringUtils.EMPTY);
     }
 }

@@ -116,9 +116,11 @@ public class RuleHelper {
      */
     private static boolean evaluateMatchingRule(Rule rule, Input input) {
         if (StringUtils.isNotEmpty(rule.getMatchingRule().getExpectedValue())) {
+            // expected value matching
             return rule.getMatchingRule().getExpectedValue()
                     .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName()).toString());
         }
+        // field value matching
         return rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName())
                 .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getExpectedFieldName()));
     }
