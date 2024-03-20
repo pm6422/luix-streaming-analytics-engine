@@ -65,7 +65,7 @@ public class RuleHelper {
         }
     }
 
-    public static boolean evaluateRuleGroup(RuleGroup ruleGroup, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
+    public static boolean evaluateRuleGroup(RuleGroup ruleGroup, Input input, MapState<Long, Set<Input>> inputWindowState) throws Exception {
         if (ruleGroup == null) {
             return false;
         }
@@ -78,7 +78,7 @@ public class RuleHelper {
         // evaluate child rule groups
         if (CollectionUtils.isNotEmpty(ruleGroup.getChildren())) {
             for (RuleGroup childGroup : ruleGroup.getChildren()) {
-                boolean childResult = evaluateRuleGroup(childGroup, input, windowState);
+                boolean childResult = evaluateRuleGroup(childGroup, input, inputWindowState);
                 if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
                     result = result && childResult;
                 } else {
@@ -90,7 +90,7 @@ public class RuleHelper {
         // evaluate rules
         if (CollectionUtils.isNotEmpty(ruleGroup.getRules())) {
             for (Rule rule : ruleGroup.getRules()) {
-                boolean ruleResult = evaluateRule(rule, input, windowState);
+                boolean ruleResult = evaluateRule(rule, input, inputWindowState);
                 if (ruleGroup.getLogicalOperator() == LogicalOperator.AND) {
                     result = result && ruleResult;
                 } else {
@@ -101,10 +101,10 @@ public class RuleHelper {
         return result;
     }
 
-    public static boolean evaluateRule(Rule rule, Input input, MapState<Long, Set<Input>> windowState) throws Exception {
+    public static boolean evaluateRule(Rule rule, Input input, MapState<Long, Set<Input>> inputWindowState) throws Exception {
         return RuleType.MATCHING == rule.determineType()
                 ? evaluateMatchingRule(rule, input)
-                : evaluateAggregatingRule(rule, input, windowState);
+                : evaluateAggregatingRule(rule, input, inputWindowState);
     }
 
     /**
@@ -126,21 +126,21 @@ public class RuleHelper {
     /**
      * Evaluates aggregate rule by comparing provided value with rules' limit based on operator.
      *
-     * @param rule        aggregation rule to evaluate
-     * @param input       inputInWindow data
-     * @param windowState inputInWindow data group by time window
+     * @param rule             aggregation rule to evaluate
+     * @param input            inputInWindow data
+     * @param inputWindowState inputInWindow data group by time window
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
      */
     private static boolean evaluateAggregatingRule(Rule rule, Input input,
-                                                   MapState<Long, Set<Input>> windowState) throws Exception {
+                                                   MapState<Long, Set<Input>> inputWindowState) throws Exception {
         Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregated value
         SimpleAccumulator<BigDecimal> aggregator = getAggregator(rule.getAggregatingRule().getAggregator());
-        for (Long stateCreatedTime : windowState.keys()) {
-            if (isStateValueInWindow(stateCreatedTime, windowStartTime, input.getCreatedTime())) {
-                Set<Input> inputsInWindow = windowState.get(stateCreatedTime);
+        for (Long inputStateCreatedTime : inputWindowState.keys()) {
+            if (isStateInWindow(inputStateCreatedTime, windowStartTime, input.getCreatedTime())) {
+                Set<Input> inputsInWindow = inputWindowState.get(inputStateCreatedTime);
                 for (Input inputInWindow : inputsInWindow) {
                     BigDecimal aggregatedValue = getBigDecimalByFieldName(
                             rule.getMappingRecord(inputInWindow), rule.getAggregatingRule().getAggregateFieldName());
@@ -155,8 +155,8 @@ public class RuleHelper {
         return rule.getArithmeticOperator().compare(actualAggregatedValue, rule.getAggregatingRule().getExpectedLimitValue());
     }
 
-    private static boolean isStateValueInWindow(Long stateCreatedTime, Long windowStartTime, long currentEventTime) {
-        return stateCreatedTime >= windowStartTime && stateCreatedTime <= currentEventTime;
+    private static boolean isStateInWindow(Long inputStateCreatedTime, Long windowStartTime, long currentInputCreatedTime) {
+        return inputStateCreatedTime >= windowStartTime && inputStateCreatedTime <= currentInputCreatedTime;
     }
 
     private static BigDecimal getBigDecimalByFieldName(Map<String, Object> record, String fieldName) {
