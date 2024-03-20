@@ -132,8 +132,7 @@ public class RuleHelper {
      * @return true if matched, otherwise false
      * @throws Exception if exception throws
      */
-    private static boolean evaluateAggregatingRule(Rule rule, Input input,
-                                                   MapState<Long, Set<Input>> inputWindowState) throws Exception {
+    private static boolean evaluateAggregatingRule(Rule rule, Input input, MapState<Long, Set<Input>> inputWindowState) throws Exception {
         Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
         // Calculate the aggregated value
