@@ -99,11 +99,13 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
                 "Rule group: " + ruleGroup.getId() + " , sharding key: " + shardingPolicy.getShardingKey() + " , matched: " + ruleMatched);
 
-        if (ruleMatched) {
+
+        if (ruleMatched && isAfterSilentPeriod(ruleGroup)) {
             if (ruleCommand.getRuleGroup().isResetAfterMatch()) {
                 evictAllInputs();
             }
             outputMeter.markEvent();
+            ruleGroup.setLastMatchingTime(System.currentTimeMillis());
             out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
         }
     }
@@ -167,5 +169,9 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         } catch (Exception ex) {
             log.error("Failed to evict all inputs");
         }
+    }
+
+    private boolean isAfterSilentPeriod(RuleGroup ruleGroup) {
+        return System.currentTimeMillis() > ruleGroup.getLastMatchingTime() + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
     }
 }
