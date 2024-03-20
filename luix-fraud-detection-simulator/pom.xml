@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-cae-common</artifactId>
+            <artifactId>luix-dae-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

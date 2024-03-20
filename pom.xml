@@ -6,8 +6,8 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>luix-cae-common</module>
-        <module>luix-cae-flink-job</module>
+        <module>luix-dae-common</module>
+        <module>luix-dae-flink-job</module>
         <module>luix-fraud-detection-simulator</module>
     </modules>
     <properties>
