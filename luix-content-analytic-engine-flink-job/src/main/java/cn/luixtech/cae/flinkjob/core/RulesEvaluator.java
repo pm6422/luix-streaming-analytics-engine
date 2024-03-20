@@ -40,7 +40,7 @@ public class RulesEvaluator {
         BroadcastStream<RuleCommand> broadcastRuleCommandStream = createBroadcastRuleCommandStream(env);
         DataStream<Input> inputStream = createInputStream(env);
 
-        // Processing pipeline setup
+        // processing pipeline setup
         SingleOutputStreamOperator<Output> outputStream = inputStream
                 .connect(broadcastRuleCommandStream)
                 .process(new InputShardingFunction())
