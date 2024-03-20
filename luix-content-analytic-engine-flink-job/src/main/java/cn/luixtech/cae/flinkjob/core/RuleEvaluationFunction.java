@@ -30,15 +30,15 @@ import java.util.concurrent.TimeUnit;
 public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
 
     private              Meter                                outputMeter;
-    private transient    MapState<Long, Set<Input>>           windowState;
-    private static final MapStateDescriptor<Long, Set<Input>> WINDOW_STATE_DESCRIPTOR =
-            new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
+    private transient    MapState<Long, Set<Input>>           inputWindowState;
+    private static final MapStateDescriptor<Long, Set<Input>> INPUT_WINDOW_STATE_DESCRIPTOR =
+            new MapStateDescriptor<>("inputWindowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
-    private static final String                               WIDEST_RULE_GROUP_KEY   = "widestRuleGroup";
+    private static final String                               WIDEST_RULE_COMMAND_KEY       = "widestRuleCommand";
 
     @Override
     public void open(Configuration parameters) {
-        windowState = getRuntimeContext().getMapState(WINDOW_STATE_DESCRIPTOR);
+        inputWindowState = getRuntimeContext().getMapState(INPUT_WINDOW_STATE_DESCRIPTOR);
         outputMeter = new MeterView(60);
         getRuntimeContext().getMetricGroup().meter("outputsPerMinute", outputMeter);
     }
@@ -47,47 +47,34 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Output> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastRuleCommandState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
-        // Merge the new rule with the existing one
+        // merge the new rule with the existing one
         RuleHelper.handleRuleCommand(broadcastRuleCommandState, ruleCommand);
-        updateWidestWindowRuleGroup(broadcastRuleCommandState, ruleCommand);
-    }
-
-    private void updateWidestWindowRuleGroup(BroadcastState<String, RuleCommand> broadcastRuleCommandState, RuleCommand ruleCommand) throws Exception {
-        RuleCommand widestWindowRule = broadcastRuleCommandState.get(WIDEST_RULE_GROUP_KEY);
-        if (Command.ADD != ruleCommand.getCommand()) {
-            return;
-        }
-        if (widestWindowRule == null) {
-            broadcastRuleCommandState.put(WIDEST_RULE_GROUP_KEY, ruleCommand);
-            return;
-        }
-        if (ruleCommand.getRuleGroup().getWindowMinutes() > widestWindowRule.getRuleGroup().getWindowMinutes()) {
-            broadcastRuleCommandState.put(WIDEST_RULE_GROUP_KEY, ruleCommand);
-        }
+        // update the rule command with the widest time window
+        updateWidestWindowRuleCommand(broadcastRuleCommandState, ruleCommand);
     }
 
     /**
-     * Called for each element after received rule
+     * Evaluate rule group after receiving new input
      *
-     * @param shardingPolicy The stream element.
+     * @param shardingPolicy The sharding policy
      * @param ctx            A {@link ReadOnlyContext} that allows querying the timestamp of the element,
      *                       querying the current processing/event time and iterating the broadcast state with
      *                       <b>read-only</b> access. The context is only valid during the invocation of this method,
      *                       do not store it.
      * @param out            The collector to emit resulting elements to
-     * @throws Exception exception
+     * @throws Exception exception if any exception throws
      */
     @Override
     public void processElement(ShardingPolicy<Input, String, String> shardingPolicy, ReadOnlyContext ctx, Collector<Output> out) throws Exception {
-        Input record = shardingPolicy.getInput();
+        Input input = shardingPolicy.getInput();
 
-        // Store record to local map which is grouped by created time
-        groupInputByTime(windowState, record.getCreatedTime(), record);
+        // store input to local map which is grouped by created time
+        groupInputsByCreatedTime(inputWindowState, input.getCreatedTime(), input);
 
-        // Calculate handling latency time
-        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - record.getIngestionTime());
+        // calculate handling latency time
+        ctx.output(Descriptors.HANDLING_LATENCY_SINK_TAG, System.currentTimeMillis() - input.getIngestionTime());
 
-        // Get rule command by ID
+        // get rule command by ID
         RuleCommand ruleCommand = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(shardingPolicy.getRuleGroupId());
         if (ruleCommand == null) {
             log.error("Rule [{}] does not exist", shardingPolicy.getRuleGroupId());
@@ -99,16 +86,16 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
             return;
         }
 
-        long cleanupTime = (record.getCreatedTime() / 1000) * 1000;
-        // Register cleanup timer
+        long cleanupTime = (input.getCreatedTime() / 1000) * 1000;
+        // register cleanup timer
         ctx.timerService().registerEventTimeTimer(cleanupTime);
 
         RuleGroup ruleGroup = ruleCommand.getRuleGroup();
 
-        // Evaluate the rule and trigger an output if matched
-        boolean ruleMatched = RuleHelper.evaluateRuleGroup(ruleGroup, record, windowState);
+        // evaluate the rule and trigger an output if matched
+        boolean ruleMatched = RuleHelper.evaluateRuleGroup(ruleGroup, input, inputWindowState);
 
-        // Print rule evaluation result
+        // print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
                 "Rule group: " + ruleGroup.getId() + " , sharding key: " + shardingPolicy.getShardingKey() + " , matched: " + ruleMatched);
 
@@ -121,18 +108,32 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         }
     }
 
-    private static <K, V> void groupInputByTime(MapState<K, Set<V>> mapState, K key, V value) throws Exception {
-        Set<V> valuesSet = mapState.get(key);
+    private void updateWidestWindowRuleCommand(BroadcastState<String, RuleCommand> broadcastRuleCommandState, RuleCommand ruleCommand) throws Exception {
+        RuleCommand widestWindowRule = broadcastRuleCommandState.get(WIDEST_RULE_COMMAND_KEY);
+        if (Command.ADD != ruleCommand.getCommand()) {
+            return;
+        }
+        if (widestWindowRule == null) {
+            broadcastRuleCommandState.put(WIDEST_RULE_COMMAND_KEY, ruleCommand);
+            return;
+        }
+        if (ruleCommand.getRuleGroup().getWindowMinutes() > widestWindowRule.getRuleGroup().getWindowMinutes()) {
+            broadcastRuleCommandState.put(WIDEST_RULE_COMMAND_KEY, ruleCommand);
+        }
+    }
+
+    private static <K, V> void groupInputsByCreatedTime(MapState<K, Set<V>> inputWindowState, K key, V value) throws Exception {
+        Set<V> valuesSet = inputWindowState.get(key);
         if (valuesSet == null) {
             valuesSet = new HashSet<>();
         }
         valuesSet.add(value);
-        mapState.put(key, valuesSet);
+        inputWindowState.put(key, valuesSet);
     }
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Output> out) throws Exception {
-        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_GROUP_KEY);
+        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_COMMAND_KEY);
         if (widestWindowRule == null) {
             return;
         }
@@ -143,7 +144,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
     private void evictAgedElementsFromWindow(Long threshold) {
         try {
-            Iterator<Long> keys = windowState.keys().iterator();
+            Iterator<Long> keys = inputWindowState.keys().iterator();
             while (keys.hasNext()) {
                 Long stateEventTime = keys.next();
                 if (stateEventTime < threshold) {
@@ -157,7 +158,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
     private void evictAllStateElements() {
         try {
-            Iterator<Long> keys = windowState.keys().iterator();
+            Iterator<Long> keys = inputWindowState.keys().iterator();
             while (keys.hasNext()) {
                 keys.next();
                 keys.remove();

@@ -41,7 +41,7 @@ public class InputShardingFunction extends BroadcastProcessFunction<Input, RuleC
     public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<ShardingPolicy<Input, String, String>> out) throws Exception {
         log.debug("Received {}", ruleCommand);
         BroadcastState<String, RuleCommand> broadcastRuleCommandState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
-        // Merge the new rule with the existing one
+        // merge the new rule with the existing one
         RuleHelper.handleRuleCommand(broadcastRuleCommandState, ruleCommand);
     }
 
