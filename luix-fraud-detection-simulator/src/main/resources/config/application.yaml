@@ -10,7 +10,7 @@ app:
   id: fraud-detection-simulator
   name: fraud-detection-simulator
   version: 1.0.0-SNAPSHOT
-  package: com.luixtech.frauddetection.simulator
+  package: cn.luixtech.frauddetection.simulator
   companyName: www.luixtech.com
 management: # Management http server configuration, used by ManagementServerProperties
   endpoints:

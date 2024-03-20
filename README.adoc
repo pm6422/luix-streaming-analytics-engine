@@ -45,7 +45,7 @@ http://localhost:8081[http://localhost:8081]
 
 
 Run fraud-detection-simulator module with main() method of:
-`com.luixtech.frauddetection.simulator.SimulatorLauncher`
+`cn.luixtech.frauddetection.simulator.SimulatorLauncher`
 
 Access swagger with URL:
 http://localhost:5656[http://localhost:5656]
