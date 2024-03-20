@@ -41,7 +41,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     public void open(Configuration parameters) {
         windowState = getRuntimeContext().getMapState(WINDOW_STATE_DESCRIPTOR);
         outputMeter = new MeterView(60);
-        getRuntimeContext().getMetricGroup().meter("outputsPerSecond", outputMeter);
+        getRuntimeContext().getMetricGroup().meter("outputsPerMinute", outputMeter);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
         // Print rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
-                "Rule: " + ruleGroup.getId() + " , Keys: " + shardingPolicy.getShardingKey() + " , Matched: " + ruleMatched);
+                "Rule group: " + ruleGroup.getId() + " , sharding key: " + shardingPolicy.getShardingKey() + " , matched: " + ruleMatched);
 
         if (ruleMatched) {
             if (ruleCommand.getRuleGroup().isResetAfterMatch()) {
