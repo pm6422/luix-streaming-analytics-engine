@@ -9,7 +9,7 @@ import cn.luixtech.cae.flinkjob.core.Arguments;
  * Main class to launch the Flink job with CLI params example:
  * --flink.dashboard.enabled=true --message.channel=socket
  */
-public class FlinkJobApplication {
+public class CaeFlinkJobApplication {
     public static void main(String[] args) throws Exception {
         Arguments arguments = new Arguments();
         JCommander commander = JCommander.newBuilder().addObject(arguments).build();

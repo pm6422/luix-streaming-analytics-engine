@@ -30,9 +30,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
 
-    private static final String                     WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
-    private              Meter                      outputMeter;
-    private transient    MapState<Long, Set<Input>> windowState;
+    private static final String                               WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
+    private              Meter                                outputMeter;
+    private transient    MapState<Long, Set<Input>>           windowState;
     private static final MapStateDescriptor<Long, Set<Input>> WINDOW_STATE_DESCRIPTOR =
             new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
@@ -71,11 +71,11 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
      * Called for each element after received rule
      *
      * @param shardingPolicy The stream element.
-     * @param ctx   A {@link ReadOnlyContext} that allows querying the timestamp of the element,
-     *              querying the current processing/event time and iterating the broadcast state with
-     *              <b>read-only</b> access. The context is only valid during the invocation of this method,
-     *              do not store it.
-     * @param out   The collector to emit resulting elements to
+     * @param ctx            A {@link ReadOnlyContext} that allows querying the timestamp of the element,
+     *                       querying the current processing/event time and iterating the broadcast state with
+     *                       <b>read-only</b> access. The context is only valid during the invocation of this method,
+     *                       do not store it.
+     * @param out            The collector to emit resulting elements to
      * @throws Exception exception
      */
     @Override

@@ -3,7 +3,6 @@ package cn.luixtech.cae.flinkjob.core;
 import cn.luixtech.cae.common.output.Output;
 import cn.luixtech.cae.common.input.Input;
 import cn.luixtech.cae.common.rule.RuleCommand;
-import cn.luixtech.cae.flinkjob.core.function.AverageAggregate;
 import cn.luixtech.cae.flinkjob.output.OutputSink;
 import cn.luixtech.cae.flinkjob.output.LatencySink;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package cn.luixtech.cae.flinkjob.core.function;
+package cn.luixtech.cae.flinkjob.core;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
