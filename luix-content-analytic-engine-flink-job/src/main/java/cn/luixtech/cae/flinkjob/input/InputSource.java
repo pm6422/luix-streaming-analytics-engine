@@ -18,15 +18,23 @@ public class InputSource {
         DataStreamSource<String> dataStreamSource = SourceCreator
                 .getInstance("input-" + arguments.messageChannel)
                 .create(env, arguments);
-        dataStreamSource.setParallelism(arguments.sourceParallelism);
+        dataStreamSource.setParallelism(arguments.inputSourceParallelism);
         return dataStreamSource;
     }
 
-    public static DataStream<Input> stringsStreamToInput(Arguments arguments, DataStream<String> inputStrings) {
-        return inputStrings
+    /**
+     * Convert input string stream to structured object stream
+     *
+     * @param arguments         application arguments
+     * @param inputStringStream input string stream
+     * @return structured object stream
+     */
+    public static DataStream<Input> stringsStreamToInput(Arguments arguments, DataStream<String> inputStringStream) {
+        return inputStringStream
                 .flatMap(new JsonDeserializer<>(Input.class))
                 .name(arguments.messageChannel)
                 .returns(Input.class)
+                // set ingestion time
                 .flatMap(new TimeStamper<>())
                 .returns(Input.class)
                 .assignTimestampsAndWatermarks(new SimpleBoundedOutOfOrdernessTimestampExtractor<>(arguments.outOfOrderdness));

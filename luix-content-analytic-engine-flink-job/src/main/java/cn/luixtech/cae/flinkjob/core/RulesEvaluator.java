@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import static cn.luixtech.cae.flinkjob.core.Arguments.CHANNEL_KAFKA;
 import static cn.luixtech.cae.flinkjob.core.Arguments.CHANNEL_SOCKET;
-import static cn.luixtech.cae.flinkjob.input.RuleSource.initRulesSource;
-import static cn.luixtech.cae.flinkjob.input.RuleSource.stringsStreamToRules;
+import static cn.luixtech.cae.flinkjob.input.RuleSource.initRuleCommandSource;
+import static cn.luixtech.cae.flinkjob.input.RuleSource.stringStreamToRuleCommand;
 import static cn.luixtech.cae.flinkjob.input.InputSource.initInputSource;
 import static cn.luixtech.cae.flinkjob.input.InputSource.stringsStreamToInput;
 
@@ -37,9 +37,9 @@ public class RulesEvaluator {
     public void run() throws Exception {
         // Create stream execution environment
         StreamExecutionEnvironment env = createExecutionEnv();
-        DataStream<RuleCommand> ruleStream = createRuleStream(env);
+        DataStream<RuleCommand> ruleCommandStream = createRuleCommandStream(env);
         // Rule must be broadcast to all flink servers on the same cluster
-        BroadcastStream<RuleCommand> broadcastRuleStream = ruleStream.broadcast(Descriptors.RULES_DESCRIPTOR);
+        BroadcastStream<RuleCommand> broadcastRuleStream = ruleCommandStream.broadcast(Descriptors.RULES_DESCRIPTOR);
         DataStream<Input> inputStream = createInputStream(env);
 
         // Processing pipeline setup
@@ -106,13 +106,13 @@ public class RulesEvaluator {
                 break;
             case CHANNEL_KAFKA:
                 // Default - unlimited restart strategy.
-                //        env.setRestartStrategy(RestartStrategies.noRestart());
+                // env.setRestartStrategy(RestartStrategies.noRestart());
         }
     }
 
-    private DataStream<RuleCommand> createRuleStream(StreamExecutionEnvironment env) {
-        DataStream<String> rulesStringStream = initRulesSource(arguments, env);
-        return stringsStreamToRules(arguments, rulesStringStream);
+    private DataStream<RuleCommand> createRuleCommandStream(StreamExecutionEnvironment env) {
+        DataStream<String> ruleCommandStringStream = initRuleCommandSource(arguments, env);
+        return stringStreamToRuleCommand(arguments, ruleCommandStringStream);
     }
 
     private DataStream<Input> createInputStream(StreamExecutionEnvironment env) {

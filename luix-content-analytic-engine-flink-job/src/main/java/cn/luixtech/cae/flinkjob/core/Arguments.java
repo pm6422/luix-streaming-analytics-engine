@@ -24,17 +24,17 @@ public class Arguments {
     @Parameter(names = "--kafka.topic.latency", description = "Latency topic")
     public              String  latencyTopic               = "latency";
     @Parameter(names = "--kafka.topic.output", description = "Output topic")
-    public              String  outputTopic                = "output";
-    @Parameter(names = "--source-parallelism", description = "Parallelism for input record source")
-    public              Integer sourceParallelism          = 2;
-    @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshotted. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)
-    public              boolean checkpointsEnabled         = false;
+    public              String  outputTopic            = "output";
+    @Parameter(names = "--input-source-parallelism", description = "Parallelism for input source")
+    public              Integer inputSourceParallelism = 2;
+    @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshot. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)
+    public              boolean checkpointsEnabled     = false;
     @Parameter(names = "--checkpoint.interval", description = "Time interval between state checkpoints in milliseconds")
     public              Integer checkpointInterval         = 60_000_0;
     @Parameter(names = "--checkpoint.min-pause", description = "The minimal pause before the next checkpoint is triggered")
     public              Long    minPauseBetweenCheckpoints = 10000L;
     @Parameter(names = "--out-of-orderdness", description = "")
-    public              Integer outOfOrderdness = 500;
+    public              Integer outOfOrderdness            = 500;
     @Parameter(names = "--generator.inputs-per-second", description = "Max records per second for input record generator")
-    public              Integer inputsPerSecond = 2;
+    public              Integer inputsPerSecond            = 2;
 }

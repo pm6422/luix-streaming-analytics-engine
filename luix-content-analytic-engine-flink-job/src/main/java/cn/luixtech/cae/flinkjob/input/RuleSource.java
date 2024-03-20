@@ -15,7 +15,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 @Slf4j
 public class RuleSource {
 
-    public static DataStreamSource<String> initRulesSource(Arguments arguments, StreamExecutionEnvironment env) {
+    public static DataStreamSource<String> initRuleCommandSource(Arguments arguments, StreamExecutionEnvironment env) {
         DataStreamSource<String> dataStreamSource = SourceCreator
                 .getInstance("rule-" + arguments.messageChannel)
                 .create(env, arguments);
@@ -23,12 +23,20 @@ public class RuleSource {
         return dataStreamSource;
     }
 
-    public static DataStream<RuleCommand> stringsStreamToRules(Arguments arguments, DataStream<String> ruleStrings) {
-        return ruleStrings
+    /**
+     * Convert rule command string stream to structured object stream
+     *
+     * @param arguments               application arguments
+     * @param ruleCommandStringStream rule command string stream
+     * @return structured object stream
+     */
+    public static DataStream<RuleCommand> stringStreamToRuleCommand(Arguments arguments, DataStream<String> ruleCommandStringStream) {
+        return ruleCommandStringStream
                 .flatMap(new JsonDeserializer<>(RuleCommand.class))
 //                .name(getRuleSourceType(parameters).getName())
                 .setParallelism(1)
                 .returns(RuleCommand.class)
+                // set ingestion time
                 .flatMap(new TimeStamper<>())
                 .returns(RuleCommand.class)
                 .assignTimestampsAndWatermarks(new SimpleBoundedOutOfOrdernessTimestampExtractor<>(arguments.outOfOrderdness));
