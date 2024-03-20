@@ -1,16 +1,16 @@
-= Fraud Detection with Apache Flink
+= Luix Content Analytic Engine with Apache Flink
 
 [[overview]]
 == Overview
-Fraud Detection engine is to consume a stream of financial transactions and evaluate them against a set of rules. Any transaction that violates a ruleGroup is flagged as a potential fraud. The engine is implemented using Apache Flink and is deployed as a standalone application. The engine is integrated with a web application that allows users to configure rules and simulate real-time transactions.
+Content analytic engine is to consume a stream of inputs and evaluate them against a set of rules. Any input that matches the rules is flagged as a output. The engine is implemented using Apache Flink and is deployed as a standalone application.
 
 [[modules]]
 == Modules
 Fraud detection demo system consists of three main components:
 
-- fraud-detection-common: Common library for the Fraud Detection application
-- fraud-detection-flink-job: Fraud Detection application with Apache Flink
-- fraud-detection-simulator: Fraud Detection web simulator, which is used to generate transactions and configure rules
+- luix-cae-common: Common library for the CAE Flink Job
+- luix-cae-flink-job: Content analytic engine application with Apache Flink
+- luix-fraud-detection-simulator: Fraud Detection web simulator demo, which is used to generate transactions and configure rules
 
 [[requirements]]
 == Requirements
@@ -37,39 +37,17 @@ Run the following command to build the project:
 == Run
 This project contains multiple sub-modules.
 
-Run fraud-detection-flink-job module with main() method of:
-`cn.luixtech.cae.flinkjob.FlinkJobLauncher`
+Run luix-cae-flink-job module with main() method of:
+`cn.luixtech.cae.flinkjob.CaeFlinkJobApplication`
 
 Access Flink Web UI (Dashboard) with URL:
 http://localhost:8081[http://localhost:8081]
 
-
-Run fraud-detection-simulator module with main() method of:
-`cn.luixtech.frauddetection.simulator.SimulatorLauncher`
+Run luix-fraud-detection-simulator module with main() method of:
+`cn.luixtech.frauddetection.simulator.SimulatorApplication`
 
 Access swagger with URL:
 http://localhost:5656[http://localhost:5656]
-
-Access H2 Console with URL:
-http://localhost:5656/h2-console[http://localhost:5656/h2-console]
-
-|===
-|Setting |Value
-
-|Driver Class
-|org.h2.Driver
-
-|JDBC URL
-|jdbc:h2:mem:simulator
-
-|Username
-|sa
-
-|Password
-|
-
-|===
-
 
 [[InstallDocker]]
 == Install Docker
