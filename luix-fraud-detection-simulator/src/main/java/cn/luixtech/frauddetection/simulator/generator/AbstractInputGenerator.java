@@ -86,11 +86,11 @@ public abstract class AbstractInputGenerator implements Runnable {
         final SplittableRandom rnd = new SplittableRandom();
 
         while (running) {
-            Input input = randomOne(rnd, null);
-            inputProducer.accept(input);
             try {
+                Input input = randomOne(rnd, null);
+                inputProducer.accept(input);
                 throttler.throttle();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

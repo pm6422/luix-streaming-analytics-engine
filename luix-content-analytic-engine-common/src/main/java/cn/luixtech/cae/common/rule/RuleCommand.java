@@ -24,7 +24,7 @@ public class RuleCommand implements IngestionTimeAssignable {
     /**
      * Timestamp of ingestion into the flink input source, unit: ms
      */
-    private Long      ingestionTime;
+    private long      ingestionTime;
 
     @Override
     public void setIngestionTime(long timestamp) {

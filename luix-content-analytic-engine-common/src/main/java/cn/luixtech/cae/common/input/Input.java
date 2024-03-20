@@ -37,7 +37,7 @@ public class Input implements IngestionTimeAssignable {
     /**
      * Timestamp of ingestion into the flink input source, unit: ms
      */
-    private Long                ingestionTime;
+    private long                ingestionTime;
     /**
      * Grouping field name and value pair, used to sharding the input records by flink,
      * the field is used in combination with field 'groupingKeys' of {@link RuleGroup}
