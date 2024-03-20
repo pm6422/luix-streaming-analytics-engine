@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Output {
-    private String    ruleId;
+    private String    ruleGroupId;
     private RuleGroup violatedRuleGroup;
     private String    groupKeys;
     private Input     triggeringInput;
