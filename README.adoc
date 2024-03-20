@@ -37,8 +37,8 @@ Run the following command to build the project:
 == Run
 This project contains multiple sub-modules.
 
-Run luix-cae-flink-job module with main() method of:
-`cn.luixtech.dae.flinkjob.CaeFlinkJobApplication`
+Run luix-dae-flink-job module with main() method of:
+`cn.luixtech.dae.flinkjob.DaeFlinkJobApplication`
 
 Access Flink Web UI (Dashboard) with URL:
 http://localhost:8081[http://localhost:8081]
