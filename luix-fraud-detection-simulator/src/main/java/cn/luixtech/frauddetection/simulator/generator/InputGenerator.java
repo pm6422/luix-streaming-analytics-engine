@@ -1,6 +1,6 @@
 package cn.luixtech.frauddetection.simulator.generator;
 
-import cn.luixtech.cae.common.input.Input;
+import cn.luixtech.dae.common.input.Input;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;

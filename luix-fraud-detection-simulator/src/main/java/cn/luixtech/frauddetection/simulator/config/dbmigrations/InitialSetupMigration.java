@@ -1,10 +1,10 @@
 package cn.luixtech.frauddetection.simulator.config.dbmigrations;
 
-import cn.luixtech.cae.common.rule.Rule;
-import cn.luixtech.cae.common.rule.RuleGroup;
-import cn.luixtech.cae.common.rule.aggregating.AggregatingRule;
-import cn.luixtech.cae.common.rule.aggregating.Aggregator;
-import cn.luixtech.cae.common.rule.ArithmeticOperator;
+import cn.luixtech.dae.common.rule.Rule;
+import cn.luixtech.dae.common.rule.RuleGroup;
+import cn.luixtech.dae.common.rule.aggregating.AggregatingRule;
+import cn.luixtech.dae.common.rule.aggregating.Aggregator;
+import cn.luixtech.dae.common.rule.ArithmeticOperator;
 import cn.luixtech.frauddetection.simulator.domain.Detector;
 import cn.luixtech.frauddetection.simulator.repository.DetectorRepository;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package cn.luixtech.frauddetection.simulator.kafka.producer;
 
-import cn.luixtech.cae.common.output.Output;
+import cn.luixtech.dae.common.output.Output;
 import cn.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

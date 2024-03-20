@@ -1,6 +1,6 @@
 package cn.luixtech.frauddetection.simulator.generator;
 
-import cn.luixtech.cae.common.input.Input;
+import cn.luixtech.dae.common.input.Input;
 import com.luixtech.utilities.thread.Throttler;
 import lombok.extern.slf4j.Slf4j;
 

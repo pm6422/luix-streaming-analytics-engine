@@ -1,0 +1,6 @@
+# The file name should be identical to the fully-qualified name of extension interface.
+# The file must be encoded in UTF-8.
+cn.luixtech.dae.flinkjob.output.sinkcreator.impl.OutputSinkKafkaCreator
+cn.luixtech.dae.flinkjob.output.sinkcreator.impl.OutputSinkSocketCreator
+cn.luixtech.dae.flinkjob.output.sinkcreator.impl.LatencySinkKafkaCreator
+cn.luixtech.dae.flinkjob.output.sinkcreator.impl.LatencySinkSocketCreator

@@ -2,8 +2,8 @@ package cn.luixtech.frauddetection.simulator.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cn.luixtech.cae.common.input.Input;
-import cn.luixtech.cae.common.output.Output;
+import cn.luixtech.dae.common.input.Input;
+import cn.luixtech.dae.common.output.Output;
 import cn.luixtech.frauddetection.simulator.config.ApplicationProperties;
 import cn.luixtech.frauddetection.simulator.domain.Detector;
 import cn.luixtech.frauddetection.simulator.kafka.producer.KafkaInputProducer;

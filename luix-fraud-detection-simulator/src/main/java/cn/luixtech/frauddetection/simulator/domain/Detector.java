@@ -1,8 +1,8 @@
 package cn.luixtech.frauddetection.simulator.domain;
 
-import cn.luixtech.cae.common.command.Command;
-import cn.luixtech.cae.common.rule.RuleCommand;
-import cn.luixtech.cae.common.rule.RuleGroup;
+import cn.luixtech.dae.common.command.Command;
+import cn.luixtech.dae.common.rule.RuleCommand;
+import cn.luixtech.dae.common.rule.RuleGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

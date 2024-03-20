@@ -1,4 +1,4 @@
-package cn.luixtech.cae.flinkjob.core.util;
+package cn.luixtech.dae.flinkjob.core.util;
 
 import java.util.Arrays;
 import org.apache.flink.api.common.ExecutionConfig;
