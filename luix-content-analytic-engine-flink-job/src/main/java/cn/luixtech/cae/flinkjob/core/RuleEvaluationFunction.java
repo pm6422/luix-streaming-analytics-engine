@@ -95,7 +95,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         // evaluate the rule and trigger an output if matched
         boolean ruleMatched = RuleHelper.evaluateRuleGroup(ruleGroup, input, inputWindowState);
 
-        // print rule evaluation result
+        // output rule evaluation result
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
                 "Rule group: " + ruleGroup.getId() + " , sharding key: " + shardingPolicy.getShardingKey() + " , matched: " + ruleMatched);
 
