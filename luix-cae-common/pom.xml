@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.luixtech</groupId>
-        <artifactId>luix-content-analytic-engine</artifactId>
+        <artifactId>luix-data-analytic-engine</artifactId>
         <version>${revision}</version>
     </parent>
     <artifactId>luix-cae-common</artifactId>
