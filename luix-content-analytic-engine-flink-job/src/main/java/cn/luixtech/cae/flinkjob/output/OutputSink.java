@@ -9,8 +9,8 @@ import org.apache.flink.streaming.api.datastream.DataStreamSink;
 
 public class OutputSink {
 
-    public static DataStream<String> outputStreamToJson(DataStream<Output> outputs) {
-        return outputs.flatMap(new JsonSerializer<>(Output.class)).name("Outputs Serialization");
+    public static DataStream<String> outputStreamToString(DataStream<Output> outputs) {
+        return outputs.flatMap(new JsonSerializer<>(Output.class)).name("Outputs serialization");
     }
 
     public static DataStreamSink<String> addOutputSink(Arguments arguments, DataStream<String> stream) {

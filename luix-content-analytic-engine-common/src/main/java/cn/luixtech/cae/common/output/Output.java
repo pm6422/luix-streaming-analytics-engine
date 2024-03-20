@@ -12,5 +12,5 @@ public class Output<E> {
     private String    ruleId;
     private RuleGroup violatedRuleGroup;
     private String    groupKeys;
-    private E      triggeringInput;
+    private E         triggeringInput;
 }

@@ -29,7 +29,7 @@ public class InputSource {
      * @param inputStringStream input string stream
      * @return structured object stream
      */
-    public static DataStream<Input> stringsStreamToInput(Arguments arguments, DataStream<String> inputStringStream) {
+    public static DataStream<Input> stringStreamToInput(Arguments arguments, DataStream<String> inputStringStream) {
         return inputStringStream
                 .flatMap(new JsonDeserializer<>(Input.class))
                 .name(arguments.messageChannel)

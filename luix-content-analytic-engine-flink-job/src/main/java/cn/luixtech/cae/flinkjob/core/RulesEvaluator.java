@@ -26,7 +26,7 @@ import static cn.luixtech.cae.flinkjob.core.Arguments.CHANNEL_SOCKET;
 import static cn.luixtech.cae.flinkjob.input.RuleSource.initRuleCommandSource;
 import static cn.luixtech.cae.flinkjob.input.RuleSource.stringStreamToRuleCommand;
 import static cn.luixtech.cae.flinkjob.input.InputSource.initInputSource;
-import static cn.luixtech.cae.flinkjob.input.InputSource.stringsStreamToInput;
+import static cn.luixtech.cae.flinkjob.input.InputSource.stringStreamToInput;
 
 @Slf4j
 @AllArgsConstructor
@@ -55,8 +55,8 @@ public class RulesEvaluator {
 
         outputStream.print().name("Output STDOUT sink");
 
-        DataStream<String> outputJson = OutputSink.outputStreamToJson(outputStream);
-        DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputJson);
+        DataStream<String> outputStringStream = OutputSink.outputStreamToString(outputStream);
+        DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputStringStream);
         outputSink.setParallelism(1).name("Output JSON sink");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
@@ -121,6 +121,6 @@ public class RulesEvaluator {
 
     private DataStream<Input> createInputStream(StreamExecutionEnvironment env) {
         DataStream<String> inputStringStream = initInputSource(arguments, env);
-        return stringsStreamToInput(arguments, inputStringStream);
+        return stringStreamToInput(arguments, inputStringStream);
     }
 }
