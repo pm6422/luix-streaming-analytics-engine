@@ -85,6 +85,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
             return;
         }
 
+        // truncate the milliseconds part of the created time value
         long cleanupTime = (input.getCreatedTime() / 1000) * 1000;
         // register cleanup timer
         ctx.timerService().registerEventTimeTimer(cleanupTime);
@@ -132,26 +133,27 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Output> out) throws Exception {
-        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_COMMAND_KEY);
-        if (widestWindowRule == null) {
+        RuleCommand widestWindowRuleCommand = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_COMMAND_KEY);
+        if (widestWindowRuleCommand == null) {
             return;
         }
-        long cleanupEventTimeWindow = TimeUnit.MINUTES.toMillis(widestWindowRule.getRuleGroup().getWindowMinutes());
-        long cleanupEventTimeThreshold = timestamp - cleanupEventTimeWindow;
-        evictAgedElementsFromWindow(cleanupEventTimeThreshold);
+        long widestTimeWindowInMillis = TimeUnit.MINUTES.toMillis(widestWindowRuleCommand.getRuleGroup().getWindowMinutes());
+        long cleanupTimeThreshold = timestamp - widestTimeWindowInMillis;
+        evictAgedInputsFromWindow(cleanupTimeThreshold);
     }
 
-    private void evictAgedElementsFromWindow(Long threshold) {
+    private void evictAgedInputsFromWindow(Long threshold) {
         try {
-            Iterator<Long> keys = inputWindowState.keys().iterator();
-            while (keys.hasNext()) {
-                Long stateEventTime = keys.next();
-                if (stateEventTime < threshold) {
-                    keys.remove();
+            Iterator<Long> inputCreatedTimeIterator = inputWindowState.keys().iterator();
+            while (inputCreatedTimeIterator.hasNext()) {
+                Long inputCreatedTime = inputCreatedTimeIterator.next();
+                if (inputCreatedTime < threshold) {
+                    // remove aged input
+                    inputCreatedTimeIterator.remove();
                 }
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            log.error("Failed to evict the aged inputs");
         }
     }
 

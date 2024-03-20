@@ -21,7 +21,7 @@ public class RuleGroup {
      */
     private String          tenant;
     /**
-     * The biggest time window of all the rules
+     * The widest time window of all the rules which is used to evict the aged inputs
      */
     private Integer         windowMinutes;
     /**
