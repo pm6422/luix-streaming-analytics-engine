@@ -1,15 +1,15 @@
-= Luix Content Analytic Engine with Apache Flink
+= Luix Data Analytic Engine with Apache Flink
 
 [[overview]]
 == Overview
-Content analytic engine is to consume a stream of inputs and evaluate them against a set of rules. Any input that matches the rules is flagged as a output. The engine is implemented using Apache Flink and is deployed as a standalone application.
+Data analytic engine is to consume a stream of inputs and evaluate them against a set of rules. Any input that matches the rules is flagged as a output. The engine is implemented using Apache Flink and is deployed as a standalone application.
 
 [[modules]]
 == Modules
-Fraud detection demo system consists of three main components:
+This project consists of three main components:
 
-- luix-cae-common: Common library for the CAE Flink Job
-- luix-cae-flink-job: Content analytic engine application with Apache Flink
+- luix-dae-common: Common library for the CAE Flink Job
+- luix-dae-flink-job: Data analytic engine application with Apache Flink
 - luix-fraud-detection-simulator: Fraud Detection web simulator demo, which is used to generate transactions and configure rules
 
 [[requirements]]
