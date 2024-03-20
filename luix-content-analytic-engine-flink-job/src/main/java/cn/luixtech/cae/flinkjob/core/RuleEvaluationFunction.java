@@ -172,6 +172,10 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     }
 
     private boolean isAfterSilentPeriod(RuleGroup ruleGroup) {
-        return System.currentTimeMillis() > ruleGroup.getLastMatchingTime() + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
+        if (ruleGroup.getLastMatchingTime() == 0 || ruleGroup.getSilentMinutes() == 0) {
+            return true;
+        }
+        return System.currentTimeMillis() >
+                ruleGroup.getLastMatchingTime() + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
     }
 }

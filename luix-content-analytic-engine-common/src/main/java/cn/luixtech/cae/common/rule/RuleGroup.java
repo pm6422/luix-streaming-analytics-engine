@@ -31,7 +31,7 @@ public class RuleGroup {
     /**
      * The rule group will not issue same output for same input record during the silent period to prevent excessive output from interfering. 0 represents no silent period
      */
-    private Integer         silentMinutes;
+    private int             silentMinutes;
     /**
      * Clear local existing inputs cache after rule matched
      */
