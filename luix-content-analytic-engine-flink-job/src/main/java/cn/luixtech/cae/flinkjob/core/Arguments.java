@@ -39,6 +39,6 @@ public class Arguments {
     public              Long    minPauseBetweenCheckpoints = 10000L;
     @Parameter(names = "--out-of-orderdness", description = "")
     public              Integer outOfOrderdness            = 500;
-    @Parameter(names = "--generator.inputs-per-second", description = "Max records per second for input record generator")
+    @Parameter(names = "--generator.inputs-per-second", description = "Max records per second for input generator")
     public              Integer inputsPerSecond            = 2;
 }
