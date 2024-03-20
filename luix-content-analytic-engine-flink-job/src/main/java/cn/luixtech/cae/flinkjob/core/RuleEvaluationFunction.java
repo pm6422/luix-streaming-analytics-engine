@@ -101,7 +101,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
         if (ruleMatched) {
             if (ruleCommand.getRuleGroup().isResetAfterMatch()) {
-                evictAllStateElements();
+                evictAllInputs();
             }
             outputMeter.markEvent();
             out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
@@ -157,15 +157,15 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         }
     }
 
-    private void evictAllStateElements() {
+    private void evictAllInputs() {
         try {
-            Iterator<Long> keys = inputWindowState.keys().iterator();
-            while (keys.hasNext()) {
-                keys.next();
-                keys.remove();
+            Iterator<Long> inputCreatedTimeIterator = inputWindowState.keys().iterator();
+            while (inputCreatedTimeIterator.hasNext()) {
+                inputCreatedTimeIterator.next();
+                inputCreatedTimeIterator.remove();
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            log.error("Failed to evict all inputs");
         }
     }
 }
