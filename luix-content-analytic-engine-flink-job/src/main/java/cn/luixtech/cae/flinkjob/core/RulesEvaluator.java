@@ -41,7 +41,7 @@ public class RulesEvaluator {
         DataStream<Input> inputStream = createInputStream(env);
 
         // Processing pipeline setup
-        DataStream<Output> outputStream = inputStream
+        SingleOutputStreamOperator<Output> outputStream = inputStream
                 .connect(broadcastRuleCommandStream)
                 .process(new InputShardingFunction())
                 .uid(InputShardingFunction.class.getSimpleName())
@@ -59,10 +59,10 @@ public class RulesEvaluator {
         DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputStringStream);
         outputSink.setParallelism(1).name("Output JSON sink");
 
-        DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
+        DataStream<String> allRuleEvaluations = outputStream.getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
         allRuleEvaluations.print().setParallelism(1).name("Rule evaluation result sink");
 
-        DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
+        DataStream<Long> handlingLatency = outputStream.getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
         DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Handling Latency Sink");
