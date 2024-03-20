@@ -47,7 +47,7 @@ public class RulesEvaluator {
                 .uid(InputShardingFunction.class.getSimpleName())
                 .name("Input sharding function")
                 // cannot be optimized to lambda
-                .keyBy((keyed) -> keyed.getShardingKey())
+                .keyBy((shardingPolicy) -> shardingPolicy.getShardingKey())
                 .connect(broadcastRuleCommandStream)
                 .process(new RuleEvaluationFunction())
                 .uid(RuleEvaluationFunction.class.getSimpleName())
