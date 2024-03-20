@@ -19,6 +19,10 @@ public class Input implements IngestionTimeAssignable {
      */
     private String              tenant;
     /**
+     * "ID of the entity to which the record belongs
+     */
+    private String              entityId;
+    /**
      * ID of the record
      */
     private String              recordId;
