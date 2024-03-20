@@ -6,7 +6,6 @@ import cn.luixtech.cae.common.input.Input;
 import cn.luixtech.cae.common.rule.RuleGroup;
 import cn.luixtech.cae.common.rule.RuleCommand;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
@@ -30,12 +29,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String, ShardingPolicy<Input, String, String>, RuleCommand, Output> {
 
-    private static final String                               WIDEST_RULE_KEY         = StringUtils.EMPTY + Integer.MIN_VALUE;
     private              Meter                                outputMeter;
     private transient    MapState<Long, Set<Input>>           windowState;
     private static final MapStateDescriptor<Long, Set<Input>> WINDOW_STATE_DESCRIPTOR =
             new MapStateDescriptor<>("windowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
+    private static final String                               WIDEST_RULE_GROUP_KEY   = "widestRuleGroup";
 
     @Override
     public void open(Configuration parameters) {
@@ -47,23 +46,23 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     @Override
     public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<Output> out) throws Exception {
         log.debug("Received {}", ruleCommand);
-        BroadcastState<String, RuleCommand> broadcastState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
+        BroadcastState<String, RuleCommand> broadcastRuleCommandState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
         // Merge the new rule with the existing one
-        RuleHelper.handleRuleCommand(broadcastState, ruleCommand);
-        updateWidestWindowRule(ruleCommand, broadcastState);
+        RuleHelper.handleRuleCommand(broadcastRuleCommandState, ruleCommand);
+        updateWidestWindowRuleGroup(broadcastRuleCommandState, ruleCommand);
     }
 
-    private void updateWidestWindowRule(RuleCommand ruleCommand, BroadcastState<String, RuleCommand> broadcastState) throws Exception {
-        RuleCommand widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
+    private void updateWidestWindowRuleGroup(BroadcastState<String, RuleCommand> broadcastRuleCommandState, RuleCommand ruleCommand) throws Exception {
+        RuleCommand widestWindowRule = broadcastRuleCommandState.get(WIDEST_RULE_GROUP_KEY);
         if (Command.ADD != ruleCommand.getCommand()) {
             return;
         }
         if (widestWindowRule == null) {
-            broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
+            broadcastRuleCommandState.put(WIDEST_RULE_GROUP_KEY, ruleCommand);
             return;
         }
         if (ruleCommand.getRuleGroup().getWindowMinutes() > widestWindowRule.getRuleGroup().getWindowMinutes()) {
-            broadcastState.put(WIDEST_RULE_KEY, ruleCommand);
+            broadcastRuleCommandState.put(WIDEST_RULE_GROUP_KEY, ruleCommand);
         }
     }
 
@@ -133,7 +132,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
 
     @Override
     public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Output> out) throws Exception {
-        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_KEY);
+        RuleCommand widestWindowRule = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR).get(WIDEST_RULE_GROUP_KEY);
         if (widestWindowRule == null) {
             return;
         }
