@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,7 +60,18 @@ public class Input implements IngestionTimeAssignable {
     }
 
     @SuppressWarnings("unchecked")
-    public String getRecordReferenceFieldValue(Rule rule, String fieldName) {
+    public Map<String, Object> getRecRefMap(Rule rule) {
+        if (MapUtils.isEmpty(record)) {
+            return new HashMap<>();
+        }
+        if (StringUtils.isEmpty(rule.getReferenceRecordKey())) {
+            return record;
+        }
+        return ((Map<String, Object>) record.get(rule.getReferenceRecordKey()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public String getRecRefFieldValue(Rule rule, String fieldName) {
         if (MapUtils.isEmpty(record)) {
             return StringUtils.EMPTY;
         }
@@ -71,7 +83,7 @@ public class Input implements IngestionTimeAssignable {
     }
 
     @SuppressWarnings("unchecked")
-    public String getTargetReferenceFieldValue(Rule rule, String fieldName) {
+    public String getRecTargetFieldValue(Rule rule, String fieldName) {
         if (MapUtils.isEmpty(record)) {
             return StringUtils.EMPTY;
         }

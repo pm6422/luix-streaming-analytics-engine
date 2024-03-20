@@ -5,10 +5,6 @@ import cn.luixtech.cae.common.rule.aggregating.AggregatingRule;
 import cn.luixtech.cae.common.rule.matching.MatchingRule;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Rules representation.
@@ -36,11 +32,6 @@ public class Rule {
      */
     private AggregatingRule    aggregatingRule;
     /**
-     * TODO：
-     * The actual data storing in field 'record' of {@link Input} class
-     */
-    private String             mappingInputRecord;
-    /**
      * The reference key for the rule expression storing in 'record' map of {@link Input} class
      * e.g. rule expression: model == X9, referenceRecordKey = state
      * We can get model by using input.record.get("state").get("model")
@@ -64,17 +55,5 @@ public class Rule {
             return RuleType.MATCHING;
         }
         throw new RuntimeException("Unsupported rule type");
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getMappingRecord(Input input) {
-        if (StringUtils.isEmpty(mappingInputRecord)) {
-            return input.getRecord();
-        }
-        if (!input.getRecord().containsKey(mappingInputRecord)) {
-            // return empty if not exist
-            return Collections.emptyMap();
-        }
-        return (Map<String, Object>) input.getRecord().get(mappingInputRecord);
     }
 }

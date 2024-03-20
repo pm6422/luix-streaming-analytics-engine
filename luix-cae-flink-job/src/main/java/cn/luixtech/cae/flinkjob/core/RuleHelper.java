@@ -118,11 +118,11 @@ public class RuleHelper {
         if (StringUtils.isNotEmpty(rule.getMatchingRule().getExpectedValue())) {
             // expected value matching
             return rule.getMatchingRule().getExpectedValue()
-                    .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName()).toString());
+                    .equals(input.getRecRefFieldValue(rule, rule.getMatchingRule().getFieldName()));
         }
         // field value matching
-        return rule.getMappingRecord(input).get(rule.getMatchingRule().getFieldName())
-                .equals(rule.getMappingRecord(input).get(rule.getMatchingRule().getExpectedFieldName()));
+        return input.getRecRefFieldValue(rule, rule.getMatchingRule().getFieldName())
+                .equals(input.getRecTargetFieldValue(rule, rule.getMatchingRule().getExpectedFieldName()));
     }
 
     /**
@@ -144,7 +144,7 @@ public class RuleHelper {
                 Set<Input> inputsInWindow = inputWindowState.get(inputStateCreatedTime);
                 for (Input inputInWindow : inputsInWindow) {
                     BigDecimal aggregatedValue = getBigDecimalByFieldName(
-                            rule.getMappingRecord(inputInWindow), rule.getAggregatingRule().getAggregateFieldName());
+                            inputInWindow.getRecRefMap(rule), rule.getAggregatingRule().getAggregateFieldName());
                     aggregator.add(aggregatedValue);
                 }
             }
@@ -161,7 +161,7 @@ public class RuleHelper {
     }
 
     private static BigDecimal getBigDecimalByFieldName(Map<String, Object> record, String fieldName) {
-        if (StringUtils.isEmpty(fieldName)) {
+        if (StringUtils.isEmpty(fieldName) || !record.containsKey(fieldName)) {
             return BigDecimal.ZERO;
         }
         return new BigDecimal(record.get(fieldName).toString());

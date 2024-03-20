@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-content-analytic-engine-common</artifactId>
+            <artifactId>luix-cae-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
