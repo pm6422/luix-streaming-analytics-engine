@@ -118,7 +118,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
                 evictAllStateElements();
             }
             outputMeter.markEvent();
-            out.collect(new Output<>(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
+            out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
         }
     }
 

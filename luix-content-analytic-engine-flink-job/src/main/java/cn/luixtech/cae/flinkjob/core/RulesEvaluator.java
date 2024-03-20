@@ -59,8 +59,8 @@ public class RulesEvaluator {
         DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputStringStream);
         outputSink.setParallelism(1).name("Output JSON sink");
 
-        DataStream<String> allRuleEvaluations = outputStream.getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
-        allRuleEvaluations.print().setParallelism(1).name("Rule evaluation result sink");
+        DataStream<String> ruleEvaluationResultStream = outputStream.getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
+        ruleEvaluationResultStream.print().setParallelism(1).name("Rule evaluation result sink");
 
         DataStream<Long> handlingLatency = outputStream.getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
         DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
