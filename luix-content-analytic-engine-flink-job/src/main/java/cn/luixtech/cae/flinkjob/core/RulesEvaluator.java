@@ -47,28 +47,29 @@ public class RulesEvaluator {
                 .connect(broadcastRuleStream)
                 .process(new InputShardingFunction())
                 .uid(InputShardingFunction.class.getSimpleName())
-                .name("Dynamic Partitioning Function")
+                .name("Input sharding function")
                 // cannot be optimized to lambda
                 .keyBy((keyed) -> keyed.getShardingKey())
                 .connect(broadcastRuleStream)
                 .process(new RuleEvaluationFunction())
                 .uid(RuleEvaluationFunction.class.getSimpleName())
-                .name("Dynamic Rule Evaluation Function");
+                .name("Rule evaluation function");
 
-        outputStream.print().name("Output STDOUT Sink");
+        outputStream.print().name("Output STDOUT sink");
+
         DataStream<String> outputJson = OutputSink.outputStreamToJson(outputStream);
         DataStreamSink<String> outputSink = OutputSink.addOutputSink(arguments, outputJson);
-        outputSink.setParallelism(1).name("Output JSON Sink");
+        outputSink.setParallelism(1).name("Output JSON sink");
 
         DataStream<String> allRuleEvaluations = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.RULE_EVALUATION_RESULT_TAG);
-        allRuleEvaluations.print().setParallelism(1).name("Rule Evaluation Sink");
+        allRuleEvaluations.print().setParallelism(1).name("Rule evaluation result sink");
 
         DataStream<Long> handlingLatency = ((SingleOutputStreamOperator<Output>) outputStream).getSideOutput(Descriptors.HANDLING_LATENCY_SINK_TAG);
         DataStream<String> latencies = handlingLatency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate()).map(String::valueOf);
         DataStreamSink<String> latencySink = LatencySink.addLatencySink(arguments, latencies);
         latencySink.name("Handling Latency Sink");
 
-        env.execute("Rule Evaluation Engine");
+        env.execute("Content analytic engine");
     }
 
     private StreamExecutionEnvironment createExecutionEnv() {
