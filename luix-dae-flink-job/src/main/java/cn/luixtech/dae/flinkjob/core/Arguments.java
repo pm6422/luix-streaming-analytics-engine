@@ -34,7 +34,7 @@ public class Arguments {
     @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshot. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)
     public              boolean checkpointsEnabled         = false;
     @Parameter(names = "--checkpoint.interval", description = "Time interval between state checkpoints in milliseconds")
-    public              Integer checkpointInterval         = 60_000_0;
+    public              Integer checkpointInterval         = 600000;
     @Parameter(names = "--checkpoint.min-pause", description = "The minimal pause before the next checkpoint is triggered")
     public              Long    minPauseBetweenCheckpoints = 10000L;
     @Parameter(names = "--out-of-orderdness", description = "")
