@@ -16,8 +16,7 @@ public class RuleGroup {
      */
     private String          id;
     /**
-     * It will evaluate input data which have the same tenant.
-     * It will evaluate all input data if the field is empty.
+     * It will evaluate input data which have the same tenant or evaluate all input data if this field is empty
      */
     private String          tenant;
     /**

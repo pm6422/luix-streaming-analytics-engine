@@ -20,7 +20,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Input implements IngestionTimeAssignable {
     /**
-     * It will be evaluated by rule groups which have the same tenant.
+     * It will be evaluated by rule groups which have the same tenant
      */
     private String              tenant;
     /**
