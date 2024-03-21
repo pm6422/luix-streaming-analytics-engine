@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class RuleCommand implements IngestionTimeAssignable {
     /**
-     * Command
+     * Dynamically control the rules without needing application restart
      */
     private Command   command;
     /**
