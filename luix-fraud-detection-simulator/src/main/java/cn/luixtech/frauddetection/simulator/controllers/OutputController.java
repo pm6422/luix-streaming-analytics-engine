@@ -35,7 +35,7 @@ public class OutputController {
             log.warn("No input record found, please start generating input records first");
             return null;
         }
-        Output output = new Output(detector.getId(), detector.toRuleCommand().getRuleGroup(), StringUtils.EMPTY, triggeringEvent);
+        Output output = new Output(detector.getId(), detector.toRuleCommand().getRuleGroup(), StringUtils.EMPTY, triggeringEvent, System.currentTimeMillis());
         String result = OBJECT_MAPPER.writeValueAsString(output);
         // Push to websocket queue
 //        simpSender.convertAndSend(applicationProperties.getWebSocket().getTopic().getOutput(), result);
