@@ -4,6 +4,10 @@
 == Overview
 Data analytic engine is to consume a stream of inputs and evaluate them against a set of rules. Any input that matches the rules is flagged as a output. The engine is implemented using Apache Flink and is deployed as a standalone application.
 
+[[snapshots]]
+== Snapshots
+image::images/flink.png[]
+
 [[modules]]
 == Modules
 This project consists of three main components:
