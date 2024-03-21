@@ -14,4 +14,5 @@ public class Output {
     private RuleGroup violatedRuleGroup;
     private String    groupKeys;
     private Input     triggeringInput;
+    public  long      createdTime;
 }

@@ -1,10 +1,10 @@
 package cn.luixtech.dae.flinkjob.core;
 
-import cn.luixtech.dae.common.output.Output;
 import cn.luixtech.dae.common.command.Command;
 import cn.luixtech.dae.common.input.Input;
-import cn.luixtech.dae.common.rule.RuleGroup;
+import cn.luixtech.dae.common.output.Output;
 import cn.luixtech.dae.common.rule.RuleCommand;
+import cn.luixtech.dae.common.rule.RuleGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapState;
@@ -102,7 +102,8 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
             }
             outputMeter.markEvent();
             ruleGroup.setLastMatchingTime(System.currentTimeMillis());
-            out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput()));
+            out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(),
+                    shardingPolicy.getInput(), ruleGroup.getLastMatchingTime()));
         }
     }
 
