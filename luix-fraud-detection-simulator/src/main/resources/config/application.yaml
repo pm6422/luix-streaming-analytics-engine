@@ -155,11 +155,11 @@ luix:
 application:
   kafka:
     listener:
-      input: input
+      input: dae-input
     topic:
-      input: input
-      rule: rule
-      output: output
-      latency: latency
+      input: dae-input
+      rule: dae-rule
+      output: dae-output
+      latency: dae-latency
   input:
     max-input-speed: 50

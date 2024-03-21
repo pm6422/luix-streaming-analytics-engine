@@ -18,17 +18,17 @@ public class Arguments {
     @Parameter(names = "--socket.rule-port", description = "Socket port for rules import")
     public              Integer ruleSocketPort             = 9999;
     @Parameter(names = "--kafka.topic.input", description = "Input topic")
-    public              String  inputTopic                 = "input";
+    public              String  inputTopic                 = "dae-input";
     @Parameter(names = "--kafka.topic.input.group", description = "Input topic group")
     public              String  inputTopicGroup            = "inputGrp";
     @Parameter(names = "--kafka.topic.rule", description = "Rule topic")
-    public              String  ruleTopic                  = "rule";
+    public              String  ruleTopic                  = "dae-rule";
     @Parameter(names = "--kafka.topic.rule.group", description = "Rule topic group")
     public              String  ruleTopicGroup             = "ruleGrp";
     @Parameter(names = "--kafka.topic.latency", description = "Latency topic")
-    public              String  latencyTopic               = "latency";
+    public              String  latencyTopic               = "dae-latency";
     @Parameter(names = "--kafka.topic.output", description = "Output topic")
-    public              String  outputTopic                = "output";
+    public              String  outputTopic                = "dae-output";
     @Parameter(names = "--input-source-parallelism", description = "Parallelism for input source")
     public              Integer inputSourceParallelism     = 2;
     @Parameter(names = "--checkpoints.enabled", description = "Enables checkpointing for the streaming job. The distributed state of the streaming dataflow will be periodically snapshot. In case of a failure, the streaming dataflow will be restarted from the latest completed checkpoint", arity = 1)
