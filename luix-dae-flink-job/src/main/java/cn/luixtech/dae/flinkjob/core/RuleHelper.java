@@ -22,19 +22,19 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RuleHelper {
-    public static void handleRuleCommand(BroadcastState<String, RuleCommand> broadcastState, RuleCommand ruleCommand) throws Exception {
+    public static void handleRuleCommand(BroadcastState<String, RuleGroup> broadcastState, RuleCommand ruleCommand) throws Exception {
         switch (ruleCommand.getCommand()) {
             case ADD:
                 // merge rule by ID
-                broadcastState.put(ruleCommand.getRuleGroup().getId(), ruleCommand);
+                broadcastState.put(ruleCommand.getRuleGroup().getId(), ruleCommand.getRuleGroup());
                 break;
             case DELETE:
                 broadcastState.remove(ruleCommand.getRuleGroup().getId());
                 break;
             case DELETE_ALL:
-                Iterator<Map.Entry<String, RuleCommand>> entriesIterator = broadcastState.iterator();
+                Iterator<Map.Entry<String, RuleGroup>> entriesIterator = broadcastState.iterator();
                 while (entriesIterator.hasNext()) {
-                    Map.Entry<String, RuleCommand> ruleEntry = entriesIterator.next();
+                    Map.Entry<String, RuleGroup> ruleEntry = entriesIterator.next();
                     broadcastState.remove(ruleEntry.getKey());
                     log.info("Removed {}", ruleEntry.getValue());
                 }

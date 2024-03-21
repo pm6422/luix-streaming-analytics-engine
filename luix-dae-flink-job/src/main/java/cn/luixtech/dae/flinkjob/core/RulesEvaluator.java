@@ -110,7 +110,7 @@ public class RulesEvaluator {
     private BroadcastStream<RuleCommand> createBroadcastRuleCommandStream(StreamExecutionEnvironment env) {
         DataStream<RuleCommand> ruleCommandStream = createRuleCommandStream(env);
         // Broadcast rules to all flink servers on the same cluster
-        return ruleCommandStream.broadcast(Descriptors.RULES_COMMAND_DESCRIPTOR);
+        return ruleCommandStream.broadcast(Descriptors.RULES_GROUP_DESCRIPTOR);
     }
 
     private DataStream<RuleCommand> createRuleCommandStream(StreamExecutionEnvironment env) {

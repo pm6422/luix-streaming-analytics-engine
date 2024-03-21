@@ -2,6 +2,7 @@ package cn.luixtech.dae.flinkjob.core;
 
 import cn.luixtech.dae.common.input.Input;
 import cn.luixtech.dae.common.rule.RuleCommand;
+import cn.luixtech.dae.common.rule.RuleGroup;
 import lombok.Data;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class InputShardingFunction extends BroadcastProcessFunction<Input, RuleC
     @Override
     public void processBroadcastElement(RuleCommand ruleCommand, Context ctx, Collector<ShardingPolicy<Input, String, String>> out) throws Exception {
         log.debug("Received {}", ruleCommand);
-        BroadcastState<String, RuleCommand> broadcastRuleCommandState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
+        BroadcastState<String, RuleGroup> broadcastRuleCommandState = ctx.getBroadcastState(Descriptors.RULES_GROUP_DESCRIPTOR);
         // merge the new rule with the existing one
         RuleHelper.handleRuleCommand(broadcastRuleCommandState, ruleCommand);
     }
@@ -57,15 +58,15 @@ public class InputShardingFunction extends BroadcastProcessFunction<Input, RuleC
      */
     @Override
     public void processElement(Input input, ReadOnlyContext ctx, Collector<ShardingPolicy<Input, String, String>> out) throws Exception {
-        ReadOnlyBroadcastState<String, RuleCommand> ruleCommandState = ctx.getBroadcastState(Descriptors.RULES_COMMAND_DESCRIPTOR);
+        ReadOnlyBroadcastState<String, RuleGroup> ruleCommandState = ctx.getBroadcastState(Descriptors.RULES_GROUP_DESCRIPTOR);
         int ruleGroupCounter = 0;
         // iterate all rule groups and evaluate it for all inputs
-        for (Map.Entry<String, RuleCommand> entry : ruleCommandState.immutableEntries()) {
-            final RuleCommand ruleCommand = entry.getValue();
+        for (Map.Entry<String, RuleGroup> entry : ruleCommandState.immutableEntries()) {
+            final RuleGroup ruleGroup = entry.getValue();
             // Combines groupingValues as a single concatenated key, e.g "{tenant=tesla, model=X9}".
             // Flink will calculate the hash of this sharding key and assign the processing of this particular combination
             // to a specific server in the cluster. That is to say, inputs with the same sharding key are assigned to the same partition.
-            out.collect(new ShardingPolicy<>(input, input.getGroupingValues().toString(), ruleCommand.getRuleGroup().getId()));
+            out.collect(new ShardingPolicy<>(input, input.getGroupingValues().toString(), ruleGroup.getId()));
             ruleGroupCounter++;
         }
         ruleGroupCounterGauge.setValue(ruleGroupCounter);
