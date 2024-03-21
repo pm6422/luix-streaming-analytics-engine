@@ -5,11 +5,15 @@ import cn.luixtech.dae.common.input.Input;
 import cn.luixtech.dae.common.rule.RuleCommand;
 import cn.luixtech.dae.flinkjob.output.OutputSink;
 import cn.luixtech.dae.flinkjob.output.LatencySink;
+import com.esotericsoftware.kryo.Serializer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.api.common.RuntimeExecutionMode;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
+import org.apache.flink.api.java.typeutils.runtime.kryo.JavaSerializer;
 import org.apache.flink.configuration.ConfigConstants;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.ExecutionOptions;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -18,6 +22,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static cn.luixtech.dae.flinkjob.core.Arguments.CHANNEL_KAFKA;
@@ -72,6 +77,7 @@ public class RulesEvaluator {
     private StreamExecutionEnvironment createStreamExecutionEnv() {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        env.getConfig().registerTypeWithKryoSerializer(List.class, JavaSerializer.class);
 
         if (arguments.checkpointsEnabled) {
             env.enableCheckpointing(arguments.checkpointInterval);

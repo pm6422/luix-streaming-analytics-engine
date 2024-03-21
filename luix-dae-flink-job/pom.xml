@@ -5,7 +5,8 @@
     <artifactId>luix-dae-flink-job</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <properties>
-        <flink.version>1.15.4</flink.version>
+        <flink-connector-java.version>3.1.0-1.18</flink-connector-java.version>
+        <flink.version>1.18.1</flink.version>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -19,19 +20,19 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.3.14</version>
-        </dependency>
-        <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.82</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-connector-kafka</artifactId>
+            <artifactId>flink-connector-base</artifactId>
             <version>${flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka</artifactId>
+            <version>${flink-connector-java.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -87,6 +88,11 @@
                     <artifactId>log4j-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.12</version>
         </dependency>
     </dependencies>
     <build>
