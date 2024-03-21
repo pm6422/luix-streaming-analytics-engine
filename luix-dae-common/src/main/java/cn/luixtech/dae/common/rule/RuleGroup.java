@@ -40,11 +40,11 @@ public class RuleGroup {
      */
     private LogicalOperator logicalOperator = LogicalOperator.AND;
     /**
-     * child rule groups, and it is necessary to ensure logical order
+     * child rule groups, and it is necessary to ensure physical order
      */
     private List<RuleGroup> children;
     /**
-     * Rules under the group, and it is necessary to ensure logical order
+     * Rules under the group, and it is necessary to ensure physical order
      */
     private List<Rule>      rules;
 }
