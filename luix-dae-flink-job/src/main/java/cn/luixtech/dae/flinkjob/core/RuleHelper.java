@@ -137,7 +137,7 @@ public class RuleHelper {
     private static boolean evaluateAggregatingRule(Rule rule, Input input, MapState<Long, Set<Input>> inputWindowState) throws Exception {
         Long windowStartTime = input.getCreatedTime() - TimeUnit.MINUTES.toMillis(rule.getWindowMinutes());
 
-        // Calculate the aggregated value
+        // calculate the aggregated value
         SimpleAccumulator<BigDecimal> aggregator = getAggregator(rule.getAggregatingRule().getAggregator());
         for (Long inputStateCreatedTime : inputWindowState.keys()) {
             if (isStateInWindow(inputStateCreatedTime, windowStartTime, input.getCreatedTime())) {
