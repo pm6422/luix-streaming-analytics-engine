@@ -28,7 +28,7 @@ public class RuleGroup {
      */
     private long            lastMatchingTime;
     /**
-     * The rule group will not issue same output for same input record during the silent period to prevent excessive output from interfering. 0 represents no silent period
+     * The rule group will not issue same output for same rule group during the silent period to prevent excessive output from interfering. 0 represents no silent period
      */
     private int             silentMinutes;
     /**
@@ -40,7 +40,7 @@ public class RuleGroup {
      */
     private LogicalOperator logicalOperator = LogicalOperator.AND;
     /**
-     * child rule groups, and it is necessary to ensure physical order
+     * Child rule groups, and it is necessary to ensure physical order
      */
     private List<RuleGroup> children;
     /**
