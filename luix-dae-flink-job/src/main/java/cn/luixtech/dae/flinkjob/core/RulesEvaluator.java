@@ -77,7 +77,7 @@ public class RulesEvaluator {
     private StreamExecutionEnvironment createStreamExecutionEnv() {
         StreamExecutionEnvironment env = getStreamExecutionEnv();
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-        env.getConfig().registerTypeWithKryoSerializer(List.class, JavaSerializer.class);
+//        env.getConfig().registerTypeWithKryoSerializer(List.class, JavaSerializer.class);
 
         if (arguments.checkpointsEnabled) {
             env.enableCheckpointing(arguments.checkpointInterval);
