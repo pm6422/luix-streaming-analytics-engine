@@ -33,6 +33,9 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
             new MapStateDescriptor<>("inputWindowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
     private static final String                               WIDEST_RULE_GROUP_KEY         = "widestRuleGroup";
+    /**
+     * TODO: handle threat-safe issue
+     */
     private static final Map<String, Map<String, Long>>       LAST_MATCHING_TIME            = new HashMap<>();
 
     @Override
