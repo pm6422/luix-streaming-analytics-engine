@@ -18,9 +18,7 @@ import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +33,7 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
             new MapStateDescriptor<>("inputWindowState", BasicTypeInfo.LONG_TYPE_INFO, TypeInformation.of(new TypeHint<>() {
             }));
     private static final String                               WIDEST_RULE_GROUP_KEY         = "widestRuleGroup";
+    private static final Map<String, Map<String, Long>>       LAST_MATCHING_TIME            = new HashMap<>();
 
     @Override
     public void open(Configuration parameters) {
@@ -100,8 +99,12 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
                 evictAllInputs();
             }
             outputMeter.markEvent();
+
             long matchingTime = System.currentTimeMillis();
-            ruleGroup.addLastMatchingTime(input.getEntityId(), matchingTime);
+            if (!LAST_MATCHING_TIME.containsKey(ruleGroup.getId())) {
+                LAST_MATCHING_TIME.put(ruleGroup.getId(), new HashMap<>());
+            }
+            LAST_MATCHING_TIME.get(ruleGroup.getId()).put(input.getEntityId(), matchingTime);
             out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput(), matchingTime));
         }
     }
@@ -165,10 +168,12 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
     }
 
     private boolean isAfterSilentPeriod(RuleGroup ruleGroup, Input input) {
-        if (!ruleGroup.getLastMatchingTime().containsKey(input.getEntityId())|| ruleGroup.getSilentMinutes() == 0) {
+        if (!LAST_MATCHING_TIME.containsKey(ruleGroup.getId())
+                || !LAST_MATCHING_TIME.get(ruleGroup.getId()).containsKey(input.getEntityId())
+                || ruleGroup.getSilentMinutes() == 0) {
             return true;
         }
         return System.currentTimeMillis() >
-                ruleGroup.getLastMatchingTime().get(input.getEntityId()) + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
+                LAST_MATCHING_TIME.get(ruleGroup.getId()).get(input.getEntityId()) + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
     }
 }
