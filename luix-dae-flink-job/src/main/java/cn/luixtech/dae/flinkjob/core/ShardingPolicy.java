@@ -13,7 +13,7 @@ public class ShardingPolicy<IN, KEY, ID> {
      */
     private IN  input;
     /**
-     * Sharding key used to partition the input, e.g: {tenant=tesla;model=X9}
+     * Sharding key used to partition the input, e.g: {tenant=tesla, model=X9}
      */
     private KEY shardingKey;
     /**
