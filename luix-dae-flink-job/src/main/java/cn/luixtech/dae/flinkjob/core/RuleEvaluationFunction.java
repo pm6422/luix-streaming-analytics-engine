@@ -95,15 +95,14 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         ctx.output(Descriptors.RULE_EVALUATION_RESULT_TAG,
                 "Rule group: " + ruleGroup.getId() + " , sharding key: " + shardingPolicy.getShardingKey() + " , matched: " + ruleMatched);
 
-
-        if (ruleMatched && isAfterSilentPeriod(ruleGroup)) {
+        if (ruleMatched && isAfterSilentPeriod(ruleGroup, input)) {
             if (ruleGroup.isResetAfterMatch()) {
                 evictAllInputs();
             }
             outputMeter.markEvent();
-            ruleGroup.setLastMatchingTime(System.currentTimeMillis());
-            out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(),
-                    shardingPolicy.getInput(), ruleGroup.getLastMatchingTime()));
+            long matchingTime = System.currentTimeMillis();
+            ruleGroup.addLastMatchingTime(input.getEntityId(), matchingTime);
+            out.collect(new Output(ruleGroup.getId(), ruleGroup, shardingPolicy.getShardingKey(), shardingPolicy.getInput(), matchingTime));
         }
     }
 
@@ -165,11 +164,11 @@ public class RuleEvaluationFunction extends KeyedBroadcastProcessFunction<String
         }
     }
 
-    private boolean isAfterSilentPeriod(RuleGroup ruleGroup) {
-        if (ruleGroup.getLastMatchingTime() == 0 || ruleGroup.getSilentMinutes() == 0) {
+    private boolean isAfterSilentPeriod(RuleGroup ruleGroup, Input input) {
+        if (!ruleGroup.getLastMatchingTime().containsKey(input.getEntityId())|| ruleGroup.getSilentMinutes() == 0) {
             return true;
         }
         return System.currentTimeMillis() >
-                ruleGroup.getLastMatchingTime() + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
+                ruleGroup.getLastMatchingTime().get(input.getEntityId()) + TimeUnit.MINUTES.toMillis(ruleGroup.getSilentMinutes());
     }
 }
