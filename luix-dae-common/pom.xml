@@ -9,7 +9,6 @@
     <artifactId>luix-dae-common</artifactId>
     <properties>
         <java.version>11</java.version>
-        <logback.version>1.2.11</logback.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.version>3.6.2</maven.version>
