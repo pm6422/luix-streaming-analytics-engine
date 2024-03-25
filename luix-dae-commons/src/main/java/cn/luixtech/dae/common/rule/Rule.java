@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Rule {
-    private static final String MAPPING_INPUT_RECORD_MSG   = "msg";
-    private static final String MAPPING_INPUT_RECORD_EVENT = "event";
 
     /**
      * Arithmetic operator
