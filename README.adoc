@@ -12,7 +12,7 @@ image::images/flink.png[]
 == Modules
 This project consists of three main components:
 
-- luix-dae-common: Common library for the DAE Flink Job
+- luix-dae-commons: Common library for the DAE Flink Job
 - luix-dae-flink-job: Data analytic engine application with Apache Flink
 - luix-fraud-detection-simulator: Fraud detection web simulator demo, which is used to generate transactions and configure rules
 

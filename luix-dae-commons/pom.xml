@@ -6,7 +6,7 @@
         <artifactId>luix-data-analytic-engine</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>luix-dae-common</artifactId>
+    <artifactId>luix-dae-commons</artifactId>
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

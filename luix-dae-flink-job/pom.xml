@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>luix-dae-common</artifactId>
+            <artifactId>luix-dae-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
