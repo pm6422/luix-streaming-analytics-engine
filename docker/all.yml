@@ -43,7 +43,7 @@ services:
     entrypoint: /bin/sh
     command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     ports:
-      - "8080:8080"
+      - "8084:8080"
     environment:
       CONFIG_FILEPATH: /tmp/config.yml
       CONSOLE_CONFIG_FILE: |

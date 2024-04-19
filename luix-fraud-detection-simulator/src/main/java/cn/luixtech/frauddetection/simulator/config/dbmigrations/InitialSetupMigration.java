@@ -76,7 +76,7 @@ public class InitialSetupMigration implements ApplicationRunner {
 
         Rule rule4 = new Rule();
         rule4.setArithmeticOperator(ArithmeticOperator.GREATER_EQUAL);
-        rule4.setAggregatingRule(aggregatingRule3);
+        rule4.setAggregatingRule(aggregatingRule4);
         rule4.setWindowMinutes(1440);
 
         RuleGroup ruleGroup4 = new RuleGroup();
