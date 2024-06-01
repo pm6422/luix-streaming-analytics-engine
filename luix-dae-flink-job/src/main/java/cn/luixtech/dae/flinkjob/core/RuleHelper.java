@@ -143,8 +143,15 @@ public class RuleHelper {
             if (isStateInWindow(inputStateCreatedTime, windowStartTime, input.getCreatedTime())) {
                 Set<Input> inputsInWindow = inputWindowState.get(inputStateCreatedTime);
                 for (Input inputInWindow : inputsInWindow) {
-                    BigDecimal aggregatedValue = getBigDecimalByFieldName(
-                            inputInWindow.getRecRefMap(rule), rule.getAggregatingRule().getAggregateFieldName());
+                    BigDecimal aggregatedValue;
+                    if(Aggregator.COUNT == rule.getAggregatingRule().getAggregator()) {
+                        aggregatedValue = countMatchedField(inputInWindow.getRecRefMap(rule),
+                                rule.getAggregatingRule().getAggregateFieldName(),
+                                rule.getAggregatingRule().getExpectedAggregateFieldValue());
+                    } else {
+                         aggregatedValue = getBigDecimalByFieldName(
+                                inputInWindow.getRecRefMap(rule), rule.getAggregatingRule().getAggregateFieldName());
+                    }
                     aggregator.add(aggregatedValue);
                 }
             }
@@ -165,5 +172,13 @@ public class RuleHelper {
             return BigDecimal.ZERO;
         }
         return new BigDecimal(record.get(fieldName).toString());
+    }
+
+    private static BigDecimal countMatchedField(Map<String, Object> record,
+                                                String fieldName, String expectedFieldValue) {
+        if (StringUtils.isEmpty(fieldName) || !record.containsKey(fieldName) || StringUtils.isEmpty(expectedFieldValue)) {
+            return BigDecimal.ZERO;
+        }
+        return expectedFieldValue.equals(record.get(fieldName)) ? BigDecimal.ONE : BigDecimal.ZERO;
     }
 }
